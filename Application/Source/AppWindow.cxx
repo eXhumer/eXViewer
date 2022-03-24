@@ -1,14 +1,15 @@
 #include "AppWindow.hxx"
 #include "eXF1TV/F1TV.hxx"
+#include <QJsonArray>
 #include <QMessageBox>
 #include <QPushButton>
+#include <QTimer>
 #include <QVBoxLayout>
 #include <QWebEngineCookieStore>
 #include <QWebEngineProfile>
 #include <QWebEngineView>
 #ifdef WIN32
 #include <QSettings>
-#include <QTimer>
 #include <dwmapi.h>
 
 COLORREF DARK_COLOR = 0x00505050;
@@ -56,6 +57,7 @@ AppWindow::AppWindow(QWidget *parent) : QMainWindow(parent) {
   themeChangeTimer->start(1000);
 #endif // WIN32
 
+  m_liveSessionTimer = new QTimer(this);
   auto f1tvService = new eXF1TV::Service::F1TV(nullptr, this);
   setCentralWidget(new QWidget);
   centralWidget()->setLayout(new QVBoxLayout);
@@ -100,4 +102,9 @@ AppWindow::AppWindow(QWidget *parent) : QMainWindow(parent) {
             authBtn->setEnabled(true);
             revokeBtn->setDisabled(true);
           });
+  connect(f1tvService, &eXF1TV::Service::F1TV::liveSessionsAvailable, this,
+          [](const QJsonArray &liveSessions) { qDebug() << liveSessions; });
+  connect(m_liveSessionTimer, &QTimer::timeout, f1tvService,
+          &eXF1TV::Service::F1TV::queryLiveSessions);
+  m_liveSessionTimer->start(60 * 1000);
 }

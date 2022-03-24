@@ -7,6 +7,7 @@ private:
 #ifdef WIN32
   bool m_darkMode;
 #endif // WIN32
+  QTimer *m_liveSessionTimer;
 public:
   AppWindow(QWidget *parent = nullptr);
 };
