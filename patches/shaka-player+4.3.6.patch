@@ -1,0 +1,37 @@
+diff --git a/node_modules/shaka-player/dist/shaka-player.compiled.d.ts b/node_modules/shaka-player/dist/shaka-player.compiled.d.ts
+index 13db9c5..021d7ae 100644
+--- a/node_modules/shaka-player/dist/shaka-player.compiled.d.ts
++++ b/node_modules/shaka-player/dist/shaka-player.compiled.d.ts
+@@ -4484,3 +4484,5 @@ declare namespace ಠ_ಠ.clutz {
+     static isTypeSupported (keySystem : string , contentType : string ) : boolean ;
+   }
+ }
++
++export default shaka;
+diff --git a/node_modules/shaka-player/dist/shaka-player.ui.d.ts b/node_modules/shaka-player/dist/shaka-player.ui.d.ts
+index 2099f5d..13bbfdc 100644
+--- a/node_modules/shaka-player/dist/shaka-player.ui.d.ts
++++ b/node_modules/shaka-player/dist/shaka-player.ui.d.ts
+@@ -5070,3 +5070,5 @@ declare namespace shaka.extern {
+ declare namespace shaka.extern {
+   type UIVolumeBarColors = { base : string , level : string } ;
+ }
++
++export default shaka;
+diff --git a/node_modules/shaka-player/index.d.ts b/node_modules/shaka-player/index.d.ts
+new file mode 100644
+index 0000000..86130b2
+--- /dev/null
++++ b/node_modules/shaka-player/index.d.ts
+@@ -0,0 +1,2 @@
++/// <reference path="./dist/shaka-player.compiled.d.ts" />
++/// <reference path="./dist/shaka-player.ui.d.ts" />
+diff --git a/node_modules/shaka-player/ui.d.ts b/node_modules/shaka-player/ui.d.ts
+new file mode 100644
+index 0000000..9482c1f
+--- /dev/null
++++ b/node_modules/shaka-player/ui.d.ts
+@@ -0,0 +1,3 @@
++import shaka from "shaka-player/dist/shaka-player.ui";
++export * from "shaka-player/dist/shaka-player.ui";
++export default shaka;

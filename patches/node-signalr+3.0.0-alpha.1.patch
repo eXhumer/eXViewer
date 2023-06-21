@@ -1,0 +1,26 @@
+diff --git a/node_modules/node-signalr/dist/index.cjs b/node_modules/node-signalr/dist/index.cjs
+index 37115d0..42ed47e 100644
+--- a/node_modules/node-signalr/dist/index.cjs
++++ b/node_modules/node-signalr/dist/index.cjs
+@@ -146,6 +146,8 @@ class Client extends typedEventEmitter.TypedEventEmitter {
+                 );
+               }
+               resolve(protocol);
++              if ("set-cookie" in res.headers)
++                this.headers["cookie"] = res.headers["set-cookie"].join("; ");
+             } else if (res.statusCode == 401 || res.statusCode == 302) {
+               reject(
+                 new SignalRError(
+diff --git a/node_modules/node-signalr/dist/index.mjs b/node_modules/node-signalr/dist/index.mjs
+index a20d79c..c31850a 100644
+--- a/node_modules/node-signalr/dist/index.mjs
++++ b/node_modules/node-signalr/dist/index.mjs
+@@ -135,6 +135,8 @@ class Client extends TypedEventEmitter {
+                   )
+                 );
+               }
++              if ("set-cookie" in res.headers)
++                this.headers["cookie"] = res.headers["set-cookie"].join("; ");
+               resolve(protocol);
+             } else if (res.statusCode == 401 || res.statusCode == 302) {
+               reject(

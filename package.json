@@ -1,0 +1,77 @@
+{
+  "name": "exviewer",
+  "productName": "eXViewer",
+  "version": "0.0.0",
+  "description": "Unofficial live timing and content streaming client for F1TV",
+  "main": ".webpack/main",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "eslint --ext .ts,.tsx .",
+    "postinstall": "patch-package"
+  },
+  "license": "AGPL-3.0-only",
+  "homepage": "https://github.com/eXhumer/eXViewer",
+  "repository": {
+    "url": "https://github.com/eXhumer/eXViewer"
+  },
+  "bugs": {
+    "url": "https://github.com/eXhumer/eXViewer",
+    "email": "exhumer@exhumer.cc"
+  },
+  "author": {
+    "name": "eXhumer",
+    "email": "exhumer@exhumer.cc"
+  },
+  "os": [
+    "win32",
+    "darwin",
+    "linux"
+  ],
+  "keywords": [
+    "f1",
+    "formula 1",
+    "live timing client"
+  ],
+  "devDependencies": {
+    "@electron-forge/cli": "^6.2.1",
+    "@electron-forge/maker-zip": "^6.2.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^6.2.1",
+    "@electron-forge/plugin-fuses": "^6.2.1",
+    "@electron-forge/plugin-webpack": "^6.2.1",
+    "@electron/fuses": "^1.6.1",
+    "@types/react": "^18.2.12",
+    "@types/react-dom": "^18.2.5",
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "@typescript-eslint/parser": "^5.0.0",
+    "@vercel/webpack-asset-relocator-loader": "1.7.3",
+    "css-loader": "^6.0.0",
+    "electron": "https://github.com/castlabs/electron-releases#v25.1.1+wvcus",
+    "eslint": "^8.0.1",
+    "eslint-plugin-import": "^2.25.0",
+    "fork-ts-checker-webpack-plugin": "^7.2.13",
+    "node-loader": "^2.0.0",
+    "openpgp": "^5.9.0",
+    "patch-package": "^7.0.0",
+    "postinstall-postinstall": "^2.1.0",
+    "style-loader": "^3.0.0",
+    "svg-url-loader": "^8.0.0",
+    "ts-loader": "^9.2.2",
+    "ts-node": "^10.0.0",
+    "typescript": "~4.5.4"
+  },
+  "dependencies": {
+    "axios": "^1.4.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "jwt-decode": "^3.1.2",
+    "mux.js": "^6.3.0",
+    "node-signalr": "3.0.0-alpha.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-pro-sidebar": "^1.1.0-alpha.1",
+    "shaka-player": "4.3.6",
+    "typed-emitter": "2.1.0"
+  }
+}
