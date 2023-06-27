@@ -15,15 +15,28 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { useState } from "react";
 import Info from "./Components/Info";
+import { AppPage } from "../../Type";
 import Sidebar from "./Components/Sidebar";
 
 export default () => {
+  const [appPage, setAppPage] = useState(AppPage.DEFAULT);
+
   return (
     <>
-      <Sidebar />
+      <Sidebar
+        appPage={appPage}
+        currentSeason={(new Date(Date.now())).getFullYear()}
+        setAppPage={setAppPage}
+      />
       <div style={{height: "100%", width: "100%"}}>
-        <Info />
+        {appPage === AppPage.INFO ?
+          <Info /> :
+          appPage === AppPage.CURRENT_SEASON ?
+          <div>Current Season</div> :
+          appPage === AppPage.SETTINGS ?
+          <div>Settings</div> : null}
       </div>
     </>
   );
