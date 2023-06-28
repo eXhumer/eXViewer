@@ -73,5 +73,8 @@
     "react-pro-sidebar": "^1.1.0-alpha.1",
     "shaka-player": "4.3.6",
     "typed-emitter": "2.1.0"
+  },
+  "resolutions": {
+    "semver": "^7.5.2"
   }
 }
