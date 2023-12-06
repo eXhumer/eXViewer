@@ -17,7 +17,7 @@
 
 import { app, ipcMain, session, BrowserWindow } from "electron";
 import { F1LiveTimingClient, F1TVClient } from "./client";
-import { LoginSession } from "./type";
+import { F1TVLoginSession } from "./type";
 
 if (require("electron-squirrel-startup"))
   app.quit();
@@ -54,7 +54,7 @@ const createMainWindow = () => {
   mainWindow.on("ready-to-show", () => {
     session.defaultSession.cookies.get({ url: "https://f1tv.formula1.com", name: "login-session" }).then(cookies => {
       if (cookies.length > 0 && f1tvClient === null) {
-        const loginSession = JSON.parse(decodeURIComponent(cookies[0].value)) as LoginSession;
+        const loginSession = JSON.parse(decodeURIComponent(cookies[0].value)) as F1TVLoginSession;
         const ascendon = loginSession.data.subscriptionToken;
         f1tvClient.ascendon = ascendon;
       }
@@ -122,7 +122,7 @@ app.on("ready", () => {
 
       else {
         console.log(cookie, cause);
-        const loginSession = JSON.parse(decodeURIComponent(cookie.value)) as LoginSession;
+        const loginSession = JSON.parse(decodeURIComponent(cookie.value)) as F1TVLoginSession;
         const ascendon = loginSession.data.subscriptionToken;
         f1tvClient.ascendon = ascendon;
 
