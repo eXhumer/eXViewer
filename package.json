@@ -1,0 +1,62 @@
+{
+  "name": "exviewer",
+  "productName": "eXViewer",
+  "version": "1.0.0",
+  "description": "Unofficial F1TV viewer and live timing client",
+  "main": ".webpack/main",
+  "scripts": {
+    "start": "electron-forge start",
+    "package": "electron-forge package",
+    "make": "electron-forge make",
+    "publish": "electron-forge publish",
+    "lint": "eslint --ext .ts,.tsx .",
+    "postinstall": "patch-package && npm run redeploy-electron-dev",
+    "redeploy-electron-dev": "ts-node redeploy-electron-dev.ts"
+  },
+  "devDependencies": {
+    "@electron-forge/cli": "^7.3.1",
+    "@electron-forge/maker-appx": "^7.3.1",
+    "@electron-forge/maker-deb": "^7.3.1",
+    "@electron-forge/maker-dmg": "^7.3.1",
+    "@electron-forge/maker-flatpak": "^7.3.1",
+    "@electron-forge/maker-pkg": "^7.3.1",
+    "@electron-forge/maker-rpm": "^7.3.1",
+    "@electron-forge/maker-snap": "^7.3.1",
+    "@electron-forge/maker-squirrel": "^7.3.1",
+    "@electron-forge/maker-zip": "^7.3.1",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.3.1",
+    "@electron-forge/plugin-fuses": "^7.3.1",
+    "@electron-forge/plugin-webpack": "^7.3.1",
+    "@electron/fuses": "^1.8.0",
+    "@types/react": "^18.2.73",
+    "@types/react-dom": "^18.2.23",
+    "@typescript-eslint/eslint-plugin": "^5.62.0",
+    "@typescript-eslint/parser": "^5.62.0",
+    "@vercel/webpack-asset-relocator-loader": "^1.7.3",
+    "css-loader": "^6.10.0",
+    "electron": "github:castlabs/electron-releases#v29.1.6+wvcus",
+    "eslint": "^8.57.0",
+    "eslint-plugin-import": "^2.29.1",
+    "fork-ts-checker-webpack-plugin": "^7.3.0",
+    "node-loader": "^2.0.0",
+    "patch-package": "^8.0.0",
+    "style-loader": "^3.3.4",
+    "ts-loader": "^9.5.1",
+    "ts-node": "^10.9.2",
+    "typescript": "~4.5.4"
+  },
+  "keywords": [],
+  "author": {
+    "name": "eXhumer",
+    "email": "exhumer1@protonmail.com"
+  },
+  "license": "AGPL-3.0-only",
+  "dependencies": {
+    "@exhumer/f1tv-api": "^0.4.0",
+    "electron-squirrel-startup": "^1.0.0",
+    "react": "^18.2.0",
+    "react-collapsible": "^2.10.0",
+    "react-dom": "^18.2.0",
+    "shaka-player": "^4.7.11"
+  }
+}
