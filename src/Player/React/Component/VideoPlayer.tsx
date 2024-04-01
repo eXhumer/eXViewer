@@ -1,4 +1,4 @@
-import { forwardRef, useEffect, useImperativeHandle, useRef, useState, CSSProperties, ForwardRefRenderFunction } from 'react';
+import { forwardRef, useEffect, useImperativeHandle, useRef, useState, ForwardRefRenderFunction } from 'react';
 
 import shaka from 'shaka-player/dist/shaka-player.ui';
 import 'shaka-player/dist/controls.css';
@@ -7,15 +7,21 @@ type RecursivePartial<T> = {
   [P in keyof T]?: RecursivePartial<T[P]>;
 };
 
-const VideoPlayer: ForwardRefRenderFunction<{
+export type VideoPlayerRef = {
   readonly player: shaka.Player;
   readonly ui: shaka.ui.Overlay;
   readonly videoElement: HTMLVideoElement;
-}, {
+};
+
+export type VideoPlayerProps = {
+  autoPlay?: boolean;
   config?: RecursivePartial<shaka.extern.PlayerConfiguration>;
   src?: string;
-  uiStyle?: CSSProperties;
-}> = ({ config, src, uiStyle }, ref) => {
+};
+
+export type VideoPlayerFn = ForwardRefRenderFunction<VideoPlayerRef, VideoPlayerProps>;
+
+const VideoPlayer: VideoPlayerFn = ({ autoPlay, config, src }, ref) => {
   const uiRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -60,11 +66,13 @@ const VideoPlayer: ForwardRefRenderFunction<{
   }));
 
   return (
-    <div ref={uiRef} style={uiStyle}>
+    <div ref={uiRef} style={{ width: '100%', height: '100%', padding: 0, margin: 0 }}>
       <video ref={videoRef}
+        autoPlay={autoPlay}
+        style={{ width: '100%', height: '100%', padding: 0, margin: 0 }}
       />
     </div>
   );
 };
 
-export default forwardRef(VideoPlayer);
+export default forwardRef<VideoPlayerRef, VideoPlayerProps>(VideoPlayer);
