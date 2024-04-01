@@ -30,20 +30,20 @@
     "@electron/fuses": "^1.8.0",
     "@types/react": "^18.2.73",
     "@types/react-dom": "^18.2.23",
-    "@typescript-eslint/eslint-plugin": "^5.62.0",
-    "@typescript-eslint/parser": "^5.62.0",
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
     "css-loader": "^6.10.0",
     "electron": "github:castlabs/electron-releases#v29.1.6+wvcus",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
-    "fork-ts-checker-webpack-plugin": "^7.3.0",
+    "fork-ts-checker-webpack-plugin": "^9.0.2",
     "node-loader": "^2.0.0",
     "patch-package": "^8.0.0",
     "style-loader": "^3.3.4",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "typescript": "~4.5.4"
+    "typescript": "~5.4.3"
   },
   "keywords": [],
   "author": {
@@ -52,7 +52,7 @@
   },
   "license": "AGPL-3.0-only",
   "dependencies": {
-    "@exhumer/f1tv-api": "^0.4.0",
+    "@exhumer/f1tv-api": "^1.1.0",
     "electron-squirrel-startup": "^1.0.0",
     "react": "^18.2.0",
     "react-collapsible": "^2.10.0",

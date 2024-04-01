@@ -37,6 +37,14 @@ const config: ForgeConfig = {
               js: './src/Player/Preload.ts',
             },
           },
+          {
+            html: './src/MainWindow/Index.html',
+            js: './src/MainWindow/Renderer.ts',
+            name: 'main_window',
+            preload: {
+              js: './src/MainWindow/Preload.ts',
+            },
+          },
         ],
       },
     }),
