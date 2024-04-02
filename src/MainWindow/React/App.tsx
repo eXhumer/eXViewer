@@ -15,7 +15,7 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 const App = () => {
   const [subscriptionToken, setSubscriptionToken] = useState<string | null>(null);
@@ -33,9 +33,9 @@ const App = () => {
       {subscriptionToken === null ?
         <button onClick={f1tv.login}>Login</button> : // 
         <div>
-          <input type="text" value={subscriptionToken} readOnly />
+          <input type='text' value={subscriptionToken} readOnly />
           <br />
-          <input type="number" ref={contentIdInputRef} />
+          <input type='number' ref={contentIdInputRef} />
           <button onClick={() => {
             const currentInput = contentIdInputRef.current;
 

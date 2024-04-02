@@ -15,9 +15,9 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useRef, useState } from "react";
-import VideoPlayer, { VideoPlayerRef } from "./Component/VideoPlayer";
-import { ContentPlayResult } from "@exhumer/f1tv-api";
+import { useEffect, useRef, useState } from 'react';
+import VideoPlayer, { VideoPlayerRef } from './Component/VideoPlayer';
+import { ContentPlayResult } from '@exhumer/f1tv-api';
 
 const App = () => {
   const [playRes, setPlayRes] = useState<ContentPlayResult | null>(null);
@@ -35,10 +35,10 @@ const App = () => {
   return playRes !== null ?
     <VideoPlayer
       src={playRes.url}
-      config={playRes === null || playRes.streamType !== "DASHWV" || playRes.laUrl === undefined ? undefined : {
+      config={playRes === null || playRes.streamType !== 'DASHWV' || playRes.laUrl === undefined ? undefined : {
         drm: {
           servers: {
-            "com.widevine.alpha": playRes.laUrl,
+            'com.widevine.alpha': playRes.laUrl,
           }
         }
       }}

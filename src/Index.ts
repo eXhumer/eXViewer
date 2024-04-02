@@ -157,7 +157,7 @@ ipcMain.handle('F1TV:Login', async () => {
     loginWindow = null;
   });
 
-  loginWindow.loadURL("https://account.formula1.com/#/en/login");
+  loginWindow.loadURL('https://account.formula1.com/#/en/login');
 });
 
 ipcMain.handle('F1TV:Logout', async () => {

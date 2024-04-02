@@ -15,7 +15,7 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { LocationResult } from "@exhumer/f1tv-api";
+import { LocationResult } from '@exhumer/f1tv-api';
 
 declare interface F1TV {
   location: () => Promise<LocationResult>;
