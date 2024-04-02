@@ -17,33 +17,61 @@
 
 import { useEffect, useRef, useState } from 'react';
 import VideoPlayer, { VideoPlayerRef } from './Component/VideoPlayer';
-import { ContentPlayResult } from '@exhumer/f1tv-api';
+import { ContentPlayResult, ContentVideoContainer } from '@exhumer/f1tv-api';
+import Overlay from './Component/Overlay';
 
 const App = () => {
-  const [playRes, setPlayRes] = useState<ContentPlayResult | null>(null);
-  // const [videoRes, setVideoRes] = useState<ContentVideoResult | null>(null);
+  const [playData, setPlayData] = useState<ContentPlayResult | null>(null);
+  const [videoContainer, setVideoContainer] = useState<ContentVideoContainer | null>(null);
   const ref = useRef<VideoPlayerRef>(null);
 
   useEffect(() => {
-    player.onContentVideo((e, result) => {
-      player.contentPlay(result.contentId).then(res => {
-        setPlayRes(res);
-      });
+    player.onContentVideo((e, newVideoContainer) => {
+      setVideoContainer(newVideoContainer);
+
+      if (!playData) {
+        player.contentPlay(newVideoContainer.contentId)
+          .then(newPlayData => {
+            setPlayData(newPlayData);
+          });
+      }
     });
   }, []);
 
-  return playRes !== null ?
+  return playData !== null ? <>
+    {videoContainer && videoContainer.metadata.additionalStreams &&
+      <Overlay>
+        <div>
+          {videoContainer.metadata.additionalStreams.map(stream => (
+            <button
+              style={{
+                pointerEvents: 'auto',
+              }}
+              key={stream.channelId}
+              onClick={() => {
+                player.contentPlay(videoContainer.contentId, stream.channelId)
+                  .then(newPlayData => {
+                    setPlayData(newPlayData);
+                  });
+              }}
+            >
+              {stream.title}
+            </button>
+          ))}
+        </div>
+      </Overlay>}
     <VideoPlayer
-      src={playRes.url}
-      config={playRes === null || playRes.streamType !== 'DASHWV' || playRes.laUrl === undefined ? undefined : {
+      src={playData.url}
+      config={playData === null || playData.streamType !== 'DASHWV' || playData.laUrl === undefined ? undefined : {
         drm: {
           servers: {
-            'com.widevine.alpha': playRes.laUrl,
+            'com.widevine.alpha': playData.laUrl,
           }
         }
       }}
       ref={ref}
-    /> :
+    />
+    </>:
     <div>Loading...</div>;
 };
 
