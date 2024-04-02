@@ -9,3 +9,7 @@ contextBridge.exposeInMainWorld('f1tv', {
   logout: async () => await ipcRenderer.invoke('F1TV:Logout'),
   whenLocationReady: async () => await ipcRenderer.invoke('F1TV:When-Location-Ready'),
 });
+
+contextBridge.exposeInMainWorld('exviewer', {
+  newPlayer: (contentId: number) => ipcRenderer.invoke('eXViewer:New-Player', contentId),
+});

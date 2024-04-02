@@ -8,11 +8,17 @@ declare interface F1TV {
   whenLocationReady: () => Promise<void>;
 }
 
+declare interface ExViewer {
+  newPlayer: (contentId: number) => Promise<void>;
+}
+
 declare global {
   interface Window {
+    exviewer: ExViewer,
     f1tv: F1TV,
   }
 
+  const exviewer: ExViewer;
   const f1tv: F1TV;
 }
 

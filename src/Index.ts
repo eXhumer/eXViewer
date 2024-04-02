@@ -1,11 +1,11 @@
 import { app, session, BrowserWindow, ipcMain } from 'electron';
 import { F1TVLoginSession } from './Type';
-import { F1TVClient } from '@exhumer/f1tv-api';
+import { ContentVideoContainer, F1TVClient } from '@exhumer/f1tv-api';
 
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
-// declare const PLAYER_PRELOAD_WEBPACK_ENTRY: string;
-// declare const PLAYER_WEBPACK_ENTRY: string;
+declare const PLAYER_PRELOAD_WEBPACK_ENTRY: string;
+declare const PLAYER_WEBPACK_ENTRY: string;
 
 if (require('electron-squirrel-startup'))
   app.quit();
@@ -51,19 +51,23 @@ const createMainWindow = () => {
   mainWindow.webContents.openDevTools();
 };
 
-// const createPlayerWindow = (): void => {
-//   const mainWindow = new BrowserWindow({
-//     height: 600,
-//     width: 800,
-//     webPreferences: {
-//       preload: PLAYER_PRELOAD_WEBPACK_ENTRY,
-//     },
-//   });
+const createPlayerWindow = (container: ContentVideoContainer) => {
+  const playerWindow = new BrowserWindow({
+    height: 600,
+    width: 800,
+    webPreferences: {
+      preload: PLAYER_PRELOAD_WEBPACK_ENTRY,
+    },
+  });
 
-//   mainWindow.loadURL(PLAYER_WEBPACK_ENTRY);
+  playerWindow.on('ready-to-show', () => {
+    playerWindow.webContents.send('Player:Content-Video', container);
+  });
 
-//   mainWindow.webContents.openDevTools();
-// };
+  playerWindow.loadURL(PLAYER_WEBPACK_ENTRY);
+
+  playerWindow.webContents.openDevTools();
+};
 
 app.on('ready', () => {
   // intercept cookies and update the ascendon token
@@ -97,6 +101,24 @@ app.on('activate', () => {
   if (BrowserWindow.getAllWindows().length === 0) {
     createMainWindow();
   }
+});
+
+ipcMain.handle('Player:Content-Play', async (e, contentId: number, channelId?: number) => {
+  if (f1tv.ascendon === null)
+    return;
+
+  const apiRes = await f1tv.contentPlay(contentId, channelId);
+
+  return apiRes.resultObj;
+});
+
+ipcMain.handle('eXViewer:New-Player', async (e, contentId: number) => {
+  if (f1tv.ascendon === null)
+    return;
+
+  const apiRes = await f1tv.contentVideo(contentId);
+
+  createPlayerWindow(apiRes);
 });
 
 ipcMain.handle('F1TV:Login', async () => {
