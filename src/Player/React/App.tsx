@@ -15,15 +15,14 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useRef, useState } from 'react';
-import VideoPlayer, { VideoPlayerRef } from './Component/VideoPlayer';
+import { useEffect, useState } from 'react';
+import VideoPlayer from './Component/VideoPlayer';
 import { ContentPlayResult, ContentVideoContainer } from '@exhumer/f1tv-api';
 import Overlay from './Component/Overlay';
 
 const App = () => {
   const [playData, setPlayData] = useState<ContentPlayResult | null>(null);
   const [videoContainer, setVideoContainer] = useState<ContentVideoContainer | null>(null);
-  const ref = useRef<VideoPlayerRef>(null);
 
   useEffect(() => {
     player.onContentVideo((e, newVideoContainer) => {
@@ -45,7 +44,7 @@ const App = () => {
           {videoContainer.metadata.additionalStreams.map(stream => (
             <button
               style={{
-                pointerEvents: 'auto',
+                pointerEvents: 'auto', // This is needed to make the button clickable
               }}
               key={stream.channelId}
               onClick={() => {
@@ -69,10 +68,9 @@ const App = () => {
           }
         }
       }}
-      ref={ref}
     />
-    </>:
-    <div>Loading...</div>;
+  </>:
+  <div>Loading...</div>;
 };
 
 export default App;
