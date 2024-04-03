@@ -20,10 +20,6 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState, ForwardRe
 import shaka from 'shaka-player/dist/shaka-player.ui';
 import 'shaka-player/dist/controls.css';
 
-type RecursivePartial<T> = {
-  [P in keyof T]?: RecursivePartial<T[P]>;
-};
-
 export type VideoPlayerRef = {
   readonly player: shaka.Player;
   readonly ui: shaka.ui.Overlay;
@@ -32,13 +28,11 @@ export type VideoPlayerRef = {
 
 export type VideoPlayerProps = {
   autoPlay?: boolean;
-  config?: RecursivePartial<shaka.extern.PlayerConfiguration>;
-  src?: string;
 };
 
 export type VideoPlayerFn = ForwardRefRenderFunction<VideoPlayerRef, VideoPlayerProps>;
 
-const VideoPlayer: VideoPlayerFn = ({ autoPlay, config, src }, ref) => {
+const VideoPlayer: VideoPlayerFn = ({ autoPlay }, ref) => {
   const uiRef = useRef<HTMLDivElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
 
@@ -59,16 +53,6 @@ const VideoPlayer: VideoPlayerFn = ({ autoPlay, config, src }, ref) => {
       uiOverlay.destroy();
     };
   }, []);
-
-  useEffect(() => {
-    if (player && config)
-      player.configure(config);
-  }, [player, config]);
-
-  useEffect(() => {
-    if (player && src)
-      player.load(src);
-  }, [player, src]);
 
   useImperativeHandle(ref, () => ({
     get player() {
