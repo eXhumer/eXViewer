@@ -55,7 +55,9 @@ const createMainWindow = () => {
       .then((cookies) => {
         if (cookies.length > 0) {
           const loginSession = JSON.parse(decodeURIComponent(cookies[0].value)) as F1TVLoginSession;
-          f1tv.ascendon = loginSession.data.subscriptionToken;
+
+          if (f1tv.ascendon !== loginSession.data.subscriptionToken)
+            f1tv.ascendon = loginSession.data.subscriptionToken;
         }
 
         if (mainWindow !== null)
