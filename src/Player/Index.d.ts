@@ -18,6 +18,7 @@
 import { ContentPlayResult, ContentVideoContainer } from '@exhumer/f1tv-api';
 
 declare interface Player {
+  contextMenu: (cursor_location: { x: number, y: number }) => Promise<void>;
   contentPlay: (contentId: number, channelId?: number) => Promise<ContentPlayResult>;
   onContentVideo: (cb: (e: IpcRendererEvent, result: ContentVideoContainer) => void) => void;
 }

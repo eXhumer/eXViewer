@@ -15,7 +15,7 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { app, session, BrowserWindow, ipcMain } from 'electron';
+import { app, session, BrowserWindow, ipcMain, Menu } from 'electron';
 import { F1TVLoginSession } from './Type';
 import { ContentVideoContainer, F1TVClient } from '@exhumer/f1tv-api';
 
@@ -72,12 +72,16 @@ const createMainWindow = () => {
 
 const createPlayerWindow = (container: ContentVideoContainer) => {
   const playerWindow = new BrowserWindow({
-    height: 600,
-    width: 800,
+    minHeight: 270,
+    minWidth: 480,
+    backgroundColor: '#303030',
+    frame: false,
     webPreferences: {
       preload: PLAYER_PRELOAD_WEBPACK_ENTRY,
     },
   });
+
+  playerWindow.setAspectRatio(16 / 9);
 
   playerWindow.on('ready-to-show', () => {
     playerWindow.webContents.send('Player:Content-Video', container);
@@ -129,6 +133,26 @@ ipcMain.handle('Player:Content-Play', async (e, contentId: number, channelId?: n
   const apiRes = await f1tv.contentPlay(contentId, channelId);
 
   return apiRes.resultObj;
+});
+
+ipcMain.handle('Player:Context-Menu', async (e, cursor_location: { x: number, y: number }) => {
+  const senderWindow = BrowserWindow.fromWebContents(e.sender);
+
+  if (senderWindow === null)
+    throw new Error('senderWindow === null | Failed to get sender window!');
+
+  Menu
+    .buildFromTemplate([{
+        label: 'Close',
+        click: () => {
+          senderWindow.close();
+        }
+    }])
+    .popup({
+      window: senderWindow,
+      x: cursor_location.x,
+      y: cursor_location.y,
+    });
 });
 
 ipcMain.handle('eXViewer:New-Player', async (e, contentId: number) => {

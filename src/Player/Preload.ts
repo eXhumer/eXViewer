@@ -21,6 +21,8 @@ import { ContentVideoContainer } from '@exhumer/f1tv-api';
 contextBridge.exposeInMainWorld('player', {
   contentPlay: async (contentId: number, channelId?: number) =>
     await ipcRenderer.invoke('Player:Content-Play', contentId, channelId),
+  contextMenu: async (cursor_location: { x: number, y: number }) =>
+    await ipcRenderer.invoke('Player:Context-Menu', cursor_location),
   onContentVideo: (cb: (e: Electron.IpcRendererEvent,
                         result: ContentVideoContainer) => void) => 
     ipcRenderer.on('Player:Content-Video', cb),
