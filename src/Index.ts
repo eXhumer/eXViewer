@@ -15,7 +15,7 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { app, session, BrowserWindow, ipcMain, Menu } from 'electron';
+import { app, components, session, BrowserWindow, ipcMain, Menu } from 'electron';
 import { F1TVLoginSession } from './Type';
 import { ContentVideoContainer, F1TVClient } from '@exhumer/f1tv-api';
 
@@ -77,6 +77,7 @@ const createPlayerWindow = (container: ContentVideoContainer) => {
     backgroundColor: '#303030',
     frame: false,
     webPreferences: {
+      webSecurity: false,
       preload: PLAYER_PRELOAD_WEBPACK_ENTRY,
     },
   });
@@ -84,7 +85,7 @@ const createPlayerWindow = (container: ContentVideoContainer) => {
   playerWindow.setAspectRatio(16 / 9);
 
   playerWindow.on('ready-to-show', () => {
-    playerWindow.webContents.send('Player:Content-Video', container);
+    playerWindow.webContents.send('Player:Player-Data', container, f1tv.ascendon);
   });
 
   playerWindow.loadURL(PLAYER_WEBPACK_ENTRY);
@@ -92,7 +93,20 @@ const createPlayerWindow = (container: ContentVideoContainer) => {
   playerWindow.webContents.openDevTools();
 };
 
-app.on('ready', () => {
+app.whenReady().then(async () => {
+  await components.whenReady();
+
+  session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
+    if (details.url.startsWith("https://f1tv.formula1.com")) {
+      details.requestHeaders['sec-fetch-site'] = 'same-origin';
+
+      if (details.requestHeaders['Referer']) // Fix for widevine rejection due to Referer header
+        delete details.requestHeaders['Referer'];
+    }
+
+    callback({ cancel: false, requestHeaders: details.requestHeaders });
+  });
+
   // intercept cookies and update the ascendon token
   session.defaultSession.cookies.on('changed', (e, cookie, cause, removed) => {
     if (cookie.name === 'login-session' && cookie.domain.endsWith('.formula1.com')) {

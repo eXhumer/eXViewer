@@ -19,6 +19,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState, ForwardRe
 
 import shaka from 'shaka-player/dist/shaka-player.ui';
 import 'shaka-player/dist/controls.css';
+import styles from './VideoPlayer.module.css';
 
 export type VideoPlayerRef = {
   readonly player: shaka.Player;
@@ -37,20 +38,20 @@ const VideoPlayer: VideoPlayerFn = ({ autoPlay }, ref) => {
   const videoRef = useRef<HTMLVideoElement>(null);
 
   const [player, setPlayer] = useState<shaka.Player | null>(null);
-  const [uiOverlay, setUiOverlay] = useState<shaka.ui.Overlay | null>(null);
+  const [ui, setUi] = useState<shaka.ui.Overlay | null>(null);
 
   useEffect(() => {
     const newPlayer = new shaka.Player();
     setPlayer(newPlayer);
 
-    const newUiOverlay = new shaka.ui.Overlay(newPlayer, uiRef.current, videoRef.current);
-    setUiOverlay(newUiOverlay);
+    const newUi = new shaka.ui.Overlay(newPlayer, uiRef.current, videoRef.current);
+    setUi(newUi);
 
     newPlayer.attach(videoRef.current);
   
     return () => {
       player.destroy();
-      uiOverlay.destroy();
+      ui.destroy();
     };
   }, []);
 
@@ -59,7 +60,7 @@ const VideoPlayer: VideoPlayerFn = ({ autoPlay }, ref) => {
       return player;
     },
     get ui() {
-      return uiOverlay;
+      return ui;
     },
     get videoElement() {
       return videoRef.current;
@@ -67,10 +68,10 @@ const VideoPlayer: VideoPlayerFn = ({ autoPlay }, ref) => {
   }));
 
   return (
-    <div ref={uiRef} style={{ width: '100%', height: '100%', padding: 0, margin: 0 }}>
+    <div ref={uiRef} className={styles['all-available-space']}>
       <video ref={videoRef}
         autoPlay={autoPlay}
-        style={{ width: '100%', height: '100%', padding: 0, margin: 0 }}
+        className={styles['all-available-space']}
       />
     </div>
   );

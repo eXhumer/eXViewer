@@ -22,7 +22,24 @@ import { plugins } from './plugins';
 
 rules.push({
   test: /\.css$/,
-  use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
+  use: [
+    { loader: 'style-loader' },
+    { loader: 'css-loader' },
+  ],
+  exclude: /\.module\.css$/,
+});
+
+rules.push({
+  test: /\.module\.css$/,
+  use: [
+    { loader: 'style-loader' },
+    {
+      loader: 'css-loader',
+      options: {
+        modules: true,
+      },
+    },
+  ],
 });
 
 export const rendererConfig: Configuration = {

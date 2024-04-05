@@ -16,6 +16,7 @@
 */
 
 import { createRoot } from 'react-dom/client';
+import './Index.css';
 import App from './App';
 
 createRoot(document.getElementById('react-root') as HTMLDivElement)

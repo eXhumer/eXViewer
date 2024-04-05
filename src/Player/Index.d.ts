@@ -20,9 +20,15 @@ import { ContentPlayResult, ContentVideoContainer } from '@exhumer/f1tv-api';
 declare interface Player {
   contextMenu: (cursor_location: { x: number, y: number }) => Promise<void>;
   contentPlay: (contentId: number, channelId?: number) => Promise<ContentPlayResult>;
-  onContentVideo: (cb: (e: IpcRendererEvent, result: ContentVideoContainer) => void) => void;
+  offPlayerData: (cb: (e: IpcRendererEvent, result: ContentVideoContainer, ascendon: string) => void) => void;
+  onPlayerData: (cb: (e: IpcRendererEvent, result: ContentVideoContainer, ascendon: string) => void) => void;
 }
 declare global {
+  declare module '*.css' {
+    const classes: { [key: string]: string };
+    export default classes;
+  }
+
   interface Window {
     player: Player,
   }
