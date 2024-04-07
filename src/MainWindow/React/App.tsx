@@ -16,8 +16,11 @@
 */
 
 import { useEffect, useRef, useState } from 'react';
+import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
+import './App.css';
 
 const App = () => {
+  const [collapse, setCollapse] = useState<boolean>(true);
   const [subscriptionToken, setSubscriptionToken] = useState<string | null>(null);
   const contentIdInputRef = useRef<HTMLInputElement>(null);
 
@@ -28,26 +31,23 @@ const App = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Hello, World!</h1>
-      {subscriptionToken === null ?
-        <button onClick={f1tv.login}>Login</button> : // 
-        <div>
-          <input type='text' value={subscriptionToken} readOnly />
-          <br />
-          <input type='number' ref={contentIdInputRef} />
-          <button onClick={() => {
-            const currentInput = contentIdInputRef.current;
-
-            if (currentInput === null || currentInput.value.length === 0)
-              return;
-
-            exviewer.newPlayer(parseInt(currentInput.value));
-          }}>Play</button>
-          <br />
-          <button onClick={f1tv.logout}>Logout</button>
-        </div>}
-      
+    <div className={['all-space', 'flexbox-horizontal'].join(' ')}>
+      <Sidebar collapsed={collapse}>
+        <Menu>
+          <MenuItem onClick={() => setCollapse(!collapse)}> Expand / Collapse </MenuItem>
+          {subscriptionToken ?
+            <MenuItem onClick={f1tv.logout} > Logout </MenuItem> :
+            <MenuItem onClick={f1tv.login}> Login </MenuItem>}
+        </Menu>
+      </Sidebar>
+      {subscriptionToken && <div>
+        <input ref={contentIdInputRef} type="number" placeholder="Content ID" />
+        <button onClick={() => {
+          if (contentIdInputRef.current && contentIdInputRef.current.value) {
+            exviewer.newPlayer(parseInt(contentIdInputRef.current.value));
+          }
+        }}> Play </button>
+      </div>}
     </div>
   );
 };

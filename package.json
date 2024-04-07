@@ -57,6 +57,7 @@
     "react": "^18.2.0",
     "react-collapsible": "^2.10.0",
     "react-dom": "^18.2.0",
+    "react-pro-sidebar": "^1.1.0",
     "shaka-player": "^4.7.11"
   }
 }

@@ -68,13 +68,16 @@ const createMainWindow = () => {
 
   mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-  mainWindow.webContents.openDevTools();
+  if (!app.isPackaged)
+    mainWindow.webContents.openDevTools();
 };
 
 const createPlayerWindow = (container: ContentVideoContainer) => {
   const playerWindow = new BrowserWindow({
     minHeight: 270,
     minWidth: 480,
+    height: 720,
+    width: 1280,
     backgroundColor: '#303030',
     frame: false,
     webPreferences: {
@@ -90,18 +93,21 @@ const createPlayerWindow = (container: ContentVideoContainer) => {
 
   playerWindow.loadURL(PLAYER_WEBPACK_ENTRY);
 
-  playerWindow.webContents.openDevTools();
+  if (!app.isPackaged)
+    playerWindow.webContents.openDevTools();
 };
 
 app.whenReady().then(async () => {
   await components.whenReady();
 
   session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
-    if (new URL(details.url).host.endsWith(".formula1.com")) {
-      details.requestHeaders['sec-fetch-site'] = 'same-origin';
+    if (new URL(details.url).host.endsWith(".formula1.com") || new URL(details.url).host === 'f1prodlive.akamaized.net') {
+      // CORS fix, pretend requests are coming from or refered by the F1TV website
+      if (details.requestHeaders['Origin'])
+        details.requestHeaders['Origin'] = 'https://f1tv.formula1.com';
 
-      if (details.requestHeaders['Referer']) // Fix for widevine rejection due to Referer header
-        delete details.requestHeaders['Referer'];
+      if (details.requestHeaders['Referer'])
+        details.requestHeaders['Referer'] = 'https://f1tv.formula1.com';
     }
 
     if (app.isPackaged) {
@@ -132,6 +138,12 @@ app.whenReady().then(async () => {
     }
 
     callback({ cancel: false, requestHeaders: details.requestHeaders });
+  });
+
+  session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
+    // CORS fix, allow all origins
+    details.responseHeaders['access-control-allow-origin'] = ['*'];
+    callback({ cancel: false, responseHeaders: details.responseHeaders });
   });
 
   // intercept cookies and update the ascendon token
