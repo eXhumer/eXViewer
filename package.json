@@ -34,7 +34,7 @@
     "@typescript-eslint/parser": "^7.4.0",
     "@vercel/webpack-asset-relocator-loader": "^1.7.3",
     "css-loader": "^7.0.0",
-    "electron": "github:castlabs/electron-releases#v29.1.6+wvcus",
+    "electron": "github:castlabs/electron-releases#v29.2.0+wvcus",
     "eslint": "^8.57.0",
     "eslint-plugin-import": "^2.29.1",
     "fork-ts-checker-webpack-plugin": "^9.0.2",

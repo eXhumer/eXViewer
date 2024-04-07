@@ -18,6 +18,7 @@
 import { app, components, session, BrowserWindow, ipcMain, Menu } from 'electron';
 import { F1TVLoginSession } from './Type';
 import { ContentVideoContainer, F1TVClient } from '@exhumer/f1tv-api';
+import { URL } from 'url';
 
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -77,7 +78,6 @@ const createPlayerWindow = (container: ContentVideoContainer) => {
     backgroundColor: '#303030',
     frame: false,
     webPreferences: {
-      webSecurity: false,
       preload: PLAYER_PRELOAD_WEBPACK_ENTRY,
     },
   });
@@ -97,11 +97,38 @@ app.whenReady().then(async () => {
   await components.whenReady();
 
   session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
-    if (details.url.startsWith("https://f1tv.formula1.com")) {
+    if (new URL(details.url).host.endsWith(".formula1.com")) {
       details.requestHeaders['sec-fetch-site'] = 'same-origin';
 
       if (details.requestHeaders['Referer']) // Fix for widevine rejection due to Referer header
         delete details.requestHeaders['Referer'];
+    }
+
+    if (app.isPackaged) {
+      /*
+        vFEeTcZfEYdrr8GarhaoQHjymmCQxrYA0dptv4MoM6s= - src/Player/React/Component/Overlay.css
+        TO/Wk6Wf/LQS7nkRNmLV5qpVRgTy9iNaEwKo/bAl7Fw= - src/Player/React/Component/VideoPlayer.css
+        a7YQzojqEE4Ess4G0fb8am1PrMioVLkTIC7rE8n5xJs= - src/Player/React/Index.css
+        f0VwQZDo4sMMt4tOslhp33dfiah1e+25nW5KwCRWkZ8= - src/Player/React/App.css
+        6SqcJMJH1bYvSX2vT8yFGBhD7QXS/1AtPLSdsMpl4HY= - related to shaka-player/dist/controls.css
+        47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU= - related to shaka-player/dist/controls.css
+      */
+      details.requestHeaders['Content-Security-Policy'] = [
+        "default-src 'self'",
+        [
+          "script-src",
+          "'sha256-TO/Wk6Wf/LQS7nkRNmLV5qpVRgTy9iNaEwKo/bAl7Fw='",
+          "'sha256-vFEeTcZfEYdrr8GarhaoQHjymmCQxrYA0dptv4MoM6s='",
+          "'sha256-f0VwQZDo4sMMt4tOslhp33dfiah1e+25nW5KwCRWkZ8='",
+          "'sha256-a7YQzojqEE4Ess4G0fb8am1PrMioVLkTIC7rE8n5xJs='",
+          "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
+          "'sha256-6SqcJMJH1bYvSX2vT8yFGBhD7QXS/1AtPLSdsMpl4HY='",
+        ].join(' '),
+        "media-src blob:",
+        "font-src https://fonts.gstatic.com",
+        "connect-src https://*.formula1.com",
+        "img-src https://*.formula1.com",
+      ].join('; ') + ';';
     }
 
     callback({ cancel: false, requestHeaders: details.requestHeaders });

@@ -1,12 +1,12 @@
 import { PropsWithChildren } from 'react';
-import styles from './Overlay.module.css';
+import './Overlay.css';
 
 type OverlayProps = PropsWithChildren<{
   // No props
 }>;
 
 const Overlay = ({ children }: OverlayProps) => (
-  <div className={styles.overlay}>
+  <div className={'overlay'}>
     {children}
   </div>
 );

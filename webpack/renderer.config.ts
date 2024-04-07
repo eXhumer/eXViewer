@@ -24,7 +24,12 @@ rules.push({
   test: /\.css$/,
   use: [
     { loader: 'style-loader' },
-    { loader: 'css-loader' },
+    {
+      loader: 'css-loader',
+      options: {
+        sourceMap: false,
+      },
+    },
   ],
   exclude: /\.module\.css$/,
 });

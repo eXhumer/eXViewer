@@ -20,7 +20,7 @@ import VideoPlayer, { VideoPlayerRef } from './Component/VideoPlayer';
 import { ContentVideoContainer } from '@exhumer/f1tv-api';
 import shaka from 'shaka-player';
 import Overlay from './Component/Overlay';
-import styles from './App.module.css';
+import './App.css';
 
 const App = () => {
   const [ascendon, setAscendon] = useState<string | null>(null);
@@ -28,7 +28,7 @@ const App = () => {
   const playerRef = useRef<VideoPlayerRef | null>(null);
 
   const setPlayerRef = useCallback((ref?: VideoPlayerRef) => {
-    if (ref && ref.player && ref.ui && ref.videoElement) {
+    if (ref && ref.player) {
       ref.player.configure({
         streaming: {
           bufferingGoal: 60,
@@ -94,7 +94,7 @@ const App = () => {
   return <>
     {videoContainer && videoContainer.metadata.additionalStreams &&
       <Overlay>
-        <div className={styles['additional-streams-overlay']}>
+        <div className={'additional-streams-overlay'}>
           {videoContainer.metadata.additionalStreams.map(stream => (
             <button
               key={stream.channelId}
@@ -144,7 +144,7 @@ const App = () => {
           ))}
         </div>
       </Overlay>}
-    <VideoPlayer ref={setPlayerRef} />
+    <VideoPlayer autoPlay={true} ref={setPlayerRef} />
   </>;
 };
 

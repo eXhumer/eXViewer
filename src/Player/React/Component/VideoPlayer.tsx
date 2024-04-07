@@ -19,7 +19,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState, ForwardRe
 
 import shaka from 'shaka-player/dist/shaka-player.ui';
 import 'shaka-player/dist/controls.css';
-import styles from './VideoPlayer.module.css';
+import './VideoPlayer.css';
 
 export type VideoPlayerRef = {
   readonly player: shaka.Player;
@@ -68,10 +68,10 @@ const VideoPlayer: VideoPlayerFn = ({ autoPlay }, ref) => {
   }));
 
   return (
-    <div ref={uiRef} className={styles['all-available-space']}>
+    <div ref={uiRef} className={'all-available-space'}>
       <video ref={videoRef}
         autoPlay={autoPlay}
-        className={styles['all-available-space']}
+        className={'all-available-space'}
       />
     </div>
   );
