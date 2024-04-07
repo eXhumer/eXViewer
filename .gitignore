@@ -93,3 +93,6 @@ out/
 
 # VSCode
 .vscode/
+
+# Castlabs EVS package signing Python environment
+.venv/
