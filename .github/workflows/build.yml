@@ -46,7 +46,7 @@ jobs:
         run: npm run package -- --platform ${{ matrix.platform }} --arch ${{ matrix.arch }}
 
       - name: Upload package
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: eXViewer-${{ matrix.platform }}-${{ matrix.arch }}
           path: out/eXViewer-${{ matrix.platform }}-${{ matrix.arch }}/
