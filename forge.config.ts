@@ -24,12 +24,19 @@ import { WebpackPlugin } from '@electron-forge/plugin-webpack';
 
 import { mainConfig } from './webpack/main.config';
 import { rendererConfig } from './webpack/renderer.config';
-import { access, constants as fsConstants } from 'fs/promises';
-import { join } from 'path';
 import { promisify } from 'util';
 import { exec } from 'child_process';
 
 const execPromise = promisify(exec);
+
+const vmpSignPkg = async (pkgPath: string) => {
+  if (!process.env.CASTLABS_EVS_USERNAME || !process.env.CASTLABS_EVS_PASSWORD)
+    throw new Error(`Missing CASTLABS_EVS_USERNAME or CASTLABS_EVS_PASSWORD environment variables required for signing!`);
+
+  await execPromise(`python -m pip install --upgrade castlabs-evs`);
+  await execPromise(`python -m castlabs_evs.account reauth --account-name '${process.env.CASTLABS_EVS_USERNAME}' --passwd '${process.env.CASTLABS_EVS_PASSWORD}'`);
+  await execPromise(`python -m castlabs_evs.vmp sign-pkg "${pkgPath}"`);
+};
 
 const config: ForgeConfig = {
   hooks: {
@@ -38,21 +45,11 @@ const config: ForgeConfig = {
       if (pkgResult.platform == 'linux')
         return;
 
-      const pythonPath = process.platform === 'win32' ?
-        join(__dirname, '.venv', 'Scripts', 'python.exe') :
-        join(__dirname, '.venv', 'bin', 'python');
-
-      if (!access(pythonPath, fsConstants.X_OK))
-        throw new Error('Python venv not found or not executable');
-
       if (!process.env.CASTLABS_EVS_USERNAME || !process.env.CASTLABS_EVS_PASSWORD)
         throw new Error(`Missing CASTLABS_EVS_USERNAME or CASTLABS_EVS_PASSWORD environment variables required for signing!`);
 
-      await execPromise(`${pythonPath} -m pip install --upgrade castlabs-evs`);
-      await execPromise(`${pythonPath} -m castlabs_evs.account reauth --account-name '${process.env.CASTLABS_EVS_USERNAME}' --passwd '${process.env.CASTLABS_EVS_PASSWORD}'`);
-
       for (const path of pkgResult.outputPaths)
-        await execPromise(`${pythonPath} -m castlabs_evs.vmp sign-pkg "${path}"`);
+        await vmpSignPkg(path);
     },
   },
   packagerConfig: {
