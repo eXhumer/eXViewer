@@ -43,10 +43,28 @@ jobs:
         env:
           CASTLABS_EVS_USERNAME: ${{ secrets.CASTLABS_EVS_USERNAME }}
           CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
+        run: npm run make -- --platform ${{ matrix.platform }} --arch ${{ matrix.arch }}
+        if: ${{ matrix.platform == 'darwin' }}
+
+      - name: Build package
+        env:
+          CASTLABS_EVS_USERNAME: ${{ secrets.CASTLABS_EVS_USERNAME }}
+          CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
         run: npm run package -- --platform ${{ matrix.platform }} --arch ${{ matrix.arch }}
+        if: ${{ matrix.platform != 'darwin' }}
 
       - name: Upload package
         uses: actions/upload-artifact@v4
+        if: ${{ matrix.platform == 'darwin' }}
+        with:
+          name: eXViewer-${{ matrix.platform }}-${{ matrix.arch }}
+          path: out/make/zip/${{ matrix.platform }}/${{ matrix.arch }}/*
+          if-no-files-found: error
+          compression-level: 9
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        if: ${{ matrix.platform != 'darwin' }}
         with:
           name: eXViewer-${{ matrix.platform }}-${{ matrix.arch }}
           path: out/eXViewer-${{ matrix.platform }}-${{ matrix.arch }}/
