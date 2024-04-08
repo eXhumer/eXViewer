@@ -50,3 +50,5 @@ jobs:
         with:
           name: eXViewer-${{ matrix.platform }}-${{ matrix.arch }}
           path: out/eXViewer-${{ matrix.platform }}-${{ matrix.arch }}/
+          if-no-files-found: error
+          compression-level: 9
