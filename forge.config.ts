@@ -29,12 +29,9 @@ import { exec } from 'child_process';
 
 const execPromise = promisify(exec);
 
-const vmpSignPkg = async (pkgPath: string) => {
-  if (!process.env.CASTLABS_EVS_USERNAME || !process.env.CASTLABS_EVS_PASSWORD)
-    throw new Error(`Missing CASTLABS_EVS_USERNAME or CASTLABS_EVS_PASSWORD environment variables required for signing!`);
-
+const vmpSignPkg = async (pkgPath: string, username: string, password: string) => {
   await execPromise(`python -m pip install --upgrade castlabs-evs`);
-  await execPromise(`python -m castlabs_evs.account reauth --account-name '${process.env.CASTLABS_EVS_USERNAME}' --passwd '${process.env.CASTLABS_EVS_PASSWORD}'`);
+  await execPromise(`python -m castlabs_evs.account reauth --account-name '${username}' --passwd '${password}'`);
   await execPromise(`python -m castlabs_evs.vmp sign-pkg "${pkgPath}"`);
 };
 
@@ -49,7 +46,7 @@ const config: ForgeConfig = {
         throw new Error(`Missing CASTLABS_EVS_USERNAME or CASTLABS_EVS_PASSWORD environment variables required for signing!`);
 
       for (const path of pkgResult.outputPaths)
-        await vmpSignPkg(path);
+        await vmpSignPkg(path, process.env.CASTLABS_EVS_USERNAME, process.env.CASTLABS_EVS_PASSWORD);
     },
   },
   packagerConfig: {
