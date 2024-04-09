@@ -31,6 +31,7 @@ if (require('electron-squirrel-startup'))
   app.quit();
 
 const APP_CONFIG_PATH = join(app.getPath('userData'), 'config.json');
+const WM_INITMENU = 0x0116;
 
 let loginWindow: BrowserWindow | null = null;
 let mainWindow: BrowserWindow | null = null;
@@ -65,6 +66,15 @@ const createPlayerWindow = (container: ContentVideoContainer) => {
   });
 
   playerWindow.setAspectRatio(16 / 9);
+
+  // Workaround for draggable frameless window in Windows
+  // https://github.com/electron/electron/issues/24893#issuecomment-1109262719
+  if (process.platform === 'win32')
+    playerWindow.hookWindowMessage(WM_INITMENU, () => {
+      playerWindow.setEnabled(false);
+      playerWindow.setEnabled(true);
+      playerCtxMenuPopup(playerWindow);
+    });
 
   playerWindow.on('ready-to-show', () => {
     playerWindow.webContents.send('Player:Player-Data', container, f1tv.ascendon);
