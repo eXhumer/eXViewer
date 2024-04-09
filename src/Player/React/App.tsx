@@ -107,7 +107,7 @@ const App = () => {
                 const currentTime = currentRef.videoElement.currentTime;
 
                 player
-                  .contentPlay(videoContainer.contentId, stream.identifier !== "WIF" ? stream.channelId : undefined)
+                  .contentPlay(videoContainer.contentId, stream.identifier !== 'WIF' ? stream.channelId : undefined)
                   .then(newPlayData => {
                     if (newPlayData.streamType === 'DASHWV' && newPlayData.drmType === 'widevine' && newPlayData.laURL) {
                       currentRef.player.configure({

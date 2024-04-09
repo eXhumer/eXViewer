@@ -41,7 +41,7 @@ const App = () => {
         </Menu>
       </Sidebar>
       {subscriptionToken && <div>
-        <input ref={contentIdInputRef} type="number" placeholder="Content ID" />
+        <input ref={contentIdInputRef} type='number' placeholder='Content ID' />
         <button onClick={() => {
           if (contentIdInputRef.current && contentIdInputRef.current.value) {
             exviewer.newPlayer(parseInt(contentIdInputRef.current.value));
