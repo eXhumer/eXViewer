@@ -26,6 +26,9 @@ import { mainConfig } from './webpack/main.config';
 import { rendererConfig } from './webpack/renderer.config';
 import { promisify } from 'util';
 import { exec } from 'child_process';
+import { config as dotenvConfig } from 'dotenv';
+
+dotenvConfig();
 
 const execPromise = promisify(exec);
 
