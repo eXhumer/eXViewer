@@ -15,6 +15,10 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+export type AppConfig = {
+  disableHardwareAcceleration?: boolean;
+};
+
 export type F1TVLoginSessionData = {
   subscriptionToken: string;
 };

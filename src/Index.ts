@@ -15,10 +15,12 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { app, components, session, BrowserWindow, ipcMain, Menu } from 'electron';
-import { F1TVLoginSession } from './Type';
+import { app, components, globalShortcut, session, BrowserWindow, ipcMain, Menu } from 'electron';
+import { AppConfig, F1TVLoginSession } from './Type';
 import { ContentVideoContainer, F1TVClient } from '@exhumer/f1tv-api';
-import { URL } from 'url';
+import { join } from 'path';
+import { accessSync, constants, readFileSync, writeFileSync } from 'fs';
+// import { URL } from 'url';
 
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -28,9 +30,60 @@ declare const PLAYER_WEBPACK_ENTRY: string;
 if (require('electron-squirrel-startup'))
   app.quit();
 
+const APP_CONFIG_PATH = join(app.getPath('userData'), 'config.json');
+
 let loginWindow: BrowserWindow | null = null;
 let mainWindow: BrowserWindow | null = null;
 const f1tv = new F1TVClient();
+const activePlayerWindows: BrowserWindow[] = [];
+
+const buildPlayerContextMenu = (playerWindow: BrowserWindow) => {
+  return Menu.buildFromTemplate([
+    {
+      label: 'Close',
+      click: () => {
+        playerWindow.close();
+      }
+    },
+  ]);
+};
+
+const createPlayerWindow = (container: ContentVideoContainer) => {
+  const playerWindow = new BrowserWindow({
+    minHeight: 270,
+    minWidth: 480,
+    height: 720,
+    width: 1280,
+    backgroundColor: '#303030',
+    frame: false,
+    webPreferences: {
+      webSecurity: true,
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: PLAYER_PRELOAD_WEBPACK_ENTRY,
+    },
+  });
+
+  playerWindow.setAspectRatio(16 / 9);
+
+  playerWindow.on('ready-to-show', () => {
+    playerWindow.webContents.send('Player:Player-Data', container, f1tv.ascendon);
+  });
+
+  playerWindow.on('closed', () => {
+    const index = activePlayerWindows.indexOf(playerWindow);
+
+    if (index !== -1)
+      activePlayerWindows.splice(index, 1);
+  });
+
+  playerWindow.loadURL(PLAYER_WEBPACK_ENTRY);
+
+  if (!app.isPackaged)
+    playerWindow.webContents.openDevTools();
+
+  activePlayerWindows.push(playerWindow);
+};
 
 const createMainWindow = () => {
   if (mainWindow !== null) {
@@ -42,6 +95,9 @@ const createMainWindow = () => {
     height: 600,
     width: 800,
     webPreferences: {
+      webSecurity: true,
+      nodeIntegration: false,
+      contextIsolation: true,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
     },
   });
@@ -72,69 +128,39 @@ const createMainWindow = () => {
     mainWindow.webContents.openDevTools();
 };
 
-const createPlayerWindow = (container: ContentVideoContainer) => {
-  const playerWindow = new BrowserWindow({
-    minHeight: 270,
-    minWidth: 480,
-    height: 720,
-    width: 1280,
-    backgroundColor: '#303030',
-    frame: false,
-    webPreferences: {
-      preload: PLAYER_PRELOAD_WEBPACK_ENTRY,
-    },
-  });
-
-  playerWindow.setAspectRatio(16 / 9);
-
-  playerWindow.on('ready-to-show', () => {
-    playerWindow.webContents.send('Player:Player-Data', container, f1tv.ascendon);
-  });
-
-  playerWindow.loadURL(PLAYER_WEBPACK_ENTRY);
-
-  if (!app.isPackaged)
-    playerWindow.webContents.openDevTools();
+const playerCtxMenuPopup = (playerWindow: BrowserWindow, cursorLocation?: { x: number, y: number }) => {
+  buildPlayerContextMenu(playerWindow)
+    .popup(cursorLocation ? {
+      x: cursorLocation.x,
+      y: cursorLocation.y,
+    } : undefined);
 };
 
-app.whenReady().then(async () => {
-  await components.whenReady();
+const whenReady = () => {
+  globalShortcut.register('F12', () => {
+    const focusedWindow = BrowserWindow.getFocusedWindow();
+
+    if (focusedWindow !== null)
+      focusedWindow.webContents.toggleDevTools();
+  });
 
   session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
-    if (new URL(details.url).host.endsWith(".formula1.com") || new URL(details.url).host === 'f1prodlive.akamaized.net') {
-      // CORS fix, pretend requests are coming from or refered by the F1TV website
-      if (details.requestHeaders['Origin'])
-        details.requestHeaders['Origin'] = 'https://f1tv.formula1.com';
+    // Intercept HTTPS requests with a valid webContents
+    if (details.webContents && details.url.startsWith('https://')) {
+      const win = BrowserWindow.fromWebContents(details.webContents);
 
-      if (details.requestHeaders['Referer'])
-        details.requestHeaders['Referer'] = 'https://f1tv.formula1.com';
-    }
-
-    if (app.isPackaged) {
-      /*
-        vFEeTcZfEYdrr8GarhaoQHjymmCQxrYA0dptv4MoM6s= - src/Player/React/Component/Overlay.css
-        TO/Wk6Wf/LQS7nkRNmLV5qpVRgTy9iNaEwKo/bAl7Fw= - src/Player/React/Component/VideoPlayer.css
-        a7YQzojqEE4Ess4G0fb8am1PrMioVLkTIC7rE8n5xJs= - src/Player/React/Index.css
-        f0VwQZDo4sMMt4tOslhp33dfiah1e+25nW5KwCRWkZ8= - src/Player/React/App.css
-        6SqcJMJH1bYvSX2vT8yFGBhD7QXS/1AtPLSdsMpl4HY= - related to shaka-player/dist/controls.css
-        47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU= - related to shaka-player/dist/controls.css
-      */
-      details.requestHeaders['Content-Security-Policy'] = [
-        "default-src 'self'",
-        [
-          "script-src",
-          "'sha256-TO/Wk6Wf/LQS7nkRNmLV5qpVRgTy9iNaEwKo/bAl7Fw='",
-          "'sha256-vFEeTcZfEYdrr8GarhaoQHjymmCQxrYA0dptv4MoM6s='",
-          "'sha256-f0VwQZDo4sMMt4tOslhp33dfiah1e+25nW5KwCRWkZ8='",
-          "'sha256-a7YQzojqEE4Ess4G0fb8am1PrMioVLkTIC7rE8n5xJs='",
-          "'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='",
-          "'sha256-6SqcJMJH1bYvSX2vT8yFGBhD7QXS/1AtPLSdsMpl4HY='",
-        ].join(' '),
-        "media-src blob:",
-        "font-src https://fonts.gstatic.com",
-        "connect-src https://*.formula1.com",
-        "img-src https://*.formula1.com",
-      ].join('; ') + ';';
+      if (!win) {
+        console.warn('onBeforeSendHeaders | BrowserWindow.fromWebContents(details.webContents) === null');
+      } else if (win === mainWindow) {
+        console.log('onBeforeSendHeaders | MainWindow');
+      } else if (win === loginWindow) {
+        console.log('onBeforeSendHeaders | LoginWindow');
+      } else if (activePlayerWindows.includes(win)) {
+        console.log('onBeforeSendHeaders | PlayerWindow', `[${(new Date(details.timestamp)).toISOString()}]`, details.method, details.url);
+        // TODO: Fix Widevine request failing on license request due to Referer header
+      } else {
+        console.warn('onBeforeSendHeaders | Unknown Window');
+      }
     }
 
     callback({ cancel: false, requestHeaders: details.requestHeaders });
@@ -142,7 +168,7 @@ app.whenReady().then(async () => {
 
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
     // CORS fix, allow all origins
-    details.responseHeaders['access-control-allow-origin'] = ['*'];
+    // details.responseHeaders['access-control-allow-origin'] = ['*'];
     callback({ cancel: false, responseHeaders: details.responseHeaders });
   });
 
@@ -165,19 +191,37 @@ app.whenReady().then(async () => {
   });
 
   createMainWindow();
+};
+
+app.on('activate', () => {
+  if (BrowserWindow.getAllWindows().length === 0)
+    createMainWindow();
 });
 
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
+  if (process.platform !== 'darwin')
     app.quit();
-  }
 });
 
-app.on('activate', () => {
-  if (BrowserWindow.getAllWindows().length === 0) {
-    createMainWindow();
+app.enableSandbox();
+
+try {
+  accessSync(APP_CONFIG_PATH, constants.F_OK | constants.R_OK);
+} catch (e) {
+  writeFileSync(APP_CONFIG_PATH, JSON.stringify({}));
+} finally {
+  const config = JSON.parse(readFileSync(APP_CONFIG_PATH, { encoding: 'utf-8' })) as AppConfig;
+
+  if (config.disableHardwareAcceleration) {
+    console.log('Disabling hardware acceleration!');
+    app.disableHardwareAcceleration();
   }
-});
+}
+
+app
+  .whenReady()
+  .then(async () => await components.whenReady())
+  .then(whenReady);
 
 ipcMain.handle('Player:Content-Play', async (e, contentId: number, channelId?: number) => {
   if (f1tv.ascendon === null)
@@ -188,24 +232,13 @@ ipcMain.handle('Player:Content-Play', async (e, contentId: number, channelId?: n
   return apiRes.resultObj;
 });
 
-ipcMain.handle('Player:Context-Menu', async (e, cursor_location: { x: number, y: number }) => {
+ipcMain.handle('Player:Context-Menu', async (e, cursorLocation: { x: number, y: number }) => {
   const senderWindow = BrowserWindow.fromWebContents(e.sender);
 
   if (senderWindow === null)
     throw new Error('senderWindow === null | Failed to get sender window!');
 
-  Menu
-    .buildFromTemplate([{
-        label: 'Close',
-        click: () => {
-          senderWindow.close();
-        }
-    }])
-    .popup({
-      window: senderWindow,
-      x: cursor_location.x,
-      y: cursor_location.y,
-    });
+  playerCtxMenuPopup(senderWindow, cursorLocation);
 });
 
 ipcMain.handle('eXViewer:New-Player', async (e, contentId: number) => {
@@ -230,13 +263,24 @@ ipcMain.handle('F1TV:Login', async () => {
     height: 600,
     width: 800,
     parent: mainWindow,
+    webPreferences: {
+      webSecurity: true,
+      nodeIntegration: false,
+      contextIsolation: true,
+    },
   });
 
   loginWindow.on('closed', () => {
+    if (f1tv.ascendon === null)
+      console.warn('F1TV:Login | Login window closed without login!');
+
     loginWindow = null;
   });
 
   loginWindow.loadURL('https://account.formula1.com/#/en/login');
+
+  if (!app.isPackaged)
+    loginWindow.webContents.openDevTools();
 });
 
 ipcMain.handle('F1TV:Logout', async () => {

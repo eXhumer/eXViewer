@@ -6,6 +6,7 @@ body {
   width: 100vw;
   margin: 0;
   padding: 0;
+  -webkit-app-region: drag;
 }
 
 .shaka-bottom-controls, .shaka-overflow-menu, .shaka-overflow-button, .shaka-settings-menu  {
