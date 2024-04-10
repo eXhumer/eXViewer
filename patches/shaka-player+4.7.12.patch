@@ -1,18 +1,18 @@
 diff --git a/node_modules/shaka-player/dist/shaka-player.compiled.d.ts b/node_modules/shaka-player/dist/shaka-player.compiled.d.ts
-index 6926ff0..2aee0b5 100644
+index 2c3ef34..0ad820e 100644
 --- a/node_modules/shaka-player/dist/shaka-player.compiled.d.ts
 +++ b/node_modules/shaka-player/dist/shaka-player.compiled.d.ts
-@@ -5283,3 +5283,5 @@ declare namespace ಠ_ಠ.clutz {
+@@ -5285,3 +5285,5 @@ declare namespace ಠ_ಠ.clutz {
      static isTypeSupported (keySystem : string , contentType : string ) : boolean ;
    }
  }
 +
 +export default shaka;
 diff --git a/node_modules/shaka-player/dist/shaka-player.ui.d.ts b/node_modules/shaka-player/dist/shaka-player.ui.d.ts
-index bf1ffad..587619c 100644
+index 4858f91..7e7e4f4 100644
 --- a/node_modules/shaka-player/dist/shaka-player.ui.d.ts
 +++ b/node_modules/shaka-player/dist/shaka-player.ui.d.ts
-@@ -5915,3 +5915,5 @@ declare namespace shaka.extern {
+@@ -5917,3 +5917,5 @@ declare namespace shaka.extern {
  declare namespace shaka.extern {
    type UIVolumeBarColors = { base : string , level : string } ;
  }
