@@ -177,8 +177,63 @@ const whenReady = () => {
   });
 
   session.defaultSession.webRequest.onHeadersReceived((details, callback) => {
-    // CORS fix, allow all origins
-    // details.responseHeaders['access-control-allow-origin'] = ['*'];
+    if (details.webContents && !details.url.startsWith('devtools://') && app.isPackaged) {
+      const win = BrowserWindow.fromWebContents(details.webContents);
+
+      if (!win) {
+        console.warn('onHeadersReceived | BrowserWindow.fromWebContents(details.webContents) === null');
+      } else if (win === mainWindow) {
+        /*
+          sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU= - echo -n "" | openssl sha256 -binary | openssl base64
+          sha256-wR71uSGzJJN58LKiIXPmv1CEzdcZx91JXysyN1Na/GQ= - src/MainWindow/React/Index.css
+          sha256-BnE3s+ScU1trM/fW071fHTJrqGXVCyt0Aw92SOrT1iw= - src/MainWindow/React/App.css
+        */
+        console.log('onHeadersReceived | MainWindow');
+
+        details.responseHeaders['Content-Security-Policy'] = [[
+          `default-src 'self'`,
+          [
+            `style-src 'self'`,
+            `'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='`,
+            `'sha256-wR71uSGzJJN58LKiIXPmv1CEzdcZx91JXysyN1Na/GQ='`,
+            `'sha256-BnE3s+ScU1trM/fW071fHTJrqGXVCyt0Aw92SOrT1iw='`,
+          ].join(' '),
+        ].join('; ')];
+      } else if (win === loginWindow) {
+        console.log('onHeadersReceived | LoginWindow');
+        // Don't set CSP for login window
+      } else if (activePlayerWindows.includes(win)) {
+        /*
+          sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU= - echo -n "" | openssl sha256 -binary | openssl base64
+          sha256-Sril+0Cf69AWvMuft98Zlk/oKTNzOKoTgvkln+6sRt4= - src/Player/React/Index.css
+          sha256-f0VwQZDo4sMMt4tOslhp33dfiah1e+25nW5KwCRWkZ8= - src/Player/React/App.css
+          sha256-vFEeTcZfEYdrr8GarhaoQHjymmCQxrYA0dptv4MoM6s= - src/Player/React/Component/Overlay.css
+          sha256-TO/Wk6Wf/LQS7nkRNmLV5qpVRgTy9iNaEwKo/bAl7Fw= - src/Player/React/Component/VideoPlayer.css
+          sha256-6SqcJMJH1bYvSX2vT8yFGBhD7QXS/1AtPLSdsMpl4HY= - react-player/dist/controls.css
+        */
+        console.log('onHeadersReceived | PlayerWindow', `[${(new Date(details.timestamp)).toISOString()}]`, details.statusCode, details.url);
+
+        details.responseHeaders['Content-Security-Policy'] = [[
+          `default-src 'self'`,
+          [
+            `style-src 'self'`,
+            `'sha256-47DEQpj8HBSa+/TImW+5JCeuQeRkm5NMpJWZG3hSuFU='`,
+            `'sha256-Sril+0Cf69AWvMuft98Zlk/oKTNzOKoTgvkln+6sRt4='`,
+            `'sha256-f0VwQZDo4sMMt4tOslhp33dfiah1e+25nW5KwCRWkZ8='`,
+            `'sha256-vFEeTcZfEYdrr8GarhaoQHjymmCQxrYA0dptv4MoM6s='`,
+            `'sha256-TO/Wk6Wf/LQS7nkRNmLV5qpVRgTy9iNaEwKo/bAl7Fw='`,
+            `'sha256-6SqcJMJH1bYvSX2vT8yFGBhD7QXS/1AtPLSdsMpl4HY='`,
+          ].join(' '),
+          `media-src 'self' blob:`,
+          `connect-src 'self' https://*.formula1.com`,
+          `font-src 'self' https://fonts.gstatic.com`,
+          `img-src 'self' https://*.formula1.com`,
+        ].join('; ')];
+      } else {
+        console.warn('onHeadersReceived | Unknown Window');
+      }
+    }
+
     callback({ cancel: false, responseHeaders: details.responseHeaders });
   });
 

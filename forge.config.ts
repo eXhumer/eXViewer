@@ -42,7 +42,7 @@ const config: ForgeConfig = {
   hooks: {
     postPackage: async (config, pkgResult) => {
       // Linux doesn't support VMP signing
-      if (pkgResult.platform == 'linux')
+      if (pkgResult.platform === 'linux')
         return;
 
       if (!process.env.CASTLABS_EVS_USERNAME || !process.env.CASTLABS_EVS_PASSWORD)
