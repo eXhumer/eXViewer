@@ -30,6 +30,12 @@ declare interface ExViewer {
 }
 
 declare global {
+  declare module '*.module.css' {
+    const classes: { [key: string]: string };
+    export default classes;
+    export = classes;
+  }
+
   interface Window {
     exviewer: ExViewer,
     f1tv: F1TV,

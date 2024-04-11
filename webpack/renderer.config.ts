@@ -22,28 +22,30 @@ import { plugins } from './plugins';
 
 rules.push({
   test: /\.css$/,
-  use: [
-    { loader: 'style-loader' },
+  oneOf: [
     {
-      loader: 'css-loader',
-      options: {
-        sourceMap: false,
-      },
+      test: /\.module\.css$/,
+      use: [
+        {
+          loader: 'style-loader',
+          options: {
+            esModule: false,
+          },
+        },
+        {
+          loader: 'css-loader',
+          options: {
+            esModule: false,
+            modules: {
+              exportLocalsConvention: 'as-is'
+            },
+          },
+        },
+      ],
     },
-  ],
-  exclude: /\.module\.css$/,
-});
-
-rules.push({
-  test: /\.module\.css$/,
-  use: [
-    { loader: 'style-loader' },
     {
-      loader: 'css-loader',
-      options: {
-        modules: true,
-      },
-    },
+      use: ['style-loader', 'css-loader'],
+    }
   ],
 });
 

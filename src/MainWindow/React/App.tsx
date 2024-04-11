@@ -17,7 +17,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Sidebar, Menu, MenuItem } from 'react-pro-sidebar';
-import './App.css';
+import styles from './App.module.css';
 
 const App = () => {
   const [collapse, setCollapse] = useState<boolean>(true);
@@ -31,7 +31,7 @@ const App = () => {
   }, []);
 
   return (
-    <div className={['all-space', 'flexbox-horizontal'].join(' ')}>
+    <div className={[styles['all-space'], styles['flexbox-horizontal']].join(' ')}>
       <Sidebar collapsed={collapse}>
         <Menu>
           <MenuItem onClick={() => setCollapse(!collapse)}> Expand / Collapse </MenuItem>

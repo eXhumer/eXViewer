@@ -20,7 +20,7 @@ import VideoPlayer, { VideoPlayerRef } from './Component/VideoPlayer';
 import { ContentVideoContainer } from '@exhumer/f1tv-api';
 import shaka from 'shaka-player';
 import Overlay from './Component/Overlay';
-import './App.css';
+import styles from './App.module.css';
 
 const App = () => {
   const [ascendon, setAscendon] = useState<string | null>(null);
@@ -94,7 +94,7 @@ const App = () => {
   return <>
     {videoContainer && videoContainer.metadata.additionalStreams &&
       <Overlay>
-        <div className={'additional-streams-overlay'}>
+        <div className={styles['additional-streams-overlay']}>
           {videoContainer.metadata.additionalStreams.map(stream => (
             <button
               key={stream.channelId}

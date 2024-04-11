@@ -44,7 +44,8 @@
     "style-loader": "^4.0.0",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
-    "typescript": "~5.4.4"
+    "typescript": "~5.4.4",
+    "typescript-plugin-css-modules": "^5.1.0"
   },
   "keywords": [],
   "author": {
