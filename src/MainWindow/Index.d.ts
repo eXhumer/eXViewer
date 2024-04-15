@@ -21,6 +21,7 @@ declare interface F1TV {
   location: () => Promise<LocationResult>;
   login: () => Promise<void>;
   logout: () => Promise<void>;
+  offSubscriptionToken: (cb: (e: IpcRendererEvent, ascendon: string | null) => void) => void;
   onSubscriptionToken: (cb: (e: IpcRendererEvent, ascendon: string | null) => void) => void;
   whenLocationReady: () => Promise<void>;
 }
