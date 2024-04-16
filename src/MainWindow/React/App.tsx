@@ -18,28 +18,30 @@
 import type { IpcRendererEvent } from 'electron';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Sidebar, Menu, MenuItem, sidebarClasses } from 'react-pro-sidebar';
-import { selectSubscriptionToken, update as updateSubscriptionToken } from './Slice/SubscriptionToken';
+import { selectSubscriptionToken, update as updateSubscriptionToken } from './Reducer/SubscriptionToken';
 import { useAppDispatch, useAppSelector } from './Hook';
 import styles from './App.module.css';
 
 const App = () => {
   const [collapsed, setCollapsed] = useState<boolean>(true);
+  const [initialLoad, setInitialLoad] = useState<boolean>(true);
   const subscriptionToken = useAppSelector(selectSubscriptionToken);
   const dispatch = useAppDispatch();
   const inputRef = useRef<HTMLInputElement>(null);
-  const onSubscriptionToken = useCallback((e: IpcRendererEvent, ascendon: string | null) => {
+  const subscriptionTokenCb = useCallback((e: IpcRendererEvent, ascendon: string | null) => {
     dispatch(updateSubscriptionToken(ascendon));
+    setInitialLoad(false);
   }, []);
 
   useEffect(() => {
-    f1tv.onSubscriptionToken(onSubscriptionToken);
+    f1tv.onSubscriptionToken(subscriptionTokenCb);
 
     return () => {
-      f1tv.offSubscriptionToken(onSubscriptionToken);
+      f1tv.offSubscriptionToken(subscriptionTokenCb);
     };
   }, []);
 
-  return (
+  return initialLoad === false ? (
     <div className={[styles['all-space'], styles['flexbox-horizontal']].join(' ')}>
       <Sidebar collapsed={collapsed} rootStyles={{
         [`.${sidebarClasses.container}`]: {
@@ -84,6 +86,10 @@ const App = () => {
           <h1>Not Logged In!</h1>}
         </div>
       </div>
+    </div>
+  ) : (
+    <div className={styles['all-space']}>
+      <h1>Loading...</h1>
     </div>
   );
 };
