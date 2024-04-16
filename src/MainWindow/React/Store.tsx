@@ -1,5 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit';
-import subscriptionTokenReducer from './Slice/SubscriptionToken';
+import subscriptionTokenReducer from './Reducer/SubscriptionToken';
 
 const store = configureStore({
   reducer: {
