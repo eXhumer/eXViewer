@@ -1,5 +1,5 @@
 diff --git a/node_modules/shaka-player/dist/shaka-player.compiled.d.ts b/node_modules/shaka-player/dist/shaka-player.compiled.d.ts
-index 2c3ef34..0ad820e 100644
+index 58c1c08..29033af 100644
 --- a/node_modules/shaka-player/dist/shaka-player.compiled.d.ts
 +++ b/node_modules/shaka-player/dist/shaka-player.compiled.d.ts
 @@ -5285,3 +5285,5 @@ declare namespace ಠ_ಠ.clutz {
@@ -9,7 +9,7 @@ index 2c3ef34..0ad820e 100644
 +
 +export default shaka;
 diff --git a/node_modules/shaka-player/dist/shaka-player.ui.d.ts b/node_modules/shaka-player/dist/shaka-player.ui.d.ts
-index 4858f91..7e7e4f4 100644
+index 3456ec3..e4a6c56 100644
 --- a/node_modules/shaka-player/dist/shaka-player.ui.d.ts
 +++ b/node_modules/shaka-player/dist/shaka-player.ui.d.ts
 @@ -5917,3 +5917,5 @@ declare namespace shaka.extern {
