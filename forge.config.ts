@@ -19,6 +19,8 @@ import type { ForgeConfig } from '@electron-forge/shared-types';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives';
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
+import { signAsync, PerFileSignOptions } from '@electron/osx-sign';
+import { notarize } from '@electron/notarize';
 // import { FusesPlugin } from '@electron-forge/plugin-fuses';
 // import { FuseVersion, FuseV1Options } from '@electron/fuses';
 
@@ -27,6 +29,9 @@ import { rendererConfig } from './webpack/renderer.config';
 import { promisify } from 'util';
 import { exec } from 'child_process';
 import { config as dotenvConfig } from 'dotenv';
+import { join, resolve } from 'path';
+
+import { author, productName } from './package.json';
 
 dotenvConfig();
 
@@ -36,6 +41,30 @@ const vmpSignPkg = async (pkgPath: string, username: string, password: string) =
   await execPromise(`python -m pip install --upgrade castlabs-evs`);
   await execPromise(`python -m castlabs_evs.account reauth --account-name '${username}' --passwd '${password}'`);
   await execPromise(`python -m castlabs_evs.vmp sign-pkg "${pkgPath}"`);
+};
+
+const osxSignPkg = async (pkgPath: string, optionsForFile?: (path: string) => PerFileSignOptions) => {
+  if (process.platform !== 'darwin')
+    throw new Error(`OSX Code-Signing is only supported on macOS!`);
+
+  await signAsync({
+    app: `${pkgPath}/${productName}.app`,
+    platform: 'darwin',
+    optionsForFile: optionsForFile,
+  });
+};
+
+const osxNotarizePkg = async (pkgPath: string, appleId: string, appleIdPassword: string, appleTeamId: string) => {
+  if (process.platform !== 'darwin')
+    throw new Error(`OSX Notarization is only supported on macOS!`);
+
+  await notarize({
+    tool: 'notarytool',
+    appPath: `${pkgPath}/${productName}.app`,
+    appleId: appleId,
+    appleIdPassword: appleIdPassword,
+    teamId: appleTeamId,
+  });
 };
 
 const config: ForgeConfig = {
@@ -48,12 +77,39 @@ const config: ForgeConfig = {
       if (!process.env.CASTLABS_EVS_USERNAME || !process.env.CASTLABS_EVS_PASSWORD)
         throw new Error(`Missing CASTLABS_EVS_USERNAME or CASTLABS_EVS_PASSWORD environment variables required for signing!`);
 
-      for (const path of pkgResult.outputPaths)
+      for (const path of pkgResult.outputPaths) {
         await vmpSignPkg(path, process.env.CASTLABS_EVS_USERNAME, process.env.CASTLABS_EVS_PASSWORD);
+
+        if (pkgResult.platform === 'darwin' && process.platform === 'darwin') {
+          await osxSignPkg(path, fPath => {
+            let entitlements = resolve(join(__dirname, 'entitlements', 'Default.plist'));
+  
+            if (fPath.endsWith('Helper.app')) // https://github.com/castlabs/electron-releases/issues/161#issuecomment-1609020079
+              entitlements = resolve(join(__dirname, 'entitlements', 'Helper.plist'));
+  
+            else if (fPath.endsWith('(Plugin).app'))
+              entitlements = resolve(join(__dirname, 'entitlements', 'Plugin.plist'));
+  
+            return {
+              entitlements: entitlements,
+              hardenedRuntime: true,
+            };
+          });
+  
+          if (!process.env.APPLE_ID || !process.env.APPLE_ID_PASSWORD || !process.env.APPLE_TEAM_ID)
+            throw new Error(`Missing APPLE_ID, APPLE_ID_PASSWORD or APPLE_TEAM_ID environment variables required for notarization!`);
+  
+          await osxNotarizePkg(path, process.env.APPLE_ID, process.env.APPLE_ID_PASSWORD, process.env.APPLE_TEAM_ID);
+        }
+      }
     },
   },
   packagerConfig: {
+    appBundleId: `com.${author.name}.${productName}`.toLowerCase(),
+    appCategoryType: 'public.app-category.entertainment',
+    appCopyright: `Copyright © 2024  ${author.name}`,
     asar: true,
+    helperBundleId: `com.${author.name}.${productName}.helper`.toLowerCase(),
     download: {
       mirrorOptions: {
         mirror: 'https://github.com/castlabs/electron-releases/releases/download/'
