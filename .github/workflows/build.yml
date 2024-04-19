@@ -4,21 +4,60 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-packages:
-    runs-on: ubuntu-latest
+  build-darwin:
+    runs-on: macos-latest
     strategy:
       matrix:
-        platform: [linux, win32, darwin]
-        arch: [x64, arm64, ia32]
-        exclude:
-          - platform: darwin
-            arch: ia32
-          - platform: win32
-            arch: arm64
-          - platform: linux
-            arch: arm64
-          - platform: linux
-            arch: ia32
+        arch: [x64, arm64]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+          check-latest: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          check-latest: true
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build package
+        env:
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
+          CASTLABS_EVS_USERNAME: ${{ secrets.CASTLABS_EVS_USERNAME }}
+          CI_KEYCHAIN_PASSWORD: ${{ secrets.CI_KEYCHAIN_PASSWORD }}
+          CODESIGN_CERTIFICATE_PASSWORD: ${{ secrets.CODESIGN_CERTIFICATE_PASSWORD }}
+          CODESIGN_CERTIFICATE: ${{ secrets.CODESIGN_CERTIFICATE }}
+        run: |
+          echo $CODESIGN_CERTIFICATE | base64 --decode > Certificates.p12
+          security create-keychain -p "$CI_KEYCHAIN_PASSWORD" build.keychain 
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$CI_KEYCHAIN_PASSWORD" build.keychain
+          security import Certificates.p12 -k build.keychain -P "$CODESIGN_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$CI_KEYCHAIN_PASSWORD" build.keychain
+          npm run make -- --platform darwin --arch ${{ matrix.arch }}
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: eXViewer-darwin-${{ matrix.arch }}
+          path: out/make/zip/darwin/${{ matrix.arch }}/*
+          if-no-files-found: error
+          compression-level: 9
+
+  build-linux:
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
@@ -43,30 +82,51 @@ jobs:
         env:
           CASTLABS_EVS_USERNAME: ${{ secrets.CASTLABS_EVS_USERNAME }}
           CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
-        run: npm run make -- --platform ${{ matrix.platform }} --arch ${{ matrix.arch }}
-        if: ${{ matrix.platform == 'darwin' }}
+        run: npm run package -- --platform linux --arch x64
+
+      - name: Upload package
+        uses: actions/upload-artifact@v4
+        with:
+          name: eXViewer-linux-x64
+          path: out/eXViewer-linux-x64/
+          if-no-files-found: error
+          compression-level: 9
+
+  build-win32:
+    runs-on: windows-latest
+    strategy:
+      matrix:
+        arch: [x64, ia32]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 21
+          check-latest: true
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          check-latest: true
+
+      - name: Install dependencies
+        run: npm install
 
       - name: Build package
         env:
           CASTLABS_EVS_USERNAME: ${{ secrets.CASTLABS_EVS_USERNAME }}
           CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
-        run: npm run package -- --platform ${{ matrix.platform }} --arch ${{ matrix.arch }}
-        if: ${{ matrix.platform != 'darwin' }}
+        run: npm run package -- --platform win32 --arch ${{ matrix.arch }}
 
       - name: Upload package
         uses: actions/upload-artifact@v4
-        if: ${{ matrix.platform == 'darwin' }}
         with:
-          name: eXViewer-${{ matrix.platform }}-${{ matrix.arch }}
-          path: out/make/zip/${{ matrix.platform }}/${{ matrix.arch }}/*
-          if-no-files-found: error
-          compression-level: 9
-
-      - name: Upload package
-        uses: actions/upload-artifact@v4
-        if: ${{ matrix.platform != 'darwin' }}
-        with:
-          name: eXViewer-${{ matrix.platform }}-${{ matrix.arch }}
-          path: out/eXViewer-${{ matrix.platform }}-${{ matrix.arch }}/
+          name: eXViewer-win32-${{ matrix.arch }}
+          path: out/eXViewer-win32-${{ matrix.arch }}/
           if-no-files-found: error
           compression-level: 9

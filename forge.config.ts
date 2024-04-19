@@ -39,7 +39,7 @@ const execPromise = promisify(exec);
 
 const vmpSignPkg = async (pkgPath: string, username: string, password: string) => {
   await execPromise(`python -m pip install --upgrade castlabs-evs`);
-  await execPromise(`python -m castlabs_evs.account reauth --account-name '${username}' --passwd '${password}'`);
+  await execPromise(`python -m castlabs_evs.account reauth --account-name "${username}" --passwd "${password}"`);
   await execPromise(`python -m castlabs_evs.vmp sign-pkg "${pkgPath}"`);
 };
 
