@@ -26,8 +26,7 @@ import { notarize } from '@electron/notarize';
 
 import { mainConfig } from './webpack/main.config';
 import { rendererConfig } from './webpack/renderer.config';
-import { promisify } from 'util';
-import { exec } from 'child_process';
+import { spawn, SpawnOptionsWithoutStdio } from 'child_process';
 import { config as dotenvConfig } from 'dotenv';
 import { join, resolve } from 'path';
 
@@ -35,12 +34,25 @@ import { author, productName } from './package.json';
 
 dotenvConfig();
 
-const execPromise = promisify(exec);
+const spawnPromise = (command: string, args?: string[], options?: SpawnOptionsWithoutStdio) => {
+  return new Promise<void>((resolve, reject) => {
+    const child = spawn(command, args, options);
+
+    child.on('exit', code => {
+      if (code === 0)
+        resolve();
+      else
+        reject(new Error(`Command "${command} ${args ? args.join(' ') : ''}" exited with code ${code}`));
+    });
+
+    child.on('error', reject);
+  });
+};
 
 const vmpSignPkg = async (pkgPath: string, username: string, password: string) => {
-  await execPromise(`python -m pip install --upgrade castlabs-evs`);
-  await execPromise(`python -m castlabs_evs.account reauth --account-name "${username}" --passwd "${password}"`);
-  await execPromise(`python -m castlabs_evs.vmp sign-pkg "${pkgPath}"`);
+  await spawnPromise('python', ['-m', 'pip', 'install', '--upgrade', 'castlabs-evs']);
+  await spawnPromise('python', ['-m', 'castlabs_evs.account', 'reauth', '--account-name', username, '--passwd', password]);
+  await spawnPromise('python', ['-m', 'castlabs_evs.vmp', 'sign-pkg', pkgPath]);
 };
 
 const osxSignPkg = async (pkgPath: string, optionsForFile?: (path: string) => PerFileSignOptions) => {
