@@ -8,7 +8,7 @@ jobs:
     runs-on: macos-latest
     strategy:
       matrix:
-        arch: [x64, arm64]
+        arch: [arm64, universal, x64]
 
     steps:
       - name: Checkout
@@ -58,6 +58,9 @@ jobs:
 
   build-linux:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        arch: [x64]
 
     steps:
       - name: Checkout
@@ -82,13 +85,13 @@ jobs:
         env:
           CASTLABS_EVS_USERNAME: ${{ secrets.CASTLABS_EVS_USERNAME }}
           CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
-        run: npm run package -- --platform linux --arch x64
+        run: npm run package -- --platform linux --arch ${{ matrix.arch }}
 
       - name: Upload package
         uses: actions/upload-artifact@v4
         with:
-          name: eXViewer-linux-x64
-          path: out/eXViewer-linux-x64/
+          name: eXViewer-linux-${{ matrix.arch }}
+          path: out/eXViewer-linux-${{ matrix.arch }}/
           if-no-files-found: error
           compression-level: 9
 

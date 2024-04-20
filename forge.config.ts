@@ -29,6 +29,7 @@ import { rendererConfig } from './webpack/renderer.config';
 import { spawn, SpawnOptionsWithoutStdio } from 'child_process';
 import { config as dotenvConfig } from 'dotenv';
 import { join, resolve } from 'path';
+import { readdir, unlink } from 'fs/promises';
 
 import { author, productName } from './package.json';
 
@@ -81,6 +82,23 @@ const osxNotarizePkg = async (pkgPath: string, appleId: string, appleIdPassword:
 
 const config: ForgeConfig = {
   hooks: {
+    packageAfterExtract: async (config, buildPath, electronVersion, platform) => {
+      if (platform !== 'darwin')
+        return;
+
+      const helpers = await readdir(buildPath, { recursive: true })
+        .then(files => files.filter(f => f.endsWith('Electron Framework.framework')))
+        .then(files => files.map(f => join(buildPath, f)));
+
+      for (const helper of helpers) {
+        const sigFiles = await readdir(helper, { recursive: true })
+          .then(files => files.filter(f => f.endsWith('Versions/A/Resources/Electron Framework.sig')))
+          .then(files => files.map(f => join(helper, f)));
+
+        for (const sigFile of sigFiles)
+          await unlink(sigFile);
+      }
+    },
     postPackage: async (config, pkgResult) => {
       // Linux doesn't support VMP signing
       if (pkgResult.platform === 'linux')
