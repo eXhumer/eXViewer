@@ -20,7 +20,6 @@ import { AppConfig, F1TVLoginSession } from './Type';
 import { ContentVideoContainer, F1TVClient } from '@exhumer/f1tv-api';
 import { join } from 'path';
 import { accessSync, constants, readFileSync, writeFileSync } from 'fs';
-// import { URL } from 'url';
 
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
@@ -58,7 +57,7 @@ const createPlayerWindow = (container: ContentVideoContainer) => {
     backgroundColor: '#303030',
     frame: false,
     webPreferences: {
-      webSecurity: true,
+      webSecurity: false,
       nodeIntegration: false,
       contextIsolation: true,
       preload: PLAYER_PRELOAD_WEBPACK_ENTRY,
@@ -155,27 +154,8 @@ const whenReady = () => {
   });
 
   session.defaultSession.webRequest.onBeforeSendHeaders((details, callback) => {
-    // Intercept HTTPS requests with a valid webContents
-    if (details.webContents && details.url.startsWith('https://')) {
-      const win = BrowserWindow.fromWebContents(details.webContents);
-
-      if (!win) {
-        console.warn('onBeforeSendHeaders | BrowserWindow.fromWebContents(details.webContents) === null');
-      } else if (win === mainWindow) {
-        console.log('onBeforeSendHeaders | MainWindow');
-      } else if (win === loginWindow) {
-        console.log('onBeforeSendHeaders | LoginWindow');
-      } else if (activePlayerWindows.includes(win)) {
-        console.log('onBeforeSendHeaders | PlayerWindow', `[${(new Date(details.timestamp)).toISOString()}]`, details.method, details.url);
-        // TODO: Fix Widevine request failing on license request due to Referer header
-        if (details.requestHeaders.Referer)
-          delete details.requestHeaders.Referer;
-
-        console.log('onBeforeSendHeaders | PlayerWindow.requestHeaders', details.requestHeaders);
-      } else {
-        console.warn('onBeforeSendHeaders | Unknown Window');
-      }
-    }
+    if (details.url.startsWith('https://f1tv.formula1.com/') && details.url.indexOf('/widevine') !== -1 && details.requestHeaders.Referer)
+      delete details.requestHeaders.Referer;
 
     callback({ cancel: false, requestHeaders: details.requestHeaders });
   });
