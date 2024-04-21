@@ -19,7 +19,7 @@ import { forwardRef, useEffect, useImperativeHandle, useRef, useState, ForwardRe
 
 import shaka from 'shaka-player/dist/shaka-player.ui';
 import 'shaka-player/dist/controls.css';
-import styles from './VideoPlayer.module.css';
+import styles from './ShakaPlayer.module.css';
 
 export type VideoPlayerRef = {
   readonly player: shaka.Player;

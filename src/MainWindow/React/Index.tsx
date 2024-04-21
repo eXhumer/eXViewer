@@ -18,17 +18,35 @@
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import { Provider as ReduxProvider } from 'react-redux';
+import {
+  createMemoryRouter,
+  RouterProvider,
+} from 'react-router-dom';
 
 import store from './Store';
-import App from './App';
 
 import './Index.css';
+import App from './Route/App';
+import Home from './Route/Home';
+
+const router = createMemoryRouter([
+  {
+    path: '/',
+    element: <App />,
+    children: [
+      {
+        index: true,
+        element: <Home />,
+      },
+    ],
+  },
+]);
 
 createRoot(document.getElementById('react-root') as HTMLDivElement)
   .render(
     <StrictMode>
       <ReduxProvider store={store}>
-        <App />
+        <RouterProvider router={router} />
       </ReduxProvider>
     </StrictMode>
   );

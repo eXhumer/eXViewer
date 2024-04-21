@@ -16,7 +16,7 @@
 */
 
 import { useCallback, useEffect, useRef, useState } from 'react';
-import VideoPlayer, { VideoPlayerRef } from './Component/VideoPlayer';
+import VideoPlayer, { VideoPlayerRef } from './Component/ShakaPlayer';
 import { ContentVideoContainer } from '@exhumer/f1tv-api';
 import shaka from 'shaka-player';
 import Overlay from './Component/Overlay';
@@ -31,10 +31,15 @@ const App = () => {
     if (ref && ref.player) {
       ref.player.configure({
         streaming: {
-          bufferingGoal: 60,
-          rebufferingGoal: 5,
-          bufferBehind: 60,
-        }
+          bufferingGoal: 1,
+          rebufferingGoal: 1,
+          bufferBehind: 30,
+        },
+        manifest: {
+          dash: {
+            ignoreMinBufferTime: true,
+          },
+        },
       });
     }
 
@@ -69,8 +74,8 @@ const App = () => {
               advanced: {
                 'com.widevine.alpha': {
                   // 'sessionType': 'persistent-license',
-                  // 'videoRobustness': 'SW_SECURE_CRYPTO',
-                  // 'audioRobustness': 'SW_SECURE_CRYPTO',
+                  'videoRobustness': 'SW_SECURE_CRYPTO',
+                  'audioRobustness': 'SW_SECURE_CRYPTO',
                 },
               },
             },
@@ -118,8 +123,8 @@ const App = () => {
                           advanced: {
                             'com.widevine.alpha': {
                               // 'sessionType': 'persistent-license',
-                              // 'videoRobustness': 'SW_SECURE_CRYPTO',
-                              // 'audioRobustness': 'SW_SECURE_CRYPTO',
+                              'videoRobustness': 'SW_SECURE_CRYPTO',
+                              'audioRobustness': 'SW_SECURE_CRYPTO',
                             },
                           },
                         },
