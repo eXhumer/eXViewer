@@ -26,9 +26,6 @@ declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const PLAYER_PRELOAD_WEBPACK_ENTRY: string;
 declare const PLAYER_WEBPACK_ENTRY: string;
 
-if (require('electron-squirrel-startup'))
-  app.quit();
-
 const APP_CONFIG_PATH = join(app.getPath('userData'), 'config.json');
 const WM_INITMENU = 0x0116;
 
