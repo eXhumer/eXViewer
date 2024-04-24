@@ -49,12 +49,21 @@ rules.push({
   ],
 });
 
+rules.push({
+  test: /\.s[ac]ss$/,
+  use: [
+    'style-loader',
+    'css-loader',
+    'sass-loader',
+  ],
+});
+
 export const rendererConfig: Configuration = {
   module: {
     rules,
   },
   plugins,
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css'],
+    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.scss', '.sass'],
   },
 };
