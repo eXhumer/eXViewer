@@ -16,7 +16,7 @@
 */
 
 import { app, components, globalShortcut, session, BrowserWindow, ipcMain, Menu } from 'electron';
-import { AppConfig, F1TVLoginSession } from './Type';
+import { AppConfig, DefaultAppConfig, F1TVLoginSession } from './Type';
 import { ContentVideoContainer, F1TVClient } from '@exhumer/f1tv-api';
 import { join } from 'path';
 import { accessSync, constants, readFileSync, writeFileSync } from 'fs';
@@ -189,18 +189,21 @@ app.on('window-all-closed', () => {
     app.quit();
 });
 
-app.enableSandbox();
-
 try {
   accessSync(APP_CONFIG_PATH, constants.F_OK | constants.R_OK);
 } catch (e) {
-  writeFileSync(APP_CONFIG_PATH, JSON.stringify({}));
+  writeFileSync(APP_CONFIG_PATH, JSON.stringify(DefaultAppConfig));
 } finally {
   const config = JSON.parse(readFileSync(APP_CONFIG_PATH, { encoding: 'utf-8' })) as AppConfig;
 
   if (config.disableHardwareAcceleration) {
     console.log('Disabling hardware acceleration!');
     app.disableHardwareAcceleration();
+  }
+
+  if (config.enableSandbox) {
+    console.log('Enabling sandbox!');
+    app.enableSandbox();
   }
 }
 

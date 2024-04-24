@@ -17,6 +17,12 @@
 
 export type AppConfig = {
   disableHardwareAcceleration?: boolean;
+  enableSandbox?: boolean;
+};
+
+export const DefaultAppConfig: AppConfig = {
+  disableHardwareAcceleration: false,
+  enableSandbox: true,
 };
 
 export type F1TVLoginSessionData = {
