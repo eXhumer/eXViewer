@@ -16,6 +16,7 @@
 */
 
 import type { ForgeConfig } from '@electron-forge/shared-types';
+import { MakerDMG } from '@electron-forge/maker-dmg';
 import { MakerZIP } from '@electron-forge/maker-zip';
 import { AutoUnpackNativesPlugin } from '@electron-forge/plugin-auto-unpack-natives';
 import { WebpackPlugin } from '@electron-forge/plugin-webpack';
@@ -148,7 +149,11 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerZIP({}, ['darwin', 'win32', 'linux']),
+    new MakerZIP({}, ['win32', 'linux']),
+    new MakerDMG({
+      name: `${productName} Setup`,
+      icon: './assets/icon.icns',
+    }),
   ],
   plugins: [
     new AutoUnpackNativesPlugin({}),

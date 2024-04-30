@@ -1,18 +1,18 @@
 diff --git a/node_modules/shaka-player/dist/shaka-player.compiled.d.ts b/node_modules/shaka-player/dist/shaka-player.compiled.d.ts
-index 58c1c08..29033af 100644
+index e6dcbc6..a2ad42b 100644
 --- a/node_modules/shaka-player/dist/shaka-player.compiled.d.ts
 +++ b/node_modules/shaka-player/dist/shaka-player.compiled.d.ts
-@@ -5285,3 +5285,5 @@ declare namespace ಠ_ಠ.clutz {
-     static isTypeSupported (keySystem : string , contentType : string ) : boolean ;
+@@ -5436,3 +5436,5 @@ declare namespace Windows.Media.Protection {
+     probably = 'Probably' ,
    }
  }
 +
 +export default shaka;
 diff --git a/node_modules/shaka-player/dist/shaka-player.ui.d.ts b/node_modules/shaka-player/dist/shaka-player.ui.d.ts
-index 3456ec3..e4a6c56 100644
+index 5b3b875..66af485 100644
 --- a/node_modules/shaka-player/dist/shaka-player.ui.d.ts
 +++ b/node_modules/shaka-player/dist/shaka-player.ui.d.ts
-@@ -5917,3 +5917,5 @@ declare namespace shaka.extern {
+@@ -6128,3 +6128,5 @@ declare namespace shaka.extern {
  declare namespace shaka.extern {
    type UIVolumeBarColors = { base : string , level : string } ;
  }
