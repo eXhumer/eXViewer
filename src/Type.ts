@@ -32,3 +32,24 @@ export type F1TVLoginSessionData = {
 export type F1TVLoginSession = {
   data: F1TVLoginSessionData;
 };
+
+// eslint-disable-next-line @typescript-eslint/no-namespace
+export namespace IPCChannel {
+  export enum eXViewer {
+    NEW_PLAYER = 'eXViewer:New-Player',
+  }
+
+  export enum F1TV {
+    LOCATION = 'F1TV:Location',
+    LOGIN = 'F1TV:Login',
+    LOGOUT = 'F1TV:Logout',
+    SUBSCRIPTION_TOKEN = 'F1TV:Subscription-Token',
+    WHEN_LOCATION_READY = 'F1TV:When-Location-Ready',
+  }
+
+  export enum Player {
+    CONTENT_PLAY = 'Player:Content-Play',
+    CONTEXT_MENU = 'Player:Context-Menu',
+    PLAYER_DATA = 'Player:Player-Data',
+  }
+}

@@ -16,7 +16,7 @@
 */
 
 import { app, components, globalShortcut, session, BrowserWindow, ipcMain, Menu } from 'electron';
-import { AppConfig, DefaultAppConfig, F1TVLoginSession } from './Type';
+import { AppConfig, DefaultAppConfig, F1TVLoginSession, IPCChannel } from './Type';
 import { ContentVideoContainer, F1TVClient } from '@exhumer/f1tv-api';
 import { join } from 'path';
 import { accessSync, constants, readFileSync, writeFileSync } from 'fs';
@@ -172,7 +172,7 @@ const whenReady = () => {
       }
 
       if (mainWindow !== null)
-        mainWindow.webContents.send('F1TV:Subscription-Token', f1tv.ascendon);
+        mainWindow.webContents.send(IPCChannel.F1TV.SUBSCRIPTION_TOKEN, f1tv.ascendon);
     }
   });
 
@@ -212,7 +212,7 @@ app
   .then(async () => await components.whenReady())
   .then(whenReady);
 
-ipcMain.handle('Player:Content-Play', async (e, contentId: number, channelId?: number) => {
+ipcMain.handle(IPCChannel.Player.CONTENT_PLAY, async (e, contentId: number, channelId?: number) => {
   if (f1tv.ascendon === null)
     return;
 
@@ -221,7 +221,7 @@ ipcMain.handle('Player:Content-Play', async (e, contentId: number, channelId?: n
   return apiRes.resultObj;
 });
 
-ipcMain.handle('Player:Context-Menu', async (e, cursorLocation: { x: number, y: number }) => {
+ipcMain.handle(IPCChannel.Player.CONTEXT_MENU, async (e, cursorLocation: { x: number, y: number }) => {
   const senderWindow = BrowserWindow.fromWebContents(e.sender);
 
   if (senderWindow === null)
@@ -230,7 +230,7 @@ ipcMain.handle('Player:Context-Menu', async (e, cursorLocation: { x: number, y: 
   playerCtxMenuPopup(senderWindow, cursorLocation);
 });
 
-ipcMain.handle('eXViewer:New-Player', async (e, contentId: number) => {
+ipcMain.handle(IPCChannel.eXViewer.NEW_PLAYER, async (e, contentId: number) => {
   if (f1tv.ascendon === null)
     return;
 
@@ -239,7 +239,7 @@ ipcMain.handle('eXViewer:New-Player', async (e, contentId: number) => {
   createPlayerWindow(apiRes);
 });
 
-ipcMain.handle('F1TV:Login', async () => {
+ipcMain.handle(IPCChannel.F1TV.LOGIN, async () => {
   if (f1tv.ascendon !== null)
     return;
 
@@ -272,7 +272,7 @@ ipcMain.handle('F1TV:Login', async () => {
     loginWindow.webContents.openDevTools();
 });
 
-ipcMain.handle('F1TV:Logout', async () => {
+ipcMain.handle(IPCChannel.F1TV.LOGOUT, async () => {
   if (f1tv.ascendon === null)
     return;
 
@@ -280,10 +280,10 @@ ipcMain.handle('F1TV:Logout', async () => {
   f1tv.ascendon = null;
 });
 
-ipcMain.handle('F1TV:Location', async () => {
+ipcMain.handle(IPCChannel.F1TV.LOCATION, async () => {
   return f1tv.location;
 });
 
-ipcMain.handle('F1TV:When-Location-Ready', async () => {
+ipcMain.handle(IPCChannel.F1TV.WHEN_LOCATION_READY, async () => {
   await f1tv.whenLocationReady();
 });
