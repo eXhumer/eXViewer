@@ -25,8 +25,7 @@ import {
 
 import store from './Store';
 
-import './Index.css';
-import './Custom.scss';
+import './CustomBootstrap.scss';
 import App from './Route/App';
 import Home from './Route/Home';
 

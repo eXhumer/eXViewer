@@ -34,7 +34,3 @@ contextBridge.exposeInMainWorld('f1tv', {
 contextBridge.exposeInMainWorld('exviewer', {
   newPlayer: (contentId: number) => ipcRenderer.invoke(IPCChannel.eXViewer.NEW_PLAYER, contentId),
 });
-
-window.addEventListener('DOMContentLoaded', () => {
-  console.log(process.versions);
-});

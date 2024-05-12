@@ -9,6 +9,9 @@ body {
   -webkit-app-region: drag;
 }
 
-.shaka-bottom-controls, .shaka-overflow-menu, .shaka-overflow-button, .shaka-settings-menu  {
+.bmpui-ui-controlbar,
+.bmpui-ui-selectbox,
+.bmpui-ui-settings-panel-item,
+.bmpui-ui-settings-panel {
   -webkit-app-region: no-drag;
 }

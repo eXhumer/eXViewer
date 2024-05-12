@@ -15,11 +15,14 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { ContentPlayResult, ContentVideoContainer } from '@exhumer/f1tv-api';
+import { Config, ContentPlayResult, ContentVideoContainer } from '@exhumer/f1tv-api';
 
 declare interface Player {
   contextMenu: (cursor_location: { x: number, y: number }) => Promise<void>;
-  contentPlay: (contentId: number, channelId?: number) => Promise<ContentPlayResult>;
+  contentPlay: (contentId: number, channelId?: number) => Promise<{
+    config: Config,
+    resultObj: ContentPlayResult,
+  }>;
   offPlayerData: (cb: (e: IpcRendererEvent, result: ContentVideoContainer, ascendon: string) => void) => void;
   onPlayerData: (cb: (e: IpcRendererEvent, result: ContentVideoContainer, ascendon: string) => void) => void;
 }

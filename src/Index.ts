@@ -73,7 +73,7 @@ const createPlayerWindow = (container: ContentVideoContainer) => {
     });
 
   playerWindow.on('ready-to-show', () => {
-    playerWindow.webContents.send('Player:Player-Data', container, f1tv.ascendon);
+    playerWindow.webContents.send(IPCChannel.Player.PLAYER_DATA, container, f1tv.ascendon);
   });
 
   playerWindow.on('closed', () => {
@@ -218,7 +218,7 @@ ipcMain.handle(IPCChannel.Player.CONTENT_PLAY, async (e, contentId: number, chan
 
   const apiRes = await f1tv.contentPlay(contentId, channelId);
 
-  return apiRes.resultObj;
+  return { config: f1tv.config, resultObj: apiRes.resultObj };
 });
 
 ipcMain.handle(IPCChannel.Player.CONTEXT_MENU, async (e, cursorLocation: { x: number, y: number }) => {

@@ -15,36 +15,18 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import VideoPlayer, { VideoPlayerRef } from './Component/ShakaPlayer';
+import { useEffect, useRef, useState } from 'react';
+import BitmovinPlayer, { BitmovinPlayerRef } from './Component/BitmovinPlayer';
+import type { SourceConfig } from 'bitmovin-player';
 import { ContentVideoContainer } from '@exhumer/f1tv-api';
-import shaka from 'shaka-player';
 import Overlay from './Component/Overlay';
 import styles from './App.module.css';
 
 const App = () => {
   const [ascendon, setAscendon] = useState<string | null>(null);
   const [videoContainer, setVideoContainer] = useState<ContentVideoContainer | null>(null);
-  const playerRef = useRef<VideoPlayerRef | null>(null);
-
-  const setPlayerRef = useCallback((ref?: VideoPlayerRef) => {
-    if (ref && ref.player) {
-      ref.player.configure({
-        streaming: {
-          bufferingGoal: 1,
-          rebufferingGoal: 1,
-          bufferBehind: 30,
-        },
-        manifest: {
-          dash: {
-            ignoreMinBufferTime: true,
-          },
-        },
-      });
-    }
-
-    playerRef.current = ref;
-  }, []);
+  const [playerKey, setPlayerKey] = useState<string | null>(null);
+  const playerRef = useRef<BitmovinPlayerRef | null>(null);
 
   useEffect(() => {
     player.onPlayerData((e, newVideoContainer, ascendon) => {
@@ -59,42 +41,46 @@ const App = () => {
 
     player
       .contentPlay(videoContainer.contentId)
+      .then(res => {
+        if (playerKey !== res.config.bitmovin.bitmovinKeys.player)
+          setPlayerKey(res.config.bitmovin.bitmovinKeys.player);
+
+        return res.resultObj;
+      })
       .then(playData => {
         const currentRef = playerRef.current;
 
         if (!currentRef)
           return;
 
+        const source: SourceConfig = {
+          title: videoContainer.metadata.title,
+        };
+
         if (playData.streamType === 'DASHWV' && playData.drmType === 'widevine' && playData.laURL) {
-          currentRef.player.configure({
-            drm: {
-              servers: {
-                'com.widevine.alpha': playData.laURL,
+          source.drm = {
+            widevine: {
+              LA_URL: playData.laURL,
+              headers: {
+                'Ascendontoken': ascendon,
+                'Entitlementtoken': playData.entitlementToken,
               },
-              advanced: {
-                'com.widevine.alpha': {
-                  // 'sessionType': 'persistent-license',
-                  'videoRobustness': 'SW_SECURE_CRYPTO',
-                  'audioRobustness': 'SW_SECURE_CRYPTO',
-                },
-              },
-            },
-          });
-
-          currentRef.player.getNetworkingEngine().registerRequestFilter((type, request) => {
-            if (type === shaka.net.NetworkingEngine.RequestType.LICENSE) {
-              request.headers['Ascendontoken'] = ascendon;
-              request.headers['Entitlementtoken'] = playData.entitlementToken;
-
-              if (playData.drmToken)
-                request.headers['Customdata'] = playData.drmToken;
             }
-          });
+          };
+
+          if (playData.drmToken)
+            source.drm.widevine.headers['Customdata'] = playData.drmToken;
         }
 
-        currentRef.player.load(playData.url);
+        if (playData.streamType === 'HLS') {
+          source.hls = playData.url;
+        } else if (playData.streamType === 'DASH' || playData.streamType === 'DASHWV') {
+          source.dash = playData.url;
+        }
+
+        currentRef.api.load(source);
       });
-  }, [videoContainer]);
+  }, [playerKey, videoContainer]);
 
   return <>
     {videoContainer && videoContainer.metadata.additionalStreams &&
@@ -109,38 +95,40 @@ const App = () => {
                 if (!currentRef)
                   return;
 
-                const currentTime = currentRef.videoElement.currentTime;
-
                 player
                   .contentPlay(videoContainer.contentId, stream.identifier !== 'WIF' ? stream.channelId : undefined)
+                  .then(res => {
+                    if (playerKey !== res.config.bitmovin.bitmovinKeys.player)
+                      setPlayerKey(res.config.bitmovin.bitmovinKeys.player);
+            
+                    return res.resultObj;
+                  })
                   .then(newPlayData => {
+                    const source: SourceConfig = {
+                      title: `${videoContainer.metadata.title}${stream.type === 'obc' ? ` - ${stream.driverFirstName} ${stream.driverLastName}` : ''}`,
+                    };
+            
                     if (newPlayData.streamType === 'DASHWV' && newPlayData.drmType === 'widevine' && newPlayData.laURL) {
-                      currentRef.player.configure({
-                        drm: {
-                          servers: {
-                            'com.widevine.alpha': newPlayData.laURL,
+                      source.drm = {
+                        widevine: {
+                          LA_URL: newPlayData.laURL,
+                          headers: {
+                            'Ascendontoken': ascendon,
+                            'Entitlementtoken': newPlayData.entitlementToken,
                           },
-                          advanced: {
-                            'com.widevine.alpha': {
-                              // 'sessionType': 'persistent-license',
-                              'videoRobustness': 'SW_SECURE_CRYPTO',
-                              'audioRobustness': 'SW_SECURE_CRYPTO',
-                            },
-                          },
-                        },
-                      });
-                      currentRef.player.getNetworkingEngine().registerRequestFilter((type, request) => {
-                        if (type === shaka.net.NetworkingEngine.RequestType.LICENSE) {
-                          request.headers['Ascendontoken'] = ascendon;
-                          request.headers['Entitlementtoken'] = newPlayData.entitlementToken;
-
-                          if (newPlayData.drmToken)
-                            request.headers['Customdata'] = newPlayData.drmToken;
                         }
-                      });
+                      };
+            
+                      if (newPlayData.drmToken)
+                        source.drm.widevine.headers['Customdata'] = newPlayData.drmToken;
+            
+                      source.dash = newPlayData.url;
+                    } else if (newPlayData.streamType === 'HLS') {
+                      source.hls = newPlayData.url;
+                    } else {
+                      throw new Error('Unsupported stream type');
                     }
-          
-                    currentRef.player.load(newPlayData.url, currentTime);
+                    currentRef.api.load(source);
                   });
               }}
             >
@@ -149,7 +137,26 @@ const App = () => {
           ))}
         </div>
       </Overlay>}
-    <VideoPlayer autoPlay={true} ref={setPlayerRef} />
+    {videoContainer && playerKey && <BitmovinPlayer
+      playerKey={playerKey}
+      config={{
+        buffer: {
+          audio: {
+            forwardduration: 10,
+            backwardduration: 10,
+          },
+          video: {
+            forwardduration: 10,
+            backwardduration: 10,
+          },
+        },
+        playback: {
+          autoplay: true,
+          // audioLanguage: ''
+        },
+      }}
+      ref={playerRef}
+    />}
   </>;
 };
 
