@@ -16,7 +16,7 @@
 */
 
 import { contextBridge, ipcRenderer } from 'electron';
-import { ContentVideoContainer } from '@exhumer/f1tv-api';
+import { Config, ContentVideoContainer } from '@exhumer/f1tv-api';
 import { IPCChannel } from '../Type';
 
 contextBridge.exposeInMainWorld('player', {
@@ -25,9 +25,9 @@ contextBridge.exposeInMainWorld('player', {
   contextMenu: async (cursor_location: { x: number, y: number }) =>
     await ipcRenderer.invoke(IPCChannel.Player.CONTEXT_MENU, cursor_location),
   offPlayerData: (cb: (e: Electron.IpcRendererEvent,
-                         result: ContentVideoContainer) => void) => 
+                         result: ContentVideoContainer, ascendon: string, config: Config) => void) => 
     ipcRenderer.off(IPCChannel.Player.PLAYER_DATA, cb),
   onPlayerData: (cb: (e: Electron.IpcRendererEvent,
-                        result: ContentVideoContainer) => void) => 
+                        result: ContentVideoContainer, ascendon: string, config: Config) => void) => 
     ipcRenderer.on(IPCChannel.Player.PLAYER_DATA, cb),
 });

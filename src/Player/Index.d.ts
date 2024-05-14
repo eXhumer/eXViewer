@@ -19,12 +19,9 @@ import { Config, ContentPlayResult, ContentVideoContainer } from '@exhumer/f1tv-
 
 declare interface Player {
   contextMenu: (cursor_location: { x: number, y: number }) => Promise<void>;
-  contentPlay: (contentId: number, channelId?: number) => Promise<{
-    config: Config,
-    resultObj: ContentPlayResult,
-  }>;
-  offPlayerData: (cb: (e: IpcRendererEvent, result: ContentVideoContainer, ascendon: string) => void) => void;
-  onPlayerData: (cb: (e: IpcRendererEvent, result: ContentVideoContainer, ascendon: string) => void) => void;
+  contentPlay: (contentId: number, channelId?: number) => Promise<ContentPlayResult>;
+  offPlayerData: (cb: (e: IpcRendererEvent, result: ContentVideoContainer, ascendon: string, config: Config) => void) => void;
+  onPlayerData: (cb: (e: IpcRendererEvent, result: ContentVideoContainer, ascendon: string, config: Config) => void) => void;
 }
 declare global {
   declare module '*.module.css' {
