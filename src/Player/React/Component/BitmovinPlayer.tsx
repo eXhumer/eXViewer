@@ -29,11 +29,12 @@ import Drm from 'bitmovin-player/modules/bitmovinplayer-drm';
 import Thumbnail from 'bitmovin-player/modules/bitmovinplayer-thumbnail';
 import Xml from 'bitmovin-player/modules/bitmovinplayer-xml';
 import Crypto from 'bitmovin-player/modules/bitmovinplayer-crypto';
-import Polyfill from 'bitmovin-player/modules/bitmovinplayer-polyfill';
 import Style from 'bitmovin-player/modules/bitmovinplayer-style';
-import { UIFactory } from 'bitmovin-player-ui';
+import { UIManager } from 'bitmovin-player-ui';
 
-import './BitmovinPlayer.css'; // Import the custom UI style
+import './BitmovinPlayer.scss'; // Import the custom UI style
+
+import PlayerUI from './PlayerUI';
 
 export type BitmovinPlayerConfig = Omit<PlayerConfig, 'key'>;
 
@@ -64,11 +65,10 @@ const BitmovinPlayer: BitmovinPlayerFn = ({ playerKey, config }, ref) => {
     Player.addModule(Drm); // Support for a variety of DRM systems (Widevine, PlayReady, PrimeTime, Fairplay)
     Player.addModule(Thumbnail); // DASH and WebVTT thumbnail support
     Player.addModule(Crypto); // Support for HLS AES-128 or DASH ClearKey streams
-    Player.addModule(Polyfill); // Support for JavaScript features like (e.g. Promise) on legacy browsers
     Player.addModule(Style); // Provides styling of the player
 
     const playerCtx = new Player(playerDivRef.current, { key: playerKey, ...config });
-    UIFactory.buildDefaultUI(playerCtx, {});
+    new UIManager(playerCtx, PlayerUI(playerCtx));
     setAPI(playerCtx);
 
     return () => {

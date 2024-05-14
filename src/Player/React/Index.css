@@ -8,10 +8,3 @@ body {
   padding: 0;
   -webkit-app-region: drag;
 }
-
-.bmpui-ui-controlbar,
-.bmpui-ui-selectbox,
-.bmpui-ui-settings-panel-item,
-.bmpui-ui-settings-panel {
-  -webkit-app-region: no-drag;
-}
