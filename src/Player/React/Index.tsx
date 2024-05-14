@@ -15,9 +15,18 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
+import { Provider as ReduxProvider } from 'react-redux';
+import store from './Store';
 import './Index.css';
 import App from './App';
 
 createRoot(document.getElementById('react-root') as HTMLDivElement)
-  .render(<App />);
+  .render(
+    <StrictMode>
+      <ReduxProvider store={store}>
+        <App />
+      </ReduxProvider>
+    </StrictMode>
+  );

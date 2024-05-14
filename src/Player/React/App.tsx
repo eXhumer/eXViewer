@@ -15,24 +15,41 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import BitmovinPlayer, { BitmovinPlayerRef } from './Component/BitmovinPlayer';
 import type { SourceConfig } from 'bitmovin-player';
-import { ContentVideoContainer } from '@exhumer/f1tv-api';
+import { ContentVideoContainer, Config } from '@exhumer/f1tv-api';
+import { selectAscendon, update as updateAscendon } from './Reducer/Ascendon';
+import { selectConfig, update as updateConfig } from './Reducer/Config';
+import { useAppDispatch, useAppSelector } from './Hook';
 import Overlay from './Component/Overlay';
 import styles from './App.module.css';
+import type { IpcRendererEvent } from 'electron';
+
+import { author, productName } from '../../../package.json';
 
 const App = () => {
-  const [ascendon, setAscendon] = useState<string | null>(null);
+  const [initialLoad, setInitialLoad] = useState<boolean>(true);
+
+  const ascendon = useAppSelector(selectAscendon);
+  const config = useAppSelector(selectConfig);
+  const dispatch = useAppDispatch();
+  const playerDataCb = useCallback((e: IpcRendererEvent, vidContainer: ContentVideoContainer, ascendon: string, config: Config) => {
+    dispatch(updateAscendon(ascendon));
+    dispatch(updateConfig(config));
+    setVideoContainer(vidContainer);
+    setInitialLoad(false);
+  }, []);
+
   const [videoContainer, setVideoContainer] = useState<ContentVideoContainer | null>(null);
-  const [playerKey, setPlayerKey] = useState<string | null>(null);
   const playerRef = useRef<BitmovinPlayerRef | null>(null);
 
   useEffect(() => {
-    player.onPlayerData((e, newVideoContainer, ascendon) => {
-      setAscendon(ascendon);
-      setVideoContainer(newVideoContainer);
-    });
+    player.onPlayerData(playerDataCb);
+
+    return () => {
+      player.offPlayerData(playerDataCb);
+    };
   }, []);
 
   useEffect(() => {
@@ -41,20 +58,16 @@ const App = () => {
 
     player
       .contentPlay(videoContainer.contentId)
-      .then(res => {
-        if (playerKey !== res.config.bitmovin.bitmovinKeys.player)
-          setPlayerKey(res.config.bitmovin.bitmovinKeys.player);
-
-        return res.resultObj;
-      })
       .then(playData => {
         const currentRef = playerRef.current;
 
         if (!currentRef)
           return;
 
+        const stream = videoContainer.metadata.additionalStreams ? videoContainer.metadata.additionalStreams.find(stream => stream.identifier === 'WIF') : null;
+
         const source: SourceConfig = {
-          title: videoContainer.metadata.title,
+          title: `${videoContainer.metadata.title}${stream && stream.type === 'obc' ? ` - ${stream.driverFirstName} ${stream.driverLastName}` : ''}`,
         };
 
         if (playData.streamType === 'DASHWV' && playData.drmType === 'widevine' && playData.laURL) {
@@ -80,9 +93,9 @@ const App = () => {
 
         currentRef.api.load(source);
       });
-  }, [playerKey, videoContainer]);
+  }, [videoContainer]);
 
-  return <>
+  return ascendon && config && initialLoad === false ? <>
     {videoContainer && videoContainer.metadata.additionalStreams &&
       <Overlay>
         <div className={styles['additional-streams-overlay']}>
@@ -97,17 +110,11 @@ const App = () => {
 
                 player
                   .contentPlay(videoContainer.contentId, stream.identifier !== 'WIF' ? stream.channelId : undefined)
-                  .then(res => {
-                    if (playerKey !== res.config.bitmovin.bitmovinKeys.player)
-                      setPlayerKey(res.config.bitmovin.bitmovinKeys.player);
-            
-                    return res.resultObj;
-                  })
                   .then(newPlayData => {
                     const source: SourceConfig = {
                       title: `${videoContainer.metadata.title}${stream.type === 'obc' ? ` - ${stream.driverFirstName} ${stream.driverLastName}` : ''}`,
                     };
-            
+
                     if (newPlayData.streamType === 'DASHWV' && newPlayData.drmType === 'widevine' && newPlayData.laURL) {
                       source.drm = {
                         widevine: {
@@ -137,26 +144,37 @@ const App = () => {
           ))}
         </div>
       </Overlay>}
-    {videoContainer && playerKey && <BitmovinPlayer
-      playerKey={playerKey}
+    {videoContainer && config && <BitmovinPlayer
+      playerKey={config.bitmovin.bitmovinKeys.player}
       config={{
+        remotecontrol: {
+          type: 'googlecast',
+          receiverApplicationId: config.bitmovin.chromecast.receiverApplicationId,
+          receiverVersion: 'v3',
+          messageNamespace: config.bitmovin.chromecast.messageNamespace,
+        },
         buffer: {
           audio: {
-            forwardduration: 10,
-            backwardduration: 10,
+            forwardduration: config.bitmovin.buffer.audio.forwardduration,
+            backwardduration: config.bitmovin.buffer.audio.backwardduration,
           },
           video: {
-            forwardduration: 10,
-            backwardduration: 10,
+            forwardduration: config.bitmovin.buffer.video.forwardduration,
+            backwardduration: config.bitmovin.buffer.video.backwardduration,
           },
         },
         playback: {
           autoplay: true,
-          // audioLanguage: ''
+        },
+        tweaks: {
+          file_protocol: true,
+          app_id: `com.${author.name}.${productName}`.toLowerCase(),
         },
       }}
       ref={playerRef}
     />}
+  </> : <>
+    <h1>Loading...</h1>
   </>;
 };
 
