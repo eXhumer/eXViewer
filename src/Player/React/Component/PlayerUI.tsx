@@ -39,15 +39,11 @@ import {
   SettingsPanel,
   SettingsPanelItem,
   SettingsPanelPage,
-  SettingsPanelPageOpenButton,
   SettingsToggleButton,
   Spacer,
-  SubtitleOverlay,
-  SubtitleSelectBox,
-  SubtitleSettingsLabel,
-  SubtitleSettingsPanelPage,
   TitleBar,
   UIContainer,
+  UIInstanceManager,
   VideoQualitySelectBox,
   VolumeSlider,
   VolumeToggleButton,
@@ -55,35 +51,41 @@ import {
 } from 'bitmovin-player-ui';
 import { ButtonConfig } from 'bitmovin-player-ui/dist/js/framework/components/button';
 
-const interval = 15;
-
 class FastForwardButton extends Button<ButtonConfig> {
-  constructor(playerAPI: PlayerAPI) {
+  private interval: number;
+
+  constructor(interval: number = 15) {
     super({ cssClasses: ['ui-forwardbutton', 'bmpui-ui-button'] });
+    this.interval = interval;
+  }
+
+  configure(player: PlayerAPI, uimanager: UIInstanceManager): void {
+    super.configure(player, uimanager);
 
     this.onClick.subscribe(() => {
-      playerAPI.seek(Math.min(playerAPI.getDuration(), playerAPI.getCurrentTime() + interval));
+      player.seek(Math.min(player.getDuration(), player.getCurrentTime() + this.interval));
     });
   }
 }
 
 class RewindButton extends Button<ButtonConfig> {
-  constructor(playerAPI: PlayerAPI) {
+  private interval: number;
+
+  constructor(interval: number = 15) {
     super({ cssClasses: ['ui-rewindbutton', 'bmpui-ui-button'] });
+    this.interval = interval;
+  }
+
+  configure(player: PlayerAPI, uimanager: UIInstanceManager): void {
+    super.configure(player, uimanager);
 
     this.onClick.subscribe(() => {
-      playerAPI.seek(Math.max(0, playerAPI.getCurrentTime() - interval));
+      player.seek(Math.max(0, player.getCurrentTime() - this.interval));
     });
   }
 }
 
-// playerAPI needed for the rewind and fast forward buttons
-const PlayerUI = (playerAPI: PlayerAPI) => {
-  const rewindButton = new RewindButton(playerAPI);
-  const fastForwardButton = new FastForwardButton(playerAPI);
-
-  const subtitleOverlay = new SubtitleOverlay();
-
+const PlayerUI = () => {
   const mainSettingsPanelPage = new SettingsPanelPage({
     components: [
       new SettingsPanelItem(i18n.getLocalizer('settings.video.quality'), new VideoQualitySelectBox()),
@@ -99,34 +101,6 @@ const PlayerUI = (playerAPI: PlayerAPI) => {
     hidden: true,
   });
 
-  const subtitleSettingsPanelPage = new SubtitleSettingsPanelPage({
-    settingsPanel: settingsPanel,
-    overlay: subtitleOverlay,
-  });
-
-  const subtitleSelectBox = new SubtitleSelectBox();
-
-  const subtitleSettingsOpenButton = new SettingsPanelPageOpenButton({
-    targetPage: subtitleSettingsPanelPage,
-    container: settingsPanel,
-    ariaLabel: i18n.getLocalizer('settings.subtitles'),
-    text: i18n.getLocalizer('open'),
-  });
-
-  mainSettingsPanelPage.addComponent(
-    new SettingsPanelItem(
-      new SubtitleSettingsLabel({
-        text: i18n.getLocalizer('settings.subtitles'),
-        opener: subtitleSettingsOpenButton,
-      }),
-      subtitleSelectBox,
-      {
-        role: 'menubar',
-      },
-    ));
-
-  settingsPanel.addComponent(subtitleSettingsPanelPage);
-
   const controlBar = new ControlBar({
     components: [
       settingsPanel,
@@ -140,9 +114,9 @@ const PlayerUI = (playerAPI: PlayerAPI) => {
       }),
       new Container({
         components: [
-          rewindButton,
+          new RewindButton(),
           new PlaybackToggleButton(),
-          fastForwardButton,
+          new FastForwardButton(),
           new VolumeToggleButton(),
           new VolumeSlider(),
           new Spacer(),
@@ -158,7 +132,6 @@ const PlayerUI = (playerAPI: PlayerAPI) => {
 
   return new UIContainer({
     components: [
-      subtitleOverlay,
       new BufferingOverlay(),
       new PlaybackToggleOverlay(),
       new CastStatusOverlay(),

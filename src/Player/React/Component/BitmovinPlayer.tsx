@@ -68,7 +68,7 @@ const BitmovinPlayer: BitmovinPlayerFn = ({ playerKey, config }, ref) => {
     Player.addModule(Style); // Provides styling of the player
 
     const playerCtx = new Player(playerDivRef.current, { key: playerKey, ...config });
-    new UIManager(playerCtx, PlayerUI(playerCtx));
+    new UIManager(playerCtx, PlayerUI());
     setAPI(playerCtx);
 
     return () => {

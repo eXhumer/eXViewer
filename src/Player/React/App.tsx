@@ -44,25 +44,14 @@ const App = () => {
   const [videoContainer, setVideoContainer] = useState<ContentVideoContainer | null>(null);
   const playerRef = useRef<BitmovinPlayerRef | null>(null);
 
-  useEffect(() => {
-    player.onPlayerData(playerDataCb);
-
-    return () => {
-      player.offPlayerData(playerDataCb);
-    };
-  }, []);
-
-  useEffect(() => {
-    if (!videoContainer)
+  const switchChannel = (channelId?: number) => {
+    if (!videoContainer || !playerRef.current)
       return;
 
     player
-      .contentPlay(videoContainer.contentId)
+      .contentPlay(videoContainer.contentId, channelId)
       .then(playData => {
         const currentRef = playerRef.current;
-
-        if (!currentRef)
-          return;
 
         const stream = videoContainer.metadata.additionalStreams ? videoContainer.metadata.additionalStreams.find(stream => stream.identifier === 'WIF') : null;
 
@@ -93,6 +82,25 @@ const App = () => {
 
         currentRef.api.load(source);
       });
+  };
+
+  useEffect(() => {
+    player.onPlayerData(playerDataCb);
+
+    return () => {
+      player.offPlayerData(playerDataCb);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (!videoContainer)
+      return;
+
+    if (videoContainer.metadata.additionalStreams) {
+      const defaultStream = videoContainer.metadata.additionalStreams.find(stream => stream.default === true);
+      switchChannel(defaultStream.identifier !== 'WIF' ? defaultStream.channelId : undefined);
+    } else
+      switchChannel();
   }, [videoContainer]);
 
   return ascendon && config && initialLoad === false ? <>
@@ -103,40 +111,7 @@ const App = () => {
             <button
               key={stream.channelId}
               onClick={() => {
-                const currentRef = playerRef.current;
-
-                if (!currentRef)
-                  return;
-
-                player
-                  .contentPlay(videoContainer.contentId, stream.identifier !== 'WIF' ? stream.channelId : undefined)
-                  .then(newPlayData => {
-                    const source: SourceConfig = {
-                      title: `${videoContainer.metadata.title}${stream.type === 'obc' ? ` - ${stream.driverFirstName} ${stream.driverLastName}` : ''}`,
-                    };
-
-                    if (newPlayData.streamType === 'DASHWV' && newPlayData.drmType === 'widevine' && newPlayData.laURL) {
-                      source.drm = {
-                        widevine: {
-                          LA_URL: newPlayData.laURL,
-                          headers: {
-                            'Ascendontoken': ascendon,
-                            'Entitlementtoken': newPlayData.entitlementToken,
-                          },
-                        }
-                      };
-            
-                      if (newPlayData.drmToken)
-                        source.drm.widevine.headers['Customdata'] = newPlayData.drmToken;
-            
-                      source.dash = newPlayData.url;
-                    } else if (newPlayData.streamType === 'HLS') {
-                      source.hls = newPlayData.url;
-                    } else {
-                      throw new Error('Unsupported stream type');
-                    }
-                    currentRef.api.load(source);
-                  });
+                switchChannel(stream.identifier !== 'WIF' ? stream.channelId : undefined);
               }}
             >
               {stream.title}
