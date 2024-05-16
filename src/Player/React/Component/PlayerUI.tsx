@@ -20,8 +20,6 @@ import {
   AudioTrackSelectBox,
   BufferingOverlay,
   Button,
-  CastStatusOverlay,
-  CastToggleButton,
   Container,
   ControlBar,
   ErrorMessageOverlay,
@@ -32,7 +30,6 @@ import {
   PlaybackToggleButton,
   PlaybackToggleOverlay,
   PlayerUtils,
-  RecommendationOverlay,
   SeekBar,
   SeekBarLabel,
   SettingsPanel,
@@ -87,10 +84,8 @@ class RewindButton extends Button<ButtonConfig> {
 }
 
 class PIPButton extends ToggleButton<ToggleButtonConfig> {
-  constructor(config?: ToggleButtonConfig) {
-    super(config ? config : {
-      cssClass: 'ui-piptogglebutton',
-    });
+  constructor() {
+    super({ cssClass: 'ui-piptogglebutton' });
   }
 
   configure(player: PlayerAPI, uimanager: UIInstanceManager): void {
@@ -164,7 +159,6 @@ const PlayerUI = () => {
           new VolumeSlider(),
           new Spacer(),
           new PIPButton(),
-          new CastToggleButton(),
           new SettingsToggleButton({ settingsPanel: settingsPanel }),
           new FullscreenToggleButton(),
         ],
@@ -177,10 +171,8 @@ const PlayerUI = () => {
     components: [
       new BufferingOverlay(),
       new PlaybackToggleOverlay(),
-      new CastStatusOverlay(),
       controlBar,
       new TitleBar(),
-      new RecommendationOverlay(),
       new ErrorMessageOverlay(),
     ],
     hideDelay: 2000,
