@@ -83,6 +83,9 @@ const BitmovinPlayer: BitmovinPlayerFn = ({ playerKey, config }, ref) => {
     get api() {
       return api;
     },
+    get playerDiv() {
+      return playerDivRef.current;
+    }
   }));
 
   return (

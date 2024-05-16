@@ -1,9 +1,0 @@
-.all-space {
-  height: 100%;
-  width: 100%;
-}
-
-.flexbox-horizontal {
-  display: flex;
-  flex-direction: row;
-}

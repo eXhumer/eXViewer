@@ -17,16 +17,12 @@
 
 import type { IpcRendererEvent } from 'electron';
 import { useCallback, useEffect, useState } from 'react';
-import { Sidebar, Menu, MenuItem, sidebarClasses } from 'react-pro-sidebar';
-import { selectSubscriptionToken, update as updateSubscriptionToken } from '../Reducer/SubscriptionToken';
-import { useAppDispatch, useAppSelector } from '../Hook';
-import styles from './App.module.css';
+import { update as updateSubscriptionToken } from '../Reducer/SubscriptionToken';
+import { useAppDispatch } from '../Hook';
 import { Outlet } from 'react-router-dom';
 
 const App = () => {
-  const [collapsed, setCollapsed] = useState<boolean>(true);
   const [initialLoad, setInitialLoad] = useState<boolean>(true);
-  const subscriptionToken = useAppSelector(selectSubscriptionToken);
   const dispatch = useAppDispatch();
   const subscriptionTokenCb = useCallback((e: IpcRendererEvent, ascendon: string | null) => {
     dispatch(updateSubscriptionToken(ascendon));
@@ -42,40 +38,9 @@ const App = () => {
   }, []);
 
   return initialLoad === false ? (
-    <div className={[styles['all-space'], styles['flexbox-horizontal']].join(' ')}>
-      <Sidebar collapsedWidth={'100px'} collapsed={collapsed} rootStyles={{
-        [`.${sidebarClasses.container}`]: {
-          height: '100%',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-        },
-      }}>
-        <Menu
-          menuItemStyles={{
-            button: ({ active }) => {
-              return {
-                backgroundColor: active ? 'rgba(0, 0, 0, 0.1)' : 'transparent',
-              };
-            },
-          }}
-        >
-          <MenuItem
-            onClick={() => setCollapsed(!collapsed)}
-            icon={collapsed ? <span>&#x25B6;</span> : <span>&#x25C0;</span>}
-          > Expand / Collapse </MenuItem>
-          <MenuItem active={true}> Home </MenuItem>
-        </Menu>
-        <Menu>
-          {subscriptionToken ?
-            <MenuItem onClick={() => f1tv.logout()} > Logout </MenuItem> :
-            <MenuItem onClick={() => f1tv.login()} > Login </MenuItem>}
-        </Menu>
-      </Sidebar>
-      <Outlet />
-    </div>
+    <Outlet />
   ) : (
-    <div className={styles['all-space']}>
+    <div>
       <h1>Loading...</h1>
     </div>
   );

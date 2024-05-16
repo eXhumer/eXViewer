@@ -15,7 +15,7 @@
   along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-import { PlayerAPI } from 'bitmovin-player';
+import { PlayerAPI, PlayerEvent } from 'bitmovin-player';
 import {
   AudioTrackSelectBox,
   BufferingOverlay,
@@ -26,7 +26,6 @@ import {
   ControlBar,
   ErrorMessageOverlay,
   FullscreenToggleButton,
-  PictureInPictureToggleButton,
   PlaybackSpeedSelectBox,
   PlaybackTimeLabel,
   PlaybackTimeLabelMode,
@@ -42,6 +41,7 @@ import {
   SettingsToggleButton,
   Spacer,
   TitleBar,
+  ToggleButton,
   UIContainer,
   UIInstanceManager,
   VideoQualitySelectBox,
@@ -50,6 +50,7 @@ import {
   i18n,
 } from 'bitmovin-player-ui';
 import { ButtonConfig } from 'bitmovin-player-ui/dist/js/framework/components/button';
+import { ToggleButtonConfig } from 'bitmovin-player-ui/dist/js/framework/components/togglebutton';
 
 class FastForwardButton extends Button<ButtonConfig> {
   private interval: number;
@@ -82,6 +83,48 @@ class RewindButton extends Button<ButtonConfig> {
     this.onClick.subscribe(() => {
       player.seek(Math.max(0, player.getCurrentTime() - this.interval));
     });
+  }
+}
+
+class PIPButton extends ToggleButton<ToggleButtonConfig> {
+  constructor(config?: ToggleButtonConfig) {
+    super(config ? config : {
+      cssClass: 'ui-piptogglebutton',
+    });
+  }
+
+  configure(player: PlayerAPI, uimanager: UIInstanceManager): void {
+    super.configure(player, uimanager);
+
+    const isPictureInPictureAvailable = () => {
+      return document.pictureInPictureEnabled;
+    };
+
+    const pictureInPictureStateHandler = () => {
+      document.pictureInPictureElement !== null ? this.on() : this.off();
+    };
+
+    const pictureInPictureAvailabilityChangedHandler = () => {
+      isPictureInPictureAvailable() ? this.show() : this.hide();
+    };
+
+    const playerReadyHandler = () => {
+      player.getVideoElement().addEventListener('enterpictureinpicture', pictureInPictureStateHandler);
+      player.getVideoElement().addEventListener('leavepictureinpicture', pictureInPictureStateHandler);
+    };
+
+    player.on(PlayerEvent.Ready, playerReadyHandler);
+
+    uimanager.getConfig().events.onUpdated.subscribe(pictureInPictureAvailabilityChangedHandler);
+
+    this.onClick.subscribe(() => {
+      document.pictureInPictureElement ?
+        document.exitPictureInPicture() :
+        player.getVideoElement().requestPictureInPicture();
+    });
+
+    pictureInPictureAvailabilityChangedHandler();
+    pictureInPictureStateHandler();
   }
 }
 
@@ -120,7 +163,7 @@ const PlayerUI = () => {
           new VolumeToggleButton(),
           new VolumeSlider(),
           new Spacer(),
-          new PictureInPictureToggleButton(),
+          new PIPButton(),
           new CastToggleButton(),
           new SettingsToggleButton({ settingsPanel: settingsPanel }),
           new FullscreenToggleButton(),
