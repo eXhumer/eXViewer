@@ -122,12 +122,6 @@ const App = () => {
     {videoContainer && config && <BitmovinPlayer
       playerKey={config.bitmovin.bitmovinKeys.player}
       config={{
-        remotecontrol: {
-          type: 'googlecast',
-          receiverApplicationId: config.bitmovin.chromecast.receiverApplicationId,
-          receiverVersion: 'v3',
-          messageNamespace: config.bitmovin.chromecast.messageNamespace,
-        },
         buffer: {
           audio: {
             forwardduration: config.bitmovin.buffer.audio.forwardduration,
