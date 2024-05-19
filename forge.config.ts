@@ -83,8 +83,8 @@ const osxNotarizePkg = async (pkgPath: string, appleId: string, appleIdPassword:
 
 const config: ForgeConfig = {
   hooks: {
-    packageAfterExtract: async (config, buildPath, electronVersion, platform, arch) => {
-      if (platform !== 'darwin' || arch !== 'universal')
+    packageAfterExtract: async (config, buildPath, electronVersion, platform) => {
+      if (platform !== 'darwin')
         return;
 
       const helpers = await readdir(buildPath, { recursive: true })
