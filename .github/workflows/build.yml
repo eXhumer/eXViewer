@@ -17,7 +17,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 21
+          node-version: 22
           check-latest: true
 
       - name: Set up Python
@@ -27,7 +27,9 @@ jobs:
           check-latest: true
 
       - name: Install dependencies
-        run: npm install
+        run: |
+          python3 -m pip install setuptools
+          npm install
 
       - name: Build package
         env:
