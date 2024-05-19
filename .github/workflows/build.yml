@@ -50,7 +50,15 @@ jobs:
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$CI_KEYCHAIN_PASSWORD" build.keychain
           npm run make -- --platform darwin --arch ${{ matrix.arch }}
 
-      - name: Upload package
+      - name: Upload package (DMG)
+        uses: actions/upload-artifact@v4
+        with:
+          name: eXViewer-darwin-${{ matrix.arch }}-Installer
+          path: out/make/*.dmg
+          if-no-files-found: error
+          compression-level: 9
+
+      - name: Upload package (ZIP)
         uses: actions/upload-artifact@v4
         with:
           name: eXViewer-darwin-${{ matrix.arch }}

@@ -150,9 +150,9 @@ const config: ForgeConfig = {
   },
   rebuildConfig: {},
   makers: [
-    new MakerZIP({}, ['win32', 'linux']),
+    new MakerZIP({}, ['darwin', 'win32', 'linux']),
     new MakerDMG({
-      name: `${productName} Setup`,
+      name: `Install ${productName}`,
       icon: './assets/icon.icns',
     }),
   ],
