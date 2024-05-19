@@ -10,7 +10,6 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "postinstall": "patch-package",
     "patch-dev": " npm run redeploy-electron-dev && npm run vmp-sign-dev",
     "redeploy-electron-dev": "ts-node redeploy-electron-dev.ts",
     "vmp-sign-dev": "ts-node vmp-sign-dev.ts"
