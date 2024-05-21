@@ -62,6 +62,8 @@ const App = () => {
         if (playData.streamType === 'DASHWV' && playData.drmType === 'widevine' && playData.laURL) {
           source.drm = {
             widevine: {
+              audioRobustness: 'SW_SECURE_CRYPTO', // Widevine L3
+              videoRobustness: 'SW_SECURE_CRYPTO', // Widevine L3
               LA_URL: playData.laURL,
               headers: {
                 'Ascendontoken': ascendon,
