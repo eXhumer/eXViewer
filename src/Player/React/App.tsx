@@ -82,7 +82,20 @@ const App = () => {
           source.dash = playData.url;
         }
 
-        currentRef.api.load(source);
+        if (!currentRef.api.isPlaying())
+          currentRef.api.load(source);
+
+        else {
+          if (currentRef.api.isLive()) {
+            const timeShift = currentRef.api.getTimeShift();
+            currentRef.api.load(source)
+              .then(() => currentRef.api.timeShift(timeShift));
+          } else {
+            const seekTime = currentRef.api.getCurrentTime();
+            currentRef.api.load(source)
+              .then(() => currentRef.api.seek(seekTime));
+          }
+        }
       });
   };
 
