@@ -27,7 +27,7 @@
     "@typescript-eslint/eslint-plugin": "^7.10.0",
     "@typescript-eslint/parser": "^7.10.0",
     "@vercel/webpack-asset-relocator-loader": "1.7.3",
-    "css-loader": "^7.1.1",
+    "css-loader": "^7.1.2",
     "dotenv": "^16.4.5",
     "electron": "github:castlabs/electron-releases#v30.0.6+wvcus",
     "eslint": "^8.57.0",
@@ -51,7 +51,7 @@
   "dependencies": {
     "@exhumer/f1tv-api": "^1.5.0",
     "@reduxjs/toolkit": "^2.2.5",
-    "bitmovin-player": "^8.164.0",
+    "bitmovin-player": "^8.165.0",
     "bitmovin-player-ui": "^3.63.0",
     "bootstrap": "^5.3.3",
     "react": "^18.3.1",
