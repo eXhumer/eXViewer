@@ -17,7 +17,7 @@
 
 import { useCallback, useEffect, useRef, useState } from 'react';
 import BitmovinPlayer, { BitmovinPlayerRef } from './Component/BitmovinPlayer';
-import type { SourceConfig } from 'bitmovin-player';
+import { type SourceConfig, PlayerEvent } from 'bitmovin-player';
 import { ContentVideoContainer, Config } from '@exhumer/f1tv-api';
 import { selectAscendon, update as updateAscendon } from './Reducer/Ascendon';
 import { selectConfig, update as updateConfig } from './Reducer/Config';
@@ -145,6 +145,92 @@ const App = () => {
           video: {
             forwardduration: config.bitmovin.buffer.video.forwardduration,
             backwardduration: config.bitmovin.buffer.video.backwardduration,
+          },
+        },
+        events: {
+          [PlayerEvent.Ready]: event => {
+            console.log('onReady', event);
+          },
+          [PlayerEvent.SourceLoaded]: event => {
+            console.log('onSourceLoaded', event);
+          },
+          [PlayerEvent.Play]: event => {
+            console.log('onPlay', event);
+          },
+          [PlayerEvent.Playing]: event => {
+            console.log('onPlaying', event);
+          },
+          [PlayerEvent.Paused]: event => {
+            console.log('onPaused', event);
+          },
+          [PlayerEvent.PlaybackFinished]: event => {
+            console.log('onPlaybackFinished', event);
+          },
+          [PlayerEvent.Destroy]: event => {
+            console.log('onDestroy', event);
+          },
+          [PlayerEvent.AdBreakStarted]: event => {
+            console.log('onAdBreakStarted', event);
+          },
+          [PlayerEvent.AdBreakFinished]: event => {
+            console.log('onAdBreakFinished', event);
+          },
+          [PlayerEvent.Error]: event => {
+            console.log('onError', event);
+          },
+          [PlayerEvent.ViewModeChanged]: event => {
+            console.log('onViewModeChanged', event);
+          },
+          [PlayerEvent.VolumeChanged]: event => {
+            console.log('onVolumeChanged', event);
+          },
+          [PlayerEvent.CastStart]: event => {
+            console.log('onCastStart', event);
+          },
+          [PlayerEvent.CastStarted]: event => {
+            console.log('onCastStarted', event);
+          },
+          [PlayerEvent.CastStopped]: event => {
+            console.log('onCastStopped', event);
+          },
+          [PlayerEvent.Seek]: event => {
+            console.log('onSeek', event);
+          },
+          [PlayerEvent.Seeked]: event => {
+            console.log('onSeeked', event);
+          },
+          [PlayerEvent.TimeShifted]: event => {
+            console.log('onTimeShifted', event);
+          },
+          [PlayerEvent.DownloadFinished]: event => {
+            console.log('onDownloadFinished', event);
+          },
+          [PlayerEvent.Metadata]: event => {
+            console.log('onMetadata', event);
+          },
+          [PlayerEvent.Muted]: event => {
+            console.log('onMuted', event);
+          },
+          [PlayerEvent.Unmuted]: event => {
+            console.log('onUnmuted', event);
+          },
+          [PlayerEvent.AudioChanged]: event => {
+            console.log('onAudioChanged', event);
+          },
+          [PlayerEvent.VideoQualityChanged]: event => {
+            console.log('onVideoQualityChanged', event);
+          },
+          [PlayerEvent.SubtitleEnabled]: event => {
+            console.log('onSubtitleEnabled', event);
+          },
+          [PlayerEvent.SubtitleDisabled]: event => {
+            console.log('onSubtitleDisabled', event);
+          },
+          [PlayerEvent.AudioAdded]: event => {
+            console.log('onAudioAdded', event);
+          },
+          [PlayerEvent.TimeChanged]: event => {
+            console.log('onTimeChanged', event);
           },
         },
         playback: {
