@@ -82,7 +82,7 @@ const App = () => {
           source.dash = playData.url;
         }
 
-        if (!currentRef.api.isPlaying())
+        if (!currentRef.api.getSource() === null)
           currentRef.api.load(source);
 
         else {
