@@ -61,7 +61,9 @@ class FastForwardButton extends Button<ButtonConfig> {
     super.configure(player, uimanager);
 
     this.onClick.subscribe(() => {
-      player.seek(Math.min(player.getDuration(), player.getCurrentTime() + this.interval));
+      player.isLive() ?
+        player.timeShift(Math.min(player.getTimeShift(), this.interval)) :
+        player.seek(Math.min(player.getDuration(), player.getCurrentTime() + this.interval));
     });
   }
 }
@@ -78,7 +80,9 @@ class RewindButton extends Button<ButtonConfig> {
     super.configure(player, uimanager);
 
     this.onClick.subscribe(() => {
-      player.seek(Math.max(0, player.getCurrentTime() - this.interval));
+      player.isLive() ?
+        player.timeShift(Math.max(player.getMaxTimeShift(), -this.interval)) :
+        player.seek(Math.max(0, player.getCurrentTime() - this.interval));
     });
   }
 }
