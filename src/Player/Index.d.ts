@@ -24,7 +24,7 @@ declare interface Player {
   onPlayerData: (cb: (e: IpcRendererEvent, result: ContentVideoContainer, ascendon: string, config: Config) => void) => void;
 }
 declare global {
-  declare module '*.module.css' {
+  declare module '*.module.scss' {
     const classes: { [key: string]: string };
     export default classes;
     export = classes;

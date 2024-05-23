@@ -21,10 +21,10 @@ import { rules } from './rules';
 import { plugins } from './plugins';
 
 rules.push({
-  test: /\.css$/,
+  test: /\.s[ac]ss$/,
   oneOf: [
     {
-      test: /\.module\.css$/,
+      test: /\.module\.s[ac]ss$/,
       use: [
         {
           loader: 'style-loader',
@@ -41,20 +41,14 @@ rules.push({
             },
           },
         },
+        {
+          loader: 'sass-loader',
+        },
       ],
     },
     {
-      use: ['style-loader', 'css-loader'],
+      use: ['style-loader', 'css-loader', 'sass-loader'],
     }
-  ],
-});
-
-rules.push({
-  test: /\.s[ac]ss$/,
-  use: [
-    'style-loader',
-    'css-loader',
-    'sass-loader',
   ],
 });
 
@@ -64,6 +58,6 @@ export const rendererConfig: Configuration = {
   },
   plugins,
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.scss', '.sass'],
+    extensions: ['.js', '.ts', '.jsx', '.tsx', '.scss', '.sass'],
   },
 };

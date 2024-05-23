@@ -16,7 +16,7 @@
 */
 
 import { PropsWithChildren } from 'react';
-import styles from './Overlay.module.css';
+import styles from './Overlay.module.scss';
 
 type OverlayProps = PropsWithChildren<{
   // No props

@@ -23,7 +23,7 @@ import { selectAscendon, update as updateAscendon } from './Reducer/Ascendon';
 import { selectConfig, update as updateConfig } from './Reducer/Config';
 import { useAppDispatch, useAppSelector } from './Hook';
 import Overlay from './Component/Overlay';
-import styles from './App.module.css';
+import styles from './App.module.scss';
 import type { IpcRendererEvent } from 'electron';
 
 import { author, productName } from '../../../package.json';
