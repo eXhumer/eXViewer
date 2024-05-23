@@ -62,7 +62,7 @@ class FastForwardButton extends Button<ButtonConfig> {
 
     this.onClick.subscribe(() => {
       player.isLive() ?
-        player.timeShift(Math.min(player.getTimeShift(), this.interval)) :
+        player.timeShift(Math.min(0, this.interval + player.getTimeShift())) :
         player.seek(Math.min(player.getDuration(), player.getCurrentTime() + this.interval));
     });
   }
@@ -81,7 +81,7 @@ class RewindButton extends Button<ButtonConfig> {
 
     this.onClick.subscribe(() => {
       player.isLive() ?
-        player.timeShift(Math.max(player.getMaxTimeShift(), -this.interval)) :
+        player.timeShift(Math.max(player.getTimeShift() - this.interval, player.getMaxTimeShift())):
         player.seek(Math.max(0, player.getCurrentTime() - this.interval));
     });
   }
