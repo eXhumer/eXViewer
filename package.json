@@ -11,8 +11,8 @@
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
     "patch-dev": " npm run redeploy-electron-dev && npm run vmp-sign-dev",
-    "redeploy-electron-dev": "ts-node redeploy-electron-dev.ts",
-    "vmp-sign-dev": "ts-node vmp-sign-dev.ts"
+    "redeploy-electron-dev": "ts-node scripts/redeploy-electron-dev.ts",
+    "vmp-sign-dev": "ts-node scripts/vmp-sign-dev.ts"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.4.0",
