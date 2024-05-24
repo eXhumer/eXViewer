@@ -31,5 +31,5 @@ if (!process.env.CASTLABS_EVS_USERNAME || !process.env.CASTLABS_EVS_PASSWORD) {
   process.exit(1);
 }
 
-vmpSignPkg(`${resolve(join(__dirname, 'node_modules', 'electron', 'dist'))}`, process.env.CASTLABS_EVS_USERNAME, process.env.CASTLABS_EVS_PASSWORD)
+vmpSignPkg(`${resolve(join(__dirname, '..', 'node_modules', 'electron', 'dist'))}`, process.env.CASTLABS_EVS_USERNAME, process.env.CASTLABS_EVS_PASSWORD)
   .then(() => console.log('VMP signed node_modules/electron/dist successfully!'));
