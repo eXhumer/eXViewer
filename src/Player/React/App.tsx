@@ -48,15 +48,20 @@ const App = () => {
     if (!videoContainer || !playerRef.current)
       return;
 
+    const stream = videoContainer.metadata.additionalStreams ?
+      videoContainer.metadata.additionalStreams.find(stream => stream.channelId === channelId) :
+      null;
+
     player
-      .contentPlay(videoContainer.contentId, channelId)
+      .contentPlay(videoContainer.contentId, stream && stream.identifier !== 'WIF' ? channelId : undefined)
       .then(playData => {
         const currentRef = playerRef.current;
 
-        const stream = videoContainer.metadata.additionalStreams ? videoContainer.metadata.additionalStreams.find(stream => stream.identifier === 'WIF') : null;
 
         const source: SourceConfig = {
-          title: `${videoContainer.metadata.title}${stream && stream.type === 'obc' ? ` - ${stream.driverFirstName} ${stream.driverLastName}` : ''}`,
+          title: `${videoContainer.metadata.title}${stream && stream.type === 'obc' ?
+            ` - ${stream.driverFirstName} ${stream.driverLastName}` :
+            stream ? ` - ${stream.title}` : ''}`,
         };
 
         if (playData.streamType === 'DASHWV' && playData.drmType === 'widevine' && playData.laURL) {
@@ -113,7 +118,7 @@ const App = () => {
 
     if (videoContainer.metadata.additionalStreams) {
       const defaultStream = videoContainer.metadata.additionalStreams.find(stream => stream.default === true);
-      switchChannel(defaultStream.identifier !== 'WIF' ? defaultStream.channelId : undefined);
+      switchChannel(defaultStream.channelId);
     } else
       switchChannel();
   }, [videoContainer]);
@@ -126,7 +131,7 @@ const App = () => {
             <button
               key={stream.channelId}
               onClick={() => {
-                switchChannel(stream.identifier !== 'WIF' ? stream.channelId : undefined);
+                switchChannel(stream.channelId);
               }}
             >
               {stream.title}
