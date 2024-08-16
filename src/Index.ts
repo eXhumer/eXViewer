@@ -27,7 +27,6 @@ declare const PLAYER_PRELOAD_WEBPACK_ENTRY: string;
 declare const PLAYER_WEBPACK_ENTRY: string;
 
 const APP_CONFIG_PATH = join(app.getPath('userData'), 'config.json');
-const WM_INITMENU = 0x0116;
 
 let loginWindow: BrowserWindow | null = null;
 let mainWindow: BrowserWindow | null = null;
@@ -63,14 +62,10 @@ const createPlayerWindow = (container: ContentVideoContainer) => {
 
   playerWindow.setAspectRatio(16 / 9);
 
-  // Workaround for draggable frameless window in Windows
-  // https://github.com/electron/electron/issues/24893#issuecomment-1109262719
-  if (process.platform === 'win32')
-    playerWindow.hookWindowMessage(WM_INITMENU, () => {
-      playerWindow.setEnabled(false);
-      playerWindow.setEnabled(true);
-      playerCtxMenuPopup(playerWindow);
-    });
+  playerWindow.on('system-context-menu', e => {
+    e.preventDefault();
+    playerCtxMenuPopup(playerWindow);
+  })
 
   playerWindow.on('ready-to-show', () => {
     playerWindow.webContents.send(IPCChannel.Player.PLAYER_DATA, container, f1tv.ascendon, f1tv.config);
@@ -191,7 +186,7 @@ app.on('window-all-closed', () => {
 
 try {
   accessSync(APP_CONFIG_PATH, constants.F_OK | constants.R_OK);
-} catch (e) {
+} catch (e) { // eslint-disable-line @typescript-eslint/no-unused-vars
   writeFileSync(APP_CONFIG_PATH, JSON.stringify(DefaultAppConfig));
 } finally {
   const config = JSON.parse(readFileSync(APP_CONFIG_PATH, { encoding: 'utf-8' })) as AppConfig;
