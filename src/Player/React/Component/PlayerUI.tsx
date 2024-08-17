@@ -61,8 +61,10 @@ class FastForwardButton extends Button<ButtonConfig> {
     super.configure(player, uimanager);
 
     this.onClick.subscribe(() => {
-      player.isLive() ?
-        player.timeShift(Math.min(0, this.interval + player.getTimeShift())) :
+      if (player.isLive())
+        player.timeShift(Math.min(0, this.interval + player.getTimeShift()));
+
+      else
         player.seek(Math.min(player.getDuration(), player.getCurrentTime() + this.interval));
     });
   }
@@ -80,8 +82,10 @@ class RewindButton extends Button<ButtonConfig> {
     super.configure(player, uimanager);
 
     this.onClick.subscribe(() => {
-      player.isLive() ?
-        player.timeShift(Math.max(player.getTimeShift() - this.interval, player.getMaxTimeShift())):
+      if (player.isLive())
+        player.timeShift(Math.max(player.getTimeShift() - this.interval, player.getMaxTimeShift()));
+
+      else
         player.seek(Math.max(0, player.getCurrentTime() - this.interval));
     });
   }
@@ -100,11 +104,19 @@ class PIPButton extends ToggleButton<ToggleButtonConfig> {
     };
 
     const pictureInPictureStateHandler = () => {
-      document.pictureInPictureElement !== null ? this.on() : this.off();
+      if (document.pictureInPictureElement)
+        this.on();
+
+      else
+        this.off();
     };
 
     const pictureInPictureAvailabilityChangedHandler = () => {
-      isPictureInPictureAvailable() ? this.show() : this.hide();
+      if (isPictureInPictureAvailable())
+        this.show();
+
+      else
+        this.hide();
     };
 
     const playerReadyHandler = () => {
@@ -117,8 +129,10 @@ class PIPButton extends ToggleButton<ToggleButtonConfig> {
     uimanager.getConfig().events.onUpdated.subscribe(pictureInPictureAvailabilityChangedHandler);
 
     this.onClick.subscribe(() => {
-      document.pictureInPictureElement ?
-        document.exitPictureInPicture() :
+      if (document.pictureInPictureElement)
+        document.exitPictureInPicture();
+
+      else
         player.getVideoElement().requestPictureInPicture();
     });
 
