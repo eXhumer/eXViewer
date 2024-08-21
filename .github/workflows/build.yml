@@ -46,7 +46,15 @@ jobs:
         run: python3 -m pip install setuptools
         if: ${{ runner.os == 'macOS' }}
 
+      - name: Setup Yarn caching
+        id: yarn-cache
+        uses: actions/cache@v4
+        with:
+          path: node_modules
+          key: ${{ runner.os }}-yarn-${{ hashFiles('yarn.lock') }}
+
       - name: Install Yarn dependencies
+        if: steps.yarn-cache.outputs.cache-hit != 'true'
         run: yarn install --frozen-lockfile
 
       - name: Build package (macOS)
