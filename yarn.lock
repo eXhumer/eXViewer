@@ -1525,9 +1525,9 @@ bitmovin-player-ui@^3.69.0:
   integrity sha512-qjffK5KJ+ApuFUNJdDUYb+24EgExZ/48tpwrpO3GISZv8yOlmPetA3zZK248URbFCGnc9NrcA4mLN4LTBXkZLQ==
 
 bitmovin-player@^8.177.1:
-  version "8.177.1"
-  resolved "https://registry.yarnpkg.com/bitmovin-player/-/bitmovin-player-8.177.1.tgz#7cd0a193e68e7cf70a812fb68427076264ed0a24"
-  integrity sha512-oi+IGqsFVkFlrAF1Ryh1EyHePi4EMmhGWJNWy1qHjZdn4lon/ZQFHy9HZMRS1S/sVbGkuOkST2BoZk1iHtjHQQ==
+  version "8.178.0"
+  resolved "https://registry.yarnpkg.com/bitmovin-player/-/bitmovin-player-8.178.0.tgz#42dd2157d21e4f7b4a79c8236e4c466684e3a960"
+  integrity sha512-xHYOtpaoNF7Jcgnc+YMyNeMBkt2vcq7HlTFnypAXibIhOLlWjeGIqPKPqX2D6VFrJ/rgIKnDtghm+tSU0/TSeA==
 
 bl@^4.1.0:
   version "4.1.0"
