@@ -35,9 +35,9 @@
 ## Dependency version notes
 Some dependencies are locked to specific versions due to compatibility issues caused due to the newer versions.
 
-* `eslint` is locked to `^8.57.0` due to `@typescript-eslint/eslint-plugin`, `@typescript-eslint/parser` & `eslint-plugin-import` not being available for major version 9 yet. [`@typescript-eslint/eslint-plugin` & `@typescript-eslint/parser` have released beta version `rc-v8` to add support for ESLint 9](https://typescript-eslint.io/blog/announcing-typescript-eslint-v8-beta/#as-an-existing-user), however [`eslint-plugin-import` has no support for ESLint 9 yet](https://github.com/import-js/eslint-plugin-import/pull/2996).
+* [`eslint` is locked to `^8.57.0` due to `eslint-plugin-import` not being available for major version 9 yet.](https://github.com/import-js/eslint-plugin-import/pull/2996).
 * `@vercel/webpack-asset-relocator-loader` is locked to [`1.7.3` due to Electron Forge](https://github.com/electron/forge/issues/3600)
-* `sass` is locked to [`1.77.6` due to breaking changes with mixed declarations](https://sass-lang.com/documentation/breaking-changes/mixed-decls/). `1.77.7` & above shows warning regarding this while launching in development mode due to loading SCSS from packages `bootstrap` & `bitmovin-player-ui`.
+* `sass` is locked to [`1.77.6` due to breaking changes with mixed declarations](https://sass-lang.com/documentation/breaking-changes/mixed-decls/). `1.77.7` & above shows warning regarding this while launched in development mode due to loading SCSS from packages `bootstrap` & the player skin.
 
 ## License
 
