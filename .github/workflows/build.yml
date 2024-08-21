@@ -9,13 +9,16 @@ on:
   workflow_dispatch:
 
 jobs:
-  build-darwin:
-    runs-on: macos-latest
+  build-matrix:
     strategy:
       matrix:
-        arch: [arm64, universal, x64]
+        image: [
+          {os: macos-latest, arch: [arm64, universal, x64], python: '3.12'},
+          {os: ubuntu-latest, arch: [x64]},
+          {os: windows-latest, arch: [ia32, x64]}
+        ]
         node: [22]
-        python: [3.12]
+    runs-on: ${{ matrix.image.os }}
 
     steps:
       - name: Checkout
@@ -28,19 +31,23 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node }}
-          cache: yarn
 
-      - name: Set up Python
+      - name: Setup Python
         uses: actions/setup-python@v5
         with:
-          python-version: '${{ matrix.python }}'
+          python-version: ${{ matrix.image.python }}
+          check-latest: true
+        if: ${{ runner.os == 'macOS' }}
 
-      - name: Install dependencies
-        run: |
-          python3 -m pip install setuptools
-          yarn install --frozen-lockfile
+      - name: Install Python dependencies
+        run: python3 -m pip install setuptools
+        if: ${{ runner.os == 'macOS' }}
 
-      - name: Build package
+      - name: Install Yarn dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build package (macOS)
+        if: ${{ runner.os == 'macOS' }}
         env:
           APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
           APPLE_ID: ${{ secrets.APPLE_ID }}
@@ -57,92 +64,53 @@ jobs:
           security unlock-keychain -p "$CI_KEYCHAIN_PASSWORD" build.keychain
           security import Certificates.p12 -k build.keychain -P "$CODESIGN_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$CI_KEYCHAIN_PASSWORD" build.keychain
-          yarn run make -- --platform darwin --arch ${{ matrix.arch }}
+          yarn run make -- --platform darwin --arch ${{ matrix.image.arch }}
 
-      - name: Upload package (DMG)
+      - name: Build package
+        if: ${{ runner.os != 'macOS' }}
+        shell: 'bash'
+        env:
+          CASTLABS_EVS_USERNAME: ${{ secrets.CASTLABS_EVS_USERNAME }}
+          CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
+        run: |
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            yarn run package -- --platform linux --arch ${{ matrix.image.arch }}
+          else
+            yarn run package -- --platform win32 --arch ${{ matrix.image.arch }}
+          fi
+
+      - name: Upload package (Windows)
+        if: ${{ runner.os == 'Windows' }}
         uses: actions/upload-artifact@v4
         with:
-          name: eXViewer-darwin-${{ matrix.arch }}-Installer
+          name: eXViewer-win32-${{ matrix.image.arch }}
+          path: out/eXViewer-win32-${{ matrix.image.arch }}/
+          if-no-files-found: error
+          compression-level: 9
+
+      - name: Upload package (Linux)
+        if: ${{ runner.os == 'Linux' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: eXViewer-linux-${{ matrix.image.arch }}
+          path: out/eXViewer-linux-${{ matrix.image.arch }}/
+          if-no-files-found: error
+          compression-level: 9
+
+      - name: Upload package (macOS / DMG)
+        if: ${{ runner.os == 'macOS' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: eXViewer-darwin-${{ matrix.image.arch }}-Installer
           path: out/make/*.dmg
           if-no-files-found: error
           compression-level: 9
 
-      - name: Upload package (ZIP)
+      - name: Upload package (macOS / ZIP)
+        if: ${{ runner.os == 'macOS' }}
         uses: actions/upload-artifact@v4
         with:
-          name: eXViewer-darwin-${{ matrix.arch }}
-          path: out/make/zip/darwin/${{ matrix.arch }}/*
-          if-no-files-found: error
-          compression-level: 9
-
-  build-linux:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        arch: [x64]
-        node: [22]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Build package
-        env:
-          CASTLABS_EVS_USERNAME: ${{ secrets.CASTLABS_EVS_USERNAME }}
-          CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
-        run: yarn run package -- --platform linux --arch ${{ matrix.arch }}
-
-      - name: Upload package
-        uses: actions/upload-artifact@v4
-        with:
-          name: eXViewer-linux-${{ matrix.arch }}
-          path: out/eXViewer-linux-${{ matrix.arch }}/
-          if-no-files-found: error
-          compression-level: 9
-
-  build-win32:
-    runs-on: windows-latest
-    strategy:
-      matrix:
-        arch: [x64, ia32]
-        node: [22]
-
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Enable Corepack
-        run: corepack enable
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-
-      - name: Install dependencies
-        run: yarn install --frozen-lockfile
-
-      - name: Build package
-        env:
-          CASTLABS_EVS_USERNAME: ${{ secrets.CASTLABS_EVS_USERNAME }}
-          CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
-        run: yarn run package -- --platform win32 --arch ${{ matrix.arch }}
-
-      - name: Upload package
-        uses: actions/upload-artifact@v4
-        with:
-          name: eXViewer-win32-${{ matrix.arch }}
-          path: out/eXViewer-win32-${{ matrix.arch }}/
+          name: eXViewer-darwin-${{ matrix.image.arch }}
+          path: out/make/zip/darwin/${{ matrix.image.arch }}/*
           if-no-files-found: error
           compression-level: 9
