@@ -1,7 +1,8 @@
+@use 'sass:color';
 @import 'variables';
 
 .#{$prefix}-ui-skin-cast-receiver {
-  $background-color: transparentize($color-background, .15);
+  $background-color: color.adjust($color-background, $alpha: .15);
   $overscan-margin: 10%;
 
   // Add title safe margins for overscan TV sets
@@ -47,7 +48,7 @@
       // Replace the shadow-based text border with a transparent backdrop for better rendering
       // performance on Chromecast.
       .#{$prefix}-ui-subtitle-label {
-        background-color: transparentize($subtitle-text-border-color, .5);
+        background-color: color.adjust($subtitle-text-border-color, $alpha: .5);
         box-decoration-break: clone;
         display: inline-flex;
         line-height: 2em;

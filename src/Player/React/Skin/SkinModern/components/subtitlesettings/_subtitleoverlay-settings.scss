@@ -1,3 +1,5 @@
+@use 'sass:color';
+@use 'sass:string';
 @import '../../variables';
 @import '../../mixins';
 
@@ -40,7 +42,7 @@
     @each $opacity-name, $opacity-value in $opacities {
       &.#{$prefix}-fontcolor-#{$color-name}#{$opacity-name} {
         .#{$prefix}-ui-subtitle-label {
-          color: transparentize($color-value, 1 - $opacity-value);
+          color: color.adjust($color-value, $alpha: 1 - $opacity-value);
         }
       }
     }
@@ -51,7 +53,7 @@
     @each $opacity-name, $opacity-value in $opacities {
       &.#{$prefix}-bgcolor-#{$color-name}#{$opacity-name} .#{$prefix}-subtitle-region-container {
         .#{$prefix}-ui-subtitle-label {
-          background-color: transparentize($color-value, 1 - $opacity-value);
+          background-color: color.adjust($color-value, $alpha: 1 - $opacity-value);
         }
       }
     }
@@ -61,7 +63,7 @@
   @each $color-name, $color-value in $colors {
     @each $opacity-name, $opacity-value in $opacities {
       &.#{$prefix}-windowcolor-#{$color-name}#{$opacity-name} .#{$prefix}-subtitle-region-container {
-        background-color: transparentize($color-value, 1 - $opacity-value);
+        background-color: color.adjust($color-value, $alpha: 1 - $opacity-value);
       }
     }
   }
@@ -79,7 +81,7 @@
   @each $name, $value in $character-edges {
     &.#{$prefix}-characteredge-#{$name} {
       .#{$prefix}-ui-subtitle-label {
-        text-shadow: unquote($value);
+        text-shadow: string.unquote($value);
       }
     }
   }

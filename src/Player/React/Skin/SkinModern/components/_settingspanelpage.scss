@@ -1,3 +1,4 @@
+@use 'sass:color';
 @import '../variables';
 
 %ui-settings-panel-page {
@@ -24,7 +25,7 @@
   }
 
   .#{$prefix}-ui-settings-panel-item {
-    border-bottom: 1px solid transparentize($color-secondary, .7);
+    border-bottom: 1px solid color.adjust($color-secondary, $alpha: .7);
     padding: .5em 0;
     white-space: nowrap;
 

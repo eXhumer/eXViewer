@@ -1,3 +1,4 @@
+@use 'sass:color';
 @import '../variables';
 @import '../mixins';
 
@@ -10,7 +11,7 @@
     )
   );
 
-  $background-color: transparentize($color-background, .15);
+  $background-color: color.adjust($color-background, $alpha: .15);
 
   background-color: $background-color;
   bottom: 5em;

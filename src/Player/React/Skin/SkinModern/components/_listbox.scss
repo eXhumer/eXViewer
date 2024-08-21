@@ -1,3 +1,4 @@
+@use 'sass:color';
 @import '../variables';
 @import '../mixins';
 
@@ -20,11 +21,11 @@
     }
 
     &.#{$prefix}-selected {
-      background-color: transparentize($color-highlight, .3);
+      background-color: color.adjust($color-highlight, $alpha: .3);
     }
 
     &:hover {
-      background-color: transparentize($color-highlight, .15);
+      background-color: color.adjust($color-highlight, $alpha: .15);
     }
 
     &:last-child {

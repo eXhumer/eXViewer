@@ -1,3 +1,4 @@
+@use 'sass:color';
 @import '../variables';
 @import '../mixins';
 
@@ -31,7 +32,7 @@ $seekbar-height: .3125em;
     .#{$prefix}-seekbar-backdrop {
       @extend %bar;
 
-      background-color: transparentize($color-primary, .8);
+      background-color: color.adjust($color-primary, $alpha: .8);
       margin: $bar-inset 0;
       width: 100%;
     }
@@ -48,7 +49,7 @@ $seekbar-height: .3125em;
     .#{$prefix}-seekbar-seekposition {
       @extend %bar;
 
-      background-color: transparentize($color-primary, .8);
+      background-color: color.adjust($color-primary, $alpha: .8);
       margin: $bar-inset 0;
     }
 
@@ -65,7 +66,7 @@ $seekbar-height: .3125em;
       @extend %bar;
       @include seekbar-position-marker($seekbar-height * 3);
 
-      background-color: transparentize($color-highlight, .5);
+      background-color: color.adjust($color-highlight, $alpha: .5);
       border: solid $color-highlight .1875em;
       border-radius: 50%;
     }

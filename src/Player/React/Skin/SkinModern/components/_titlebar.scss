@@ -1,3 +1,4 @@
+@use 'sass:color';
 @import '../variables';
 @import '../mixins';
 
@@ -28,7 +29,7 @@
     }
 
     .#{$prefix}-label-metadata-description {
-      color: lighten($color-secondary, 30%);
+      color: color.adjust($color-secondary, $lightness: 30%);
       cursor: default;
       display: block;
       text-shadow: 0 0 5px $color-black;
