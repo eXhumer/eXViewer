@@ -1519,7 +1519,7 @@ binary-extensions@^2.0.0:
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.3.0.tgz#f6e14a97858d327252200242d4ccfe522c445522"
   integrity sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==
 
-bitmovin-player-ui@^3.69.0:
+bitmovin-player-ui@^3.70.0:
   version "3.70.0"
   resolved "https://registry.yarnpkg.com/bitmovin-player-ui/-/bitmovin-player-ui-3.70.0.tgz#86f2fa6020438e5b022eab8e0ba181753466bd1d"
   integrity sha512-AtZaK8uvER7lzkORcJkYaXC9WzTqhKqOqHGjcd/es4mCt34l+Ir0p0CKA27YS0dGknV2RZ6c20BFcnWDwlKOeg==
