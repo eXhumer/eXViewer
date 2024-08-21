@@ -4,13 +4,14 @@
   "version": "1.0.0",
   "description": "Unofficial F1TV viewer and live timing client",
   "main": ".webpack/main",
+  "packageManager": "yarn@1.22.22",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint --ext .ts,.tsx .",
-    "patch-dev": " npm run redeploy-electron-dev && npm run vmp-sign-dev",
+    "patch-dev": " yarn redeploy-electron-dev && yarn vmp-sign-dev",
     "redeploy-electron-dev": "ts-node scripts/redeploy-electron-dev.ts",
     "vmp-sign-dev": "ts-node scripts/vmp-sign-dev.ts"
   },

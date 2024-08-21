@@ -14,27 +14,31 @@ jobs:
     strategy:
       matrix:
         arch: [arm64, universal, x64]
+        node: [22]
+        python: [3.12]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js with cache
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          check-latest: true
+          node-version: ${{ matrix.node }}
+          cache: yarn
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          check-latest: true
+          python-version: '${{ matrix.python }}'
 
       - name: Install dependencies
         run: |
           python3 -m pip install setuptools
-          npm install
+          yarn install --frozen-lockfile
 
       - name: Build package
         env:
@@ -53,7 +57,7 @@ jobs:
           security unlock-keychain -p "$CI_KEYCHAIN_PASSWORD" build.keychain
           security import Certificates.p12 -k build.keychain -P "$CODESIGN_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$CI_KEYCHAIN_PASSWORD" build.keychain
-          npm run make -- --platform darwin --arch ${{ matrix.arch }}
+          yarn run make -- --platform darwin --arch ${{ matrix.arch }}
 
       - name: Upload package (DMG)
         uses: actions/upload-artifact@v4
@@ -76,31 +80,35 @@ jobs:
     strategy:
       matrix:
         arch: [x64]
+        node: [22]
+        python: [3.12]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js with cache
         uses: actions/setup-node@v4
         with:
-          node-version: 21
-          check-latest: true
+          node-version: ${{ matrix.node }}
+          cache: yarn
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          check-latest: true
+          python-version: '${{ matrix.python }}'
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install --frozen-lockfile
 
       - name: Build package
         env:
           CASTLABS_EVS_USERNAME: ${{ secrets.CASTLABS_EVS_USERNAME }}
           CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
-        run: npm run package -- --platform linux --arch ${{ matrix.arch }}
+        run: yarn run package -- --platform linux --arch ${{ matrix.arch }}
 
       - name: Upload package
         uses: actions/upload-artifact@v4
@@ -115,31 +123,35 @@ jobs:
     strategy:
       matrix:
         arch: [x64, ia32]
+        node: [22]
+        python: [3.12]
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
 
-      - name: Set up Node.js
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js with cache
         uses: actions/setup-node@v4
         with:
-          node-version: 21
-          check-latest: true
+          node-version: ${{ matrix.node }}
+          cache: yarn
 
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.12'
-          check-latest: true
+          python-version: '${{ matrix.python }}'
 
       - name: Install dependencies
-        run: npm install
+        run: yarn install --frozen-lockfile
 
       - name: Build package
         env:
           CASTLABS_EVS_USERNAME: ${{ secrets.CASTLABS_EVS_USERNAME }}
           CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
-        run: npm run package -- --platform win32 --arch ${{ matrix.arch }}
+        run: yarn run package -- --platform win32 --arch ${{ matrix.arch }}
 
       - name: Upload package
         uses: actions/upload-artifact@v4
