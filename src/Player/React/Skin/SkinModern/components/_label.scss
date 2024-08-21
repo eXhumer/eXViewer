@@ -4,8 +4,10 @@
   @extend %ui-component;
   @include hidden;
 
-  cursor: default;
-  white-space: nowrap;
+  & {
+    cursor: default;
+    white-space: nowrap;
+  }
 }
 
 .#{$prefix}-ui-label {

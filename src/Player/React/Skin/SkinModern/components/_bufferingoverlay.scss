@@ -18,7 +18,9 @@
   @include layout-cover;
   @include hidden-animated($animation-duration * 2);
 
-  background-color: $color-background-highlight;
+  & {
+    background-color: $color-background-highlight;
+  }
 
   > .#{$prefix}-container-wrapper {
     padding: 3em;
@@ -62,12 +64,14 @@
       }
     }
 
-    animation: #{$prefix}-fancy $buffering-animation-duration ease-in infinite;
-    background: url('../Asset/SkinModern/images/loader.svg') no-repeat center;
-    display: inline-block;
-    height: 2em;
-    margin: .2em;
-    width: 2em;
+    & {
+      animation: #{$prefix}-fancy $buffering-animation-duration ease-in infinite;
+      background: url('../Asset/SkinModern/images/loader.svg') no-repeat center;
+      display: inline-block;
+      height: 2em;
+      margin: .2em;
+      width: 2em;
+    }
 
     @for $i from 1 through 3 {
       &:nth-child(#{$i}) {

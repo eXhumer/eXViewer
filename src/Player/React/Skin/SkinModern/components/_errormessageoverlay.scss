@@ -6,8 +6,10 @@
   @include layout-cover;
   @include hidden;
 
-  background-color: $color-background;
-  pointer-events: none;
+  & {
+    background-color: $color-background;
+    pointer-events: none;
+  }
 
   .#{$prefix}-ui-errormessage-label {
     color: $color-primary;

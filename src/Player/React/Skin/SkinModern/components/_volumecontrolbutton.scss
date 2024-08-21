@@ -10,11 +10,13 @@
   .#{$prefix}-ui-volumeslider {
     @include animate-slide-in-from-bottom(6em, $animation-duration-short);
 
-    background-color: $color-background;
-    bottom: 100%;
-    height: 6em;
-    position: absolute;
-    width: 1.5em;
+    & {
+      background-color: $color-background;
+      bottom: 100%;
+      height: 6em;
+      position: absolute;
+      width: 1.5em;
+    }
 
     .#{$prefix}-seekbar {
       height: auto;

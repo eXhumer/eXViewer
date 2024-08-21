@@ -6,8 +6,10 @@
   @include layout-cover;
   @include hidden-animated;
 
-  background: $color-background url('../Asset/SkinModern/images/chromecast.svg') center no-repeat;
-  background-size: 7em 7em;
+  & {
+    background: $color-background url('../Asset/SkinModern/images/chromecast.svg') center no-repeat;
+    background-size: 7em 7em;
+  }
 
   .#{$prefix}-ui-cast-status-label {
     color: $color-primary;

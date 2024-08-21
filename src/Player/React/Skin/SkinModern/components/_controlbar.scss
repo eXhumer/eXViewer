@@ -6,10 +6,12 @@
   @include hidden-animated-focusable;
   @include layout-align-bottom;
 
-  background: linear-gradient(to bottom, $color-transparent, $color-background-bars);
-  box-sizing: border-box;
-  line-height: 1em;
-  padding: 1em 1em .5em;
+  & {
+    background: linear-gradient(to bottom, $color-transparent, $color-background-bars);
+    box-sizing: border-box;
+    line-height: 1em;
+    padding: 1em 1em .5em;
+  }
 
   .#{$prefix}-controlbar-top,
   .#{$prefix}-controlbar-bottom {
@@ -54,8 +56,10 @@
         > * {
           @include hidden; // Add hidden here too, else it is overwritten by display: table-cell
 
-          display: table-cell;
-          vertical-align: middle;
+          & {
+            display: table-cell;
+            vertical-align: middle;
+          }
         }
 
         .#{$prefix}-ui-volumeslider {

@@ -11,9 +11,11 @@
 }
 
 @mixin hidden-animated($duration: $animation-duration) {
-  opacity: 1;
-  transition: hidden-animated-transition($duration);
-  visibility: visible;
+  & {
+    opacity: 1;
+    transition: hidden-animated-transition($duration);
+    visibility: visible;
+  }
 
   &.#{$prefix}-hidden {
     opacity: 0;
@@ -58,7 +60,9 @@
 
   @include hidden-animated($duration);
 
-  transition: $transitions-string;
+  & {
+    transition: $transitions-string;
+  }
 }
 
 // Cover the whole parent element
@@ -73,16 +77,20 @@
 
 // Align to parent's bottom
 @mixin layout-align-bottom {
-  bottom: 0;
-  position: absolute;
-  width: 100%;
+  & {
+    bottom: 0;
+    position: absolute;
+    width: 100%;
+  }
 }
 
 // Align to parent's top
 @mixin layout-align-top {
-  position: absolute;
-  top: 0;
-  width: 100%;
+  & {
+    position: absolute;
+    top: 0;
+    width: 100%;
+  }
 }
 
 // H/V center items in the middle of the overlay

@@ -4,12 +4,14 @@
   @extend %ui-container;
   @include hidden-animated;
 
-  bottom: 100%;
-  left: 0;
-  margin-bottom: 1em;
-  pointer-events: none;
-  position: absolute;
-  text-align: center;
+  & {
+    bottom: 100%;
+    left: 0;
+    margin-bottom: 1em;
+    pointer-events: none;
+    position: absolute;
+    text-align: center;
+  }
 
   // Center container on left edge to get it centered over timeline position
   %center-on-left-edge {

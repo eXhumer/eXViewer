@@ -22,7 +22,9 @@
     }
   }
 
-  background-image: url('../Asset/SkinModern/images/close.svg');
+  & {
+    background-image: url('../Asset/SkinModern/images/close.svg');
+  }
 
   &:hover {
     @include svg-icon-shadow;

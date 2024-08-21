@@ -6,12 +6,14 @@
     @extend %ui-container;
     @include hidden;
 
-    font-size: 1.2em;
-    pointer-events: none;
-    position: absolute;
-    text-align: center;
-    inset: 0;
-    transition: bottom $animation-duration-short ease-out;
+    & {
+      font-size: 1.2em;
+      pointer-events: none;
+      position: absolute;
+      text-align: center;
+      inset: 0;
+      transition: bottom $animation-duration-short ease-out;
+    }
 
     * {
       // This aims to prevent possibly conflicting style definitions inherited
