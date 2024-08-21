@@ -3,7 +3,6 @@
 
 .#{$prefix}-ui-titlebar {
   @extend %ui-container;
-
   @include hidden-animated-focusable;
   @include layout-align-top;
 

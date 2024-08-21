@@ -1,16 +1,9 @@
 .#{$prefix}-ui-subtitle-overlay {
   &.#{$prefix}-cea608 {
-
-    bottom: 2em;
-    left: 3em;
-    right: 3em;
-    top: 2em;
+    inset: 2em 3em;
 
     .#{$prefix}-subtitle-region-container.#{$prefix}-subtitle-position-default {
-      bottom: 0;
-      left: 0;
-      right: 0;
-      top: 0;
+      inset: 0;
     }
 
     .#{$prefix}-ui-subtitle-label {
@@ -19,7 +12,6 @@
       position: absolute;
       text-transform: uppercase;
 
-      // sass-lint:disable force-pseudo-nesting nesting-depth
       &:nth-child(1n-1)::after {
         content: normal;
         white-space: normal;

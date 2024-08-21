@@ -1,7 +1,6 @@
 @import 'variables';
 
 .#{$prefix}-ui-skin-cast-receiver {
-
   $background-color: transparentize($color-background, .15);
   $overscan-margin: 10%;
 
@@ -65,7 +64,6 @@
         opacity: .7;
       }
 
-      // sass-lint:disable force-element-nesting
       &.#{$prefix}-on .#{$prefix}-image,
       &.#{$prefix}-off .#{$prefix}-image {
         animation: none;

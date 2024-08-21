@@ -68,7 +68,6 @@
   }
 
   // When casting, also display pause icon and disable animations because the transition doesn't look right
-  // sass-lint:disable nesting-depth
   &.#{$prefix}-remote-control {
     .#{$prefix}-ui-hugeplaybacktogglebutton {
       &.#{$prefix}-on {
@@ -114,14 +113,12 @@
   }
 
   // Adjustments for screen width x <= 600
-  // sass-lint:disable no-empty-rulesets
   &.#{$prefix}-layout-max-width-400,
   &.#{$prefix}-layout-max-width-600 {
     // none yet
   }
 
   // IE9 compatibility: fallback for missing flexbox support
-  // sass-lint:disable nesting-depth
   &.#{$prefix}-no-flexbox {
     .#{$prefix}-ui-titlebar {
       > .#{$prefix}-container-wrapper {

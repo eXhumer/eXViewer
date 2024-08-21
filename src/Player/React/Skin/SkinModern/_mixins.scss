@@ -45,15 +45,19 @@
  */
 @mixin hidden-animated-with-additional-transitions($duration: $animation-duration, $transitions: ()) {
   $transitions-string: hidden-animated-transition($duration);
+
   @each $property, $property-options in $transitions {
     $property-settings: $property;
+
     @each $option in $property-options {
       $property-settings: $property-settings $option;
     }
+
     $transitions-string: $transitions-string, $property-settings;
   }
 
   @include hidden-animated($duration);
+
   transition: $transitions-string;
 }
 
@@ -100,7 +104,6 @@
   }
 
   // Animate hide
-  // sass-lint:disable force-element-nesting
   &.#{$prefix}-hidden #{$inner-selector} {
     max-height: 0;
     transition: max-height $duration ease-out;

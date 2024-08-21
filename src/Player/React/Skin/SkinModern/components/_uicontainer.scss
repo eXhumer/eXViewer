@@ -3,7 +3,6 @@
 
 .#{$prefix}-ui-uicontainer {
   @extend %ui-container;
-
   @include layout-cover;
 
   font-size: 1em;
@@ -21,7 +20,6 @@
     display: none;
   }
 
-  // sass-lint:disable force-element-nesting
   &.#{$prefix}-player-state-playing.#{$prefix}-controls-hidden {
     // Hide cursor while the controls are hidden
     * {

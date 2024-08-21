@@ -3,7 +3,6 @@
 
 .#{$prefix}-ui-recommendation-overlay {
   @extend %ui-container;
-
   @include layout-cover;
   @include layout-center-children-in-container;
   @include hidden-animated($animation-duration * 2);

@@ -3,7 +3,6 @@
 
 .#{$prefix}-ui-selectbox {
   @extend %ui-component;
-
   @include focusable;
 
   background-color: transparent;

@@ -2,7 +2,6 @@
 
 .#{$prefix}-ui-seekbar-label {
   @extend %ui-container;
-
   @include hidden-animated;
 
   bottom: 100%;

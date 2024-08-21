@@ -3,7 +3,6 @@
 
 .#{$prefix}-ui-cast-status-overlay {
   @extend %ui-container;
-
   @include layout-cover;
   @include hidden-animated;
 

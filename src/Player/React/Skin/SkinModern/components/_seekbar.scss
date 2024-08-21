@@ -5,7 +5,6 @@ $seekbar-height: .3125em;
 
 %ui-seekbar {
   @extend %ui-component;
-
   @include hidden;
   @include focusable;
 
@@ -20,23 +19,18 @@ $seekbar-height: .3125em;
   .#{$prefix}-seekbar {
 
     %bar {
-      // sass-lint:disable no-vendor-prefixes
-      -ms-transform-origin: 0 0; // required for IE9
-      -webkit-transform-origin: 0 0; // required for Android 4.4 WebView
-      bottom: 0;
       box-sizing: border-box;
       height: $seekbar-height;
-      left: 0;
       margin: auto;
       position: absolute;
-      right: auto;
-      top: 0;
       transform-origin: 0 0;
       width: 100%;
+      inset: 0 auto 0 0;
     }
 
     .#{$prefix}-seekbar-backdrop {
       @extend %bar;
+
       background-color: transparentize($color-primary, .8);
       margin: $bar-inset 0;
       width: 100%;
@@ -44,6 +38,7 @@ $seekbar-height: .3125em;
 
     .#{$prefix}-seekbar-bufferlevel {
       @extend %bar;
+
       background-color: $color-primary;
       margin: $bar-inset 0;
       transition: .3s linear, .3s linear;
@@ -52,12 +47,14 @@ $seekbar-height: .3125em;
 
     .#{$prefix}-seekbar-seekposition {
       @extend %bar;
+
       background-color: transparentize($color-primary, .8);
       margin: $bar-inset 0;
     }
 
     .#{$prefix}-seekbar-playbackposition {
       @extend %bar;
+
       background-color: $color-highlight;
       margin: $bar-inset 0;
       transition: .1s linear, .1s linear;
@@ -112,7 +109,7 @@ $seekbar-height: .3125em;
 
   &.#{$prefix}-vertical {
     .#{$prefix}-seekbar {
-      //overflow-y: hidden;
+      // overflow-y: hidden;
       height: 100%;
       width: auto;
 
@@ -122,7 +119,7 @@ $seekbar-height: .3125em;
       }
 
       %positionmarker-vertical {
-        //@extend %positionmarker-horizontal;
+        // @extend %positionmarker-horizontal;
 
         .#{$prefix}-seekbar-playbackposition-marker {
           height: 1em;

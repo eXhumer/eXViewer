@@ -6,6 +6,5 @@
 
 .#{$prefix}-ui-clickoverlay {
   @extend %ui-clickoverlay;
-
   @include layout-cover;
 }

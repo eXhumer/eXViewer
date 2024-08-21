@@ -2,7 +2,6 @@
 
 %ui-label {
   @extend %ui-component;
-
   @include hidden;
 
   cursor: default;
