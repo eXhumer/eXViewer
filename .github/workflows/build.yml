@@ -101,21 +101,21 @@ jobs:
           if-no-files-found: error
           compression-level: 9
 
-      - name: Upload package (macOS / DMG)
+      - name: Upload package (macOS)
+        if: ${{ runner.os == 'macOS' }}
+        uses: eXhumer/upload-artifact@v4
+        with:
+          name: eXViewer-darwin-${{ matrix.image.arch }}
+          path: out/eXViewer-darwin-${{ matrix.image.arch }}/
+          follow-symlinks: false
+          if-no-files-found: error
+          compression-level: 9
+  
+      - name: Upload installer (macOS)
         if: ${{ runner.os == 'macOS' }}
         uses: actions/upload-artifact@v4
         with:
           name: eXViewer-darwin-${{ matrix.image.arch }}-Installer
           path: out/make/*.dmg
-          if-no-files-found: error
-          compression-level: 9
-
-      - name: Upload package (macOS / ZIP)
-        if: ${{ runner.os == 'macOS' }}
-        uses: eXhumer/upload-artifact@v4
-        with:
-          name: eXViewer-darwin-${{ matrix.image.arch }}
-          path: out/${{ matrix.image.arch }}/
-          follow-symlinks: false
           if-no-files-found: error
           compression-level: 9
