@@ -41,7 +41,7 @@ jobs:
         with:
           python-version: ${{ matrix.image.python }}
           check-latest: true
-        if: ${{ runner.os == 'macOS' }}
+        if: ${{ runner.os != 'Linux' }}
 
       - name: Install Python dependencies
         run: python3 -m pip install setuptools
@@ -68,7 +68,7 @@ jobs:
           security unlock-keychain -p "$CI_KEYCHAIN_PASSWORD" build.keychain
           security import Certificates.p12 -k build.keychain -P "$CODESIGN_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
           security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$CI_KEYCHAIN_PASSWORD" build.keychain
-          yarn run make -- --platform darwin --arch ${{ matrix.image.arch }}
+          yarn run make --platform darwin --arch ${{ matrix.image.arch }}
 
       - name: Build package
         if: ${{ runner.os != 'macOS' }}
@@ -78,9 +78,9 @@ jobs:
           CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
         run: |
           if [ "${{ runner.os }}" = "Linux" ]; then
-            yarn run package -- --platform linux --arch ${{ matrix.image.arch }}
+            yarn run package --platform linux --arch ${{ matrix.image.arch }}
           else
-            yarn run package -- --platform win32 --arch ${{ matrix.image.arch }}
+            yarn run package --platform win32 --arch ${{ matrix.image.arch }}
           fi
 
       - name: Upload package (Windows)
@@ -112,9 +112,10 @@ jobs:
 
       - name: Upload package (macOS / ZIP)
         if: ${{ runner.os == 'macOS' }}
-        uses: actions/upload-artifact@v4
+        uses: eXhumer/upload-artifact@v4
         with:
           name: eXViewer-darwin-${{ matrix.image.arch }}
-          path: out/make/zip/darwin/${{ matrix.image.arch }}/*
+          path: out/${{ matrix.image.arch }}/
+          follow-symlinks: false
           if-no-files-found: error
           compression-level: 9
