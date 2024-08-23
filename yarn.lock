@@ -2364,10 +2364,10 @@ electron-to-chromium@^1.5.4:
   resolved "https://registry.yarnpkg.com/electron-to-chromium/-/electron-to-chromium-1.5.12.tgz#ee31756eaa2e06f2aa606f170b7ad06dd402b4e4"
   integrity sha512-tIhPkdlEoCL1Y+PToq3zRNehUaKp3wBX/sr7aclAWdIWjvqAe/Im/H0SiCM4c1Q8BLPHCdoJTol+ZblflydehA==
 
-"electron@github:castlabs/electron-releases#v32.0.0+wvcus":
-  version "32.0.0+wvcus"
-  uid "69c9ebb72c4988cb8a3561a8be07501261e1923a"
-  resolved "https://codeload.github.com/castlabs/electron-releases/tar.gz/69c9ebb72c4988cb8a3561a8be07501261e1923a"
+"electron@github:castlabs/electron-releases#v32.0.1+wvcus":
+  version "32.0.1+wvcus"
+  uid f789e686d0cf42df28ab5a78001a529da6d28e71
+  resolved "https://codeload.github.com/castlabs/electron-releases/tar.gz/f789e686d0cf42df28ab5a78001a529da6d28e71"
   dependencies:
     "@electron/get" "^2.0.0"
     "@types/node" "^20.9.0"
