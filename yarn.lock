@@ -466,13 +466,14 @@
   resolved "https://registry.yarnpkg.com/@eslint/js/-/js-8.57.0.tgz#a5417ae8427873f1dd08b70b3574b453e67b5f7f"
   integrity sha512-Ys+3g2TaW7gADOJzPt83SJtCDhMjndcDMFVQ/Tj9iA1BfJzFKD9mAUXT3OenpuPHbI6P/myECxRJrofUsDx/5g==
 
-"@exhumer/f1tv-api@^1.5.0":
-  version "1.5.0"
-  resolved "https://registry.yarnpkg.com/@exhumer/f1tv-api/-/f1tv-api-1.5.0.tgz#92eb889af875f56b248b0f123bad715e33d4c2ae"
-  integrity sha512-B3X+Ykam7o6r1DZWYwfWjvS3U/lH4t/OcQyEBPpL3u5kPgDefHNGNoBn9AlpLeqNUnnHUbg4K9pFyjEKTbBG5g==
+"@exhumer/f1tv-api@^2.0.0":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@exhumer/f1tv-api/-/f1tv-api-2.0.1.tgz#72ecea5c51420111b2906f36e6253ef37742851f"
+  integrity sha512-neoa8u0rVln4tmidlpaFM0qdUVLlcNq5UFRe9fD6pnicsmhC+9VXE9bhJjCyXHTk5s9I0Znj4C4Y18KS6vGr2Q==
   dependencies:
     "@tiny-libs/typed-event-emitter" "^1.0.0"
     jwt-decode "^4.0.0"
+    undici "^6.19.8"
 
 "@exhumer/node-signalr@^3.1.0-alpha.2":
   version "3.1.0-alpha.2"
@@ -6617,6 +6618,11 @@ undici-types@~6.19.2:
   version "6.19.8"
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-6.19.8.tgz#35111c9d1437ab83a7cdc0abae2f26d88eda0a02"
   integrity sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==
+
+undici@^6.19.8:
+  version "6.19.8"
+  resolved "https://registry.yarnpkg.com/undici/-/undici-6.19.8.tgz#002d7c8a28f8cc3a44ff33c3d4be4d85e15d40e1"
+  integrity sha512-U8uCCl2x9TK3WANvmBavymRzxbfFYG+tAu+fgx3zxQy3qdagQqBLwJVrdyO1TBfUXvfKveMKJZhpvUYoOjM+4g==
 
 unique-filename@^2.0.0:
   version "2.0.1"
