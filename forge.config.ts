@@ -149,11 +149,11 @@ const config: ForgeConfig = {
         config: rendererConfig,
         entryPoints: [
           {
-            html: './src/main_window/index.html',
-            js: './src/main_window/renderer.ts',
+            html: './src/MainWindow/Index.html',
+            js: './src/MainWindow/Renderer.ts',
             name: 'main_window',
             preload: {
-              js: './src/main_window/preload.ts',
+              js: './src/MainWindow/Preload.ts',
             },
           },
         ],
