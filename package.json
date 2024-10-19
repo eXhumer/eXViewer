@@ -1,6 +1,6 @@
 {
   "name": "exviewer",
-  "productName": "exviewer",
+  "productName": "eXViewer",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": ".webpack/main",
@@ -9,23 +9,28 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "eslint",
+    "patch-dev": " yarn redeploy-electron-dev && yarn vmp-sign-dev",
+    "redeploy-electron-dev": "ts-node scripts/redeploy-electron-dev.ts",
+    "vmp-sign-dev": "ts-node scripts/vmp-sign-dev.ts"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.5.0",
+    "@electron-forge/maker-dmg": "^7.5.0",
     "@electron-forge/maker-zip": "^7.5.0",
     "@electron-forge/plugin-auto-unpack-natives": "^7.5.0",
     "@electron-forge/plugin-fuses": "^7.5.0",
     "@electron-forge/plugin-webpack": "^7.5.0",
     "@electron/fuses": "^1.8.0",
-    "@eslint/js": "^9.12.0",
+    "@eslint/js": "^9.13.0",
     "@types/eslint__js": "^8.42.3",
     "@types/react": "^18.3.11",
     "@types/react-dom": "^18.3.1",
     "@vercel/webpack-asset-relocator-loader": "1.7.3",
     "css-loader": "^7.1.2",
-    "electron": "33.0.1",
-    "eslint": "^9.12.0",
+    "dotenv": "^16.4.5",
+    "electron": "git+https://github.com/castlabs/electron-releases.git#v33.0.1+wvcus",
+    "eslint": "^9.13.0",
     "eslint-plugin-import": "^2.31.0",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
     "globals": "^15.11.0",
@@ -41,7 +46,7 @@
     "name": "eXhumer",
     "email": "exhumer@exhumer.cc"
   },
-  "license": "MIT",
+  "license": "AGPL-3.0-only",
   "dependencies": {
     "react": "^18.3.1",
     "react-dom": "^18.3.1"
