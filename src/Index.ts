@@ -81,8 +81,8 @@ const whenReady = () => {
 
   // intercept cookies and update the ascendon token
   session.defaultSession.cookies.on('changed', (e, cookie, cause, removed) => {
-    if (cookie.name === 'login-session' && cookie.domain.endsWith('.formula1.com')) {
-      if (removed && cause === 'explicit') {
+    if (cookie.name === 'login-session' && cookie.domain === '.formula1.com') {
+      if (removed && (cause === 'explicit' || cause === 'expired')) {
         f1tv.ascendon = null;
       } else {
         const loginSession = JSON.parse(decodeURIComponent(cookie.value)) as F1TVLoginSession;
