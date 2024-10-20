@@ -1,7 +1,11 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from './Store';
+import { updateAscendon } from './Slice/F1TV';
 
 const App = () => {
-  const [ascendon, setAscendon] = useState<string | null>(null);
+  const dispatch = useAppDispatch();
+  const ascendon = useAppSelector(state => state.f1tv.ascendon);
+
   const handleBtn = () => {
     if (ascendon === null)
       f1tv.login();
@@ -9,7 +13,8 @@ const App = () => {
     else
       f1tv.logout();
   };
-  const loginSessionCB = (e: Electron.IpcRendererEvent, newAscendon: string | null) => setAscendon(newAscendon);
+
+  const loginSessionCB = (e: Electron.IpcRendererEvent, newAscendon: string | null) => dispatch(updateAscendon(newAscendon));
 
   useEffect(() => {
     f1tv.onLoginSession(loginSessionCB);
