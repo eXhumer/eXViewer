@@ -4,7 +4,7 @@ import { join } from 'path';
 import { app, components, globalShortcut, ipcMain, session, BrowserWindow } from 'electron';
 import { F1TVClient } from '@exhumer/f1tv-api';
 
-import { AppConfig, F1TVLoginSession } from './Type';
+import { AppConfig, IPCChannel, F1TVLoginSession } from './Type';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
@@ -14,6 +14,31 @@ const APP_CONFIG_PATH = join(app.getPath('userData'), 'config.json');
 const f1tv = new F1TVClient();
 let loginWindow: BrowserWindow | null = null;
 let mainWindow: BrowserWindow | null = null;
+
+f1tv.on('ascendonUpdated', () => {
+  if (mainWindow !== null)
+    mainWindow.webContents.send(IPCChannel.F1TV_ASCENDON_UPDATED, f1tv.ascendon !== null ? f1tv.decodedAscendon : null);
+});
+
+f1tv.on('configUpdated', () => {
+  if (mainWindow !== null)
+    mainWindow.webContents.send(IPCChannel.F1TV_CONFIG_UPDATED, f1tv.config);
+});
+
+f1tv.on('entitlementUpdated', () => {
+  if (mainWindow !== null)
+    mainWindow.webContents.send(IPCChannel.F1TV_ENTITLEMENT_UPDATED, f1tv.entitlement);
+});
+
+f1tv.on('locationUpdated', () => {
+  if (mainWindow !== null)
+    mainWindow.webContents.send(IPCChannel.F1TV_LOCATION_UPDATED, f1tv.location);
+});
+
+f1tv.on('ready', () => {
+  if (mainWindow !== null)
+    mainWindow.webContents.send(IPCChannel.F1TV_READY, f1tv.config, f1tv.location);
+});
 
 const DefaultAppConfig: AppConfig = {
   disableHardwareAcceleration: false,
@@ -53,7 +78,11 @@ const createMainWindow = (): void => {
         }
 
         if (mainWindow !== null)
-          mainWindow.webContents.send('F1TV:Login-Session', f1tv.ascendon !== null ? f1tv.decodedAscendon : null);
+          mainWindow.webContents.send(IPCChannel.MAIN_WINDOW_READY_TO_SHOW,
+            f1tv.ascendon !== null ? f1tv.decodedAscendon : null,
+            f1tv.entitlement,
+            f1tv.config,
+            f1tv.location);
       });
   });
 
@@ -95,9 +124,6 @@ const whenReady = () => {
         if (loginWindow !== null)
           loginWindow.close();
       }
-
-      if (mainWindow !== null)
-        mainWindow.webContents.send('F1TV:Login-Session', f1tv.ascendon !== null ? f1tv.decodedAscendon : null);
     }
   });
 
@@ -137,7 +163,7 @@ app
   .then(async () => await components.whenReady())
   .then(whenReady);
 
-ipcMain.handle('F1TV:Login', async () => {
+ipcMain.handle(IPCChannel.F1TV_LOGIN, async () => {
   if (f1tv.ascendon !== null)
     return;
 
@@ -170,9 +196,7 @@ ipcMain.handle('F1TV:Login', async () => {
     loginWindow.webContents.openDevTools();
 });
 
-ipcMain.handle('F1TV:Login-Session', () => f1tv.ascendon !== null ? f1tv.decodedAscendon : null);
-
-ipcMain.handle('F1TV:Logout', async () => {
+ipcMain.handle(IPCChannel.F1TV_LOGOUT, async () => {
   if (f1tv.ascendon === null)
     return;
 

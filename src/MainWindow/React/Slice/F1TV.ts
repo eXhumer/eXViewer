@@ -3,12 +3,14 @@ import { DecodedAscendonToken, F1TV } from '@exhumer/f1tv-api';
 
 type F1TVState = {
   ascendon: DecodedAscendonToken | null;
+  config: F1TV.Config | null;
   entitlement: string | null;
   location: F1TV.LocationResult | null;
 };
 
 const initialState: F1TVState = {
   ascendon: null,
+  config: null,
   entitlement: null,
   location: null,
 };
@@ -20,6 +22,9 @@ export const f1tvSlice = createSlice({
     updateAscendon: (state, action: PayloadAction<DecodedAscendonToken | null>) => {
       state.ascendon = action.payload;
     },
+    updateConfig: (state, action: PayloadAction<F1TV.Config | null>) => {
+      state.config = action.payload;
+    },
     updateEntitlement: (state, action: PayloadAction<string | null>) => {
       state.entitlement = action.payload;
     },
@@ -29,6 +34,11 @@ export const f1tvSlice = createSlice({
   },
 })
 
-export const { updateAscendon, updateEntitlement, updateLocation } = f1tvSlice.actions;
+export const {
+  updateAscendon,
+  updateConfig,
+  updateEntitlement,
+  updateLocation,
+} = f1tvSlice.actions;
 
 export default f1tvSlice.reducer;
