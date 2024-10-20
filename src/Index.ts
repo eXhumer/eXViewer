@@ -2,28 +2,18 @@ import { accessSync, constants, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
 import { app, components, globalShortcut, ipcMain, session, BrowserWindow } from 'electron';
+import { F1TVClient } from '@exhumer/f1tv-api';
+
+import { AppConfig, F1TVLoginSession } from './Type';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
 
 const APP_CONFIG_PATH = join(app.getPath('userData'), 'config.json');
 
-let ascendon: string | null = null;
+const f1tv = new F1TVClient();
 let loginWindow: BrowserWindow | null = null;
 let mainWindow: BrowserWindow | null = null;
-
-type F1TVLoginSessionData = {
-  subscriptionToken: string;
-};
-
-type F1TVLoginSession = {
-  data: F1TVLoginSessionData;
-};
-
-type AppConfig = {
-  disableHardwareAcceleration?: boolean;
-  enableSandbox?: boolean;
-};
 
 const DefaultAppConfig: AppConfig = {
   disableHardwareAcceleration: false,
@@ -58,12 +48,12 @@ const createMainWindow = (): void => {
         if (cookies.length > 0) {
           const loginSession = JSON.parse(decodeURIComponent(cookies[0].value)) as F1TVLoginSession;
 
-          if (ascendon !== loginSession.data.subscriptionToken)
-            ascendon = loginSession.data.subscriptionToken;
+          if (f1tv.ascendon !== loginSession.data.subscriptionToken)
+            f1tv.ascendon = loginSession.data.subscriptionToken;
         }
 
         if (mainWindow !== null)
-          mainWindow.webContents.send('F1TV:Login-Session', ascendon);
+          mainWindow.webContents.send('F1TV:Login-Session', f1tv.ascendon !== null ? f1tv.decodedAscendon : null);
       });
   });
 
@@ -92,18 +82,22 @@ const whenReady = () => {
   // intercept cookies and update the ascendon token
   session.defaultSession.cookies.on('changed', (e, cookie, cause, removed) => {
     if (cookie.name === 'login-session' && cookie.domain.endsWith('.formula1.com')) {
-      if (removed) {
-        ascendon = null;
+      if (removed && cause === 'explicit') {
+        f1tv.ascendon = null;
       } else {
         const loginSession = JSON.parse(decodeURIComponent(cookie.value)) as F1TVLoginSession;
-        ascendon = loginSession.data.subscriptionToken;
+
+        if (loginSession.data.subscriptionToken === f1tv.ascendon)
+          return;
+
+        f1tv.ascendon = loginSession.data.subscriptionToken;
 
         if (loginWindow !== null)
           loginWindow.close();
       }
 
       if (mainWindow !== null)
-        mainWindow.webContents.send('F1TV:Login-Session', ascendon);
+        mainWindow.webContents.send('F1TV:Login-Session', f1tv.ascendon !== null ? f1tv.decodedAscendon : null);
     }
   });
 
@@ -144,7 +138,7 @@ app
   .then(whenReady);
 
 ipcMain.handle('F1TV:Login', async () => {
-  if (ascendon !== null)
+  if (f1tv.ascendon !== null)
     return;
 
   if (loginWindow !== null) {
@@ -164,7 +158,7 @@ ipcMain.handle('F1TV:Login', async () => {
   });
 
   loginWindow.on('closed', () => {
-    if (ascendon === null)
+    if (f1tv.ascendon === null)
       console.warn('F1TV:Login | Login window closed without login!');
 
     loginWindow = null;
@@ -176,13 +170,12 @@ ipcMain.handle('F1TV:Login', async () => {
     loginWindow.webContents.openDevTools();
 });
 
-ipcMain.handle('F1TV:Login-Session', () => ascendon);
+ipcMain.handle('F1TV:Login-Session', () => f1tv.ascendon !== null ? f1tv.decodedAscendon : null);
 
 ipcMain.handle('F1TV:Logout', async () => {
-  if (ascendon === null)
+  if (f1tv.ascendon === null)
     return;
 
   await session.defaultSession.cookies.remove('https://f1tv.formula1.com', 'login-session');
-  ascendon = null;
-  mainWindow?.webContents.send('F1TV:Login-Session', ascendon);
+  f1tv.ascendon = null;
 });

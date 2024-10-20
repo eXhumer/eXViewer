@@ -1,8 +1,8 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { F1TV } from '@exhumer/f1tv-api';
+import { DecodedAscendonToken, F1TV } from '@exhumer/f1tv-api';
 
 type F1TVState = {
-  ascendon: string | null;
+  ascendon: DecodedAscendonToken | null;
   entitlement: string | null;
   location: F1TV.LocationResult | null;
 };
@@ -17,7 +17,7 @@ export const f1tvSlice = createSlice({
   name: 'f1tv',
   initialState: initialState,
   reducers: {
-    updateAscendon: (state, action: PayloadAction<string | null>) => {
+    updateAscendon: (state, action: PayloadAction<DecodedAscendonToken | null>) => {
       state.ascendon = action.payload;
     },
     updateEntitlement: (state, action: PayloadAction<string | null>) => {

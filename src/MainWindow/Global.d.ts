@@ -1,8 +1,10 @@
+import { DecodedAscendonToken } from "@exhumer/f1tv-api";
+
 declare interface F1TV {
-  onLoginSession: (cb: (e: IpcRendererEvent, ascendon: string | null) => void) => void;
-  offLoginSession: (cb: (e: IpcRendererEvent, ascendon: string | null) => void) => void;
+  onLoginSession: (cb: (e: IpcRendererEvent, ascendon: DecodedAscendonToken | null) => void) => void;
+  offLoginSession: (cb: (e: IpcRendererEvent, ascendon: DecodedAscendonToken | null) => void) => void;
   login: () => Promise<void>;
-  loginSession: () => Promise<string | null>;
+  loginSession: () => Promise<DecodedAscendonToken | null>;
   logout: () => Promise<void>;
 }
 

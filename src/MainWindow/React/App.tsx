@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './Store';
 import { updateAscendon } from './Slice/F1TV';
+import { DecodedAscendonToken } from '@exhumer/f1tv-api';
 
 const App = () => {
   const dispatch = useAppDispatch();
@@ -14,7 +15,10 @@ const App = () => {
       f1tv.logout();
   };
 
-  const loginSessionCB = (e: Electron.IpcRendererEvent, newAscendon: string | null) => dispatch(updateAscendon(newAscendon));
+  const loginSessionCB = (e: Electron.IpcRendererEvent, newAscendon: DecodedAscendonToken | null) => {
+    console.log('newAscendon', newAscendon);
+    dispatch(updateAscendon(newAscendon));
+  };
 
   useEffect(() => {
     f1tv.onLoginSession(loginSessionCB);
@@ -26,7 +30,7 @@ const App = () => {
 
   return (
     <>
-      <h2>Ascendon: {ascendon !== null ? 'Logged in!' : 'Not logged in!'}</h2>
+      <h2>{ascendon !== null ? `Logged in as ${ascendon.FirstName} ${ascendon.LastName}!` : 'Not logged in!'}</h2>
       <button onClick={handleBtn}>{ascendon === null ? 'Login' : 'Logout'}</button>
     </>
   );
