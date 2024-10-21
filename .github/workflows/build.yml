@@ -1,0 +1,121 @@
+name: Build packages
+
+on:
+  push:
+    branches: [ main ]
+    tags: [ '*' ]
+  pull_request:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  build-matrix:
+    strategy:
+      matrix:
+        image: [
+          {os: macos-latest, arch: arm64, python: '3.12'},
+          {os: macos-latest, arch: universal, python: '3.12'},
+          {os: macos-latest, arch: x64, python: '3.12'},
+          {os: ubuntu-latest, arch: x64},
+          {os: windows-latest, arch: ia32, python: '3.12'},
+          {os: windows-latest, arch: x64, python: '3.12'}
+        ]
+        node: [22]
+    runs-on: ${{ matrix.image.os }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enable Corepack
+        run: corepack enable
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node }}
+          cache: 'yarn'
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.image.python }}
+          check-latest: true
+        if: ${{ runner.os != 'Linux' }}
+
+      - name: Install Python dependencies
+        run: python3 -m pip install setuptools
+        if: ${{ runner.os == 'macOS' }}
+
+      - name: Install Yarn dependencies
+        run: yarn install --frozen-lockfile
+
+      - name: Build package (macOS)
+        if: ${{ runner.os == 'macOS' }}
+        env:
+          APPLE_ID_PASSWORD: ${{ secrets.APPLE_ID_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
+          CASTLABS_EVS_USERNAME: ${{ secrets.CASTLABS_EVS_USERNAME }}
+          CI_KEYCHAIN_PASSWORD: ${{ secrets.CI_KEYCHAIN_PASSWORD }}
+          CODESIGN_CERTIFICATE_PASSWORD: ${{ secrets.CODESIGN_CERTIFICATE_PASSWORD }}
+          CODESIGN_CERTIFICATE: ${{ secrets.CODESIGN_CERTIFICATE }}
+        run: |
+          echo $CODESIGN_CERTIFICATE | base64 --decode > Certificates.p12
+          security create-keychain -p "$CI_KEYCHAIN_PASSWORD" build.keychain 
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$CI_KEYCHAIN_PASSWORD" build.keychain
+          security import Certificates.p12 -k build.keychain -P "$CODESIGN_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$CI_KEYCHAIN_PASSWORD" build.keychain
+          yarn run make --platform darwin --arch ${{ matrix.image.arch }}
+
+      - name: Build package
+        if: ${{ runner.os != 'macOS' }}
+        shell: 'bash'
+        env:
+          CASTLABS_EVS_USERNAME: ${{ secrets.CASTLABS_EVS_USERNAME }}
+          CASTLABS_EVS_PASSWORD: ${{ secrets.CASTLABS_EVS_PASSWORD }}
+        run: |
+          if [ "${{ runner.os }}" = "Linux" ]; then
+            yarn run package --platform linux --arch ${{ matrix.image.arch }}
+          else
+            yarn run package --platform win32 --arch ${{ matrix.image.arch }}
+          fi
+
+      - name: Upload package (Windows)
+        if: ${{ runner.os == 'Windows' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: eXViewer-win32-${{ matrix.image.arch }}
+          path: out/eXViewer-win32-${{ matrix.image.arch }}/
+          if-no-files-found: error
+          compression-level: 9
+
+      - name: Upload package (Linux)
+        if: ${{ runner.os == 'Linux' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: eXViewer-linux-${{ matrix.image.arch }}
+          path: out/eXViewer-linux-${{ matrix.image.arch }}/
+          if-no-files-found: error
+          compression-level: 9
+
+      - name: Upload package (macOS)
+        if: ${{ runner.os == 'macOS' }}
+        uses: eXhumer/upload-artifact@0b7d5f5684d3f642f978d2faad9ade64f5b4dd57
+        with:
+          name: eXViewer-darwin-${{ matrix.image.arch }}
+          path: out/eXViewer-darwin-${{ matrix.image.arch }}/
+          follow-symlinks: false
+          if-no-files-found: error
+          compression-level: 9
+  
+      - name: Upload installer (macOS)
+        if: ${{ runner.os == 'macOS' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: eXViewer-darwin-${{ matrix.image.arch }}-Installer
+          path: out/make/*.dmg
+          if-no-files-found: error
+          compression-level: 9
