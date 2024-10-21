@@ -1,0 +1,39 @@
+@use 'sass:color';
+@import '../variables';
+@import '../mixins';
+
+%ui-listbox {
+  @extend %ui-container;
+
+  .#{$prefix}-ui-listbox-button {
+    @extend %ui-button;
+
+    box-sizing: border-box;
+    display: block;
+    font-size: .8em;
+    height: 100%;
+    min-width: 10em;
+    padding: .5em;
+    width: 100%;
+
+    .#{$prefix}-label {
+      display: inherit;
+    }
+
+    &.#{$prefix}-selected {
+      background-color: color.adjust($color-highlight, $alpha: .3);
+    }
+
+    &:hover {
+      background-color: color.adjust($color-highlight, $alpha: .15);
+    }
+
+    &:last-child {
+      border-bottom: 0;
+    }
+  }
+}
+
+.#{$prefix}-ui-listbox {
+  @extend %ui-listbox;
+}

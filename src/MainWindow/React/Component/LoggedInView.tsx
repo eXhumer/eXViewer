@@ -32,6 +32,8 @@ const LoggedInView = () => {
               if (!isNaN(contentId)) {
                 inputRef.current.value = '';
               }
+
+              mainWindow.newPlayer(contentId);
             }
           }}
         > Play Content </button>

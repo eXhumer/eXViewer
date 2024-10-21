@@ -12,7 +12,11 @@ export type AppConfig = {
 };
 
 export enum IPCChannel {
-  MAIN_WINDOW_READY_TO_SHOW = 'MainWindow:Ready-To-SHow',
+  MAIN_WINDOW_NEW_PLAYER = 'MainWindow:New-Player',
+  MAIN_WINDOW_READY_TO_SHOW = 'MainWindow:Ready-To-Show',
+  PLAYER_CONTENT_PLAY = 'Player:Content-Play',
+  PLAYER_CONTEXT_MENU = 'Player:Context-Menu',
+  PLAYER_READY_TO_SHOW = 'Player:Ready-To-Show',
   F1TV_ASCENDON_UPDATED = 'F1TV:Ascendon',
   F1TV_CONFIG_UPDATED = 'F1TV:Config',
   F1TV_ENTITLEMENT_UPDATED = 'F1TV:Entitlement',

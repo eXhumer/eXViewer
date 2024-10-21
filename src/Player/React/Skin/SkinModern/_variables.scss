@@ -1,0 +1,29 @@
+@use 'sass:color';
+
+$prefix: 'bmpui' !default;
+
+/* stylelint-disable scss/dollar-variable-empty-line-before */
+$color-black: #000 !default;
+$color-transparent: rgb(0 0 0 / 0%) !default;
+$color-red: #f00 !default;
+
+$color-highlight: #f00 !default;
+$color-primary: #fff !default;
+$color-secondary: #999 !default;
+
+$color-background: #111 !default;
+$color-background-highlight: color.adjust(color.mix($color-black, $color-highlight, $weight: 75%), $alpha: .3) !default;
+$color-background-bars: color.adjust($color-black, $alpha: .3) !default;
+$color-focus: #1b7fcc;
+
+$font-family: sans-serif !default;
+$font-size: 1em !default;
+
+$subtitle-text-color: #fff !default;
+$subtitle-text-border-color: #000 !default;
+
+$animation-duration: .3s !default;
+$animation-duration-short: $animation-duration * .5 !default;
+
+$focus-element-box-shadow: 0 0 0 2px rgba($color-focus, .8);
+/* stylelint-enable scss/dollar-variable-empty-line-before */

@@ -145,6 +145,7 @@ const config: ForgeConfig = {
     new AutoUnpackNativesPlugin({}),
     new WebpackPlugin({
       mainConfig,
+      devContentSecurityPolicy: 'media-src * blob:; font-src https://fonts.gstatic.com;',
       renderer: {
         config: rendererConfig,
         entryPoints: [
@@ -154,6 +155,14 @@ const config: ForgeConfig = {
             name: 'main_window',
             preload: {
               js: './src/MainWindow/Preload.ts',
+            },
+          },
+          {
+            html: './src/Player/Index.html',
+            js: './src/Player/Renderer.ts',
+            name: 'player',
+            preload: {
+              js: './src/Player/Preload.ts',
             },
           },
         ],

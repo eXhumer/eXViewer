@@ -1,19 +1,83 @@
 import { accessSync, constants, readFileSync, writeFileSync } from 'fs';
 import { join } from 'path';
 
-import { app, components, globalShortcut, ipcMain, session, BrowserWindow } from 'electron';
-import { F1TVClient } from '@exhumer/f1tv-api';
+import { app, components, globalShortcut, ipcMain, session, BrowserWindow, Menu } from 'electron';
+import { F1TV, F1TVClient } from '@exhumer/f1tv-api';
 
 import { AppConfig, IPCChannel, F1TVLoginSession } from './Type';
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string;
+declare const PLAYER_PRELOAD_WEBPACK_ENTRY: string;
+declare const PLAYER_WEBPACK_ENTRY: string;
 
 const APP_CONFIG_PATH = join(app.getPath('userData'), 'config.json');
 
 const f1tv = new F1TVClient();
 let loginWindow: BrowserWindow | null = null;
 let mainWindow: BrowserWindow | null = null;
+const activePlayerWindows: BrowserWindow[] = [];
+
+const buildPlayerContextMenu = (playerWindow: BrowserWindow) => {
+  return Menu.buildFromTemplate([
+    {
+      label: 'Close',
+      click: () => {
+        playerWindow.close();
+      }
+    },
+  ]);
+};
+
+const playerCtxMenuPopup = (playerWindow: BrowserWindow, cursorLocation?: { x: number, y: number }) => {
+  buildPlayerContextMenu(playerWindow)
+    .popup(cursorLocation ? {
+      x: cursorLocation.x,
+      y: cursorLocation.y,
+    } : undefined);
+};
+
+const createPlayerWindow = (container: F1TV.ContentVideoContainer) => {
+  const playerWindow = new BrowserWindow({
+    minHeight: 270,
+    minWidth: 480,
+    height: 720,
+    width: 1280,
+    backgroundColor: '#303030',
+    frame: false,
+    webPreferences: {
+      webSecurity: false,
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: PLAYER_PRELOAD_WEBPACK_ENTRY,
+    },
+  });
+
+  playerWindow.setAspectRatio(16 / 9);
+
+  playerWindow.on('system-context-menu', e => {
+    e.preventDefault();
+    playerCtxMenuPopup(playerWindow);
+  })
+
+  playerWindow.on('ready-to-show', () => {
+    playerWindow.webContents.send(IPCChannel.PLAYER_READY_TO_SHOW, container, f1tv.ascendon, f1tv.config);
+  });
+
+  playerWindow.on('closed', () => {
+    const index = activePlayerWindows.indexOf(playerWindow);
+
+    if (index !== -1)
+      activePlayerWindows.splice(index, 1);
+  });
+
+  playerWindow.loadURL(PLAYER_WEBPACK_ENTRY);
+
+  if (!app.isPackaged)
+    playerWindow.webContents.openDevTools();
+
+  activePlayerWindows.push(playerWindow);
+};
 
 f1tv.on('ascendonUpdated', () => {
   if (mainWindow !== null)
@@ -162,6 +226,33 @@ app
   .whenReady()
   .then(async () => await components.whenReady())
   .then(whenReady);
+
+ipcMain.handle(IPCChannel.PLAYER_CONTENT_PLAY, async (e, contentId: number, channelId?: number) => {
+  if (f1tv.ascendon === null)
+    return;
+
+  const apiRes = await f1tv.contentPlay(contentId, channelId);
+
+  return apiRes.resultObj;
+});
+
+ipcMain.handle(IPCChannel.PLAYER_CONTEXT_MENU, async (e, cursorLocation: { x: number, y: number }) => {
+  const senderWindow = BrowserWindow.fromWebContents(e.sender);
+
+  if (senderWindow === null)
+    throw new Error('senderWindow === null | Failed to get sender window!');
+
+  playerCtxMenuPopup(senderWindow, cursorLocation);
+});
+
+ipcMain.handle(IPCChannel.MAIN_WINDOW_NEW_PLAYER, async (e, contentId: number) => {
+  if (f1tv.ascendon === null)
+    return;
+
+  const apiRes = await f1tv.contentVideo(contentId);
+
+  createPlayerWindow(apiRes);
+});
 
 ipcMain.handle(IPCChannel.F1TV_LOGIN, async () => {
   if (f1tv.ascendon !== null)
