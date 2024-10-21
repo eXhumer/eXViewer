@@ -131,6 +131,7 @@ const config: ForgeConfig = {
         mirror: 'https://github.com/castlabs/electron-releases/releases/download/'
       }
     },
+    icon: './assets/icon',
   },
   rebuildConfig: {},
   makers: [
