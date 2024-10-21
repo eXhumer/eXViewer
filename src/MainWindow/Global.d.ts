@@ -16,7 +16,7 @@ declare interface F1TV {
 }
 
 declare interface MainWindow {
-  newPlayer: (contentId: number) => Promise<void>;
+  newPlayer: (contentId: number, platform: string) => Promise<void>;
   onReadyToShow: (cb: (e: IpcRendererEvent, decodedAscendon: DecodedAscendonToken | null, entitlement: string | null, config: F1TV.Config | null, location: F1TV.LocationResult | null) => void) => void;
   offReadyToShow: (cb: (e: IpcRendererEvent, decodedAscendon: DecodedAscendonToken | null, entitlement: string | null, config: F1TV.Config | null, location: F1TV.LocationResult | null) => void) => void;
 }

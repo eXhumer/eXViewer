@@ -37,7 +37,7 @@ const playerCtxMenuPopup = (playerWindow: BrowserWindow, cursorLocation?: { x: n
     } : undefined);
 };
 
-const createPlayerWindow = (container: F1TV.ContentVideoContainer) => {
+const createPlayerWindow = (container: F1TV.ContentVideoContainer, platform: string) => {
   const playerWindow = new BrowserWindow({
     minHeight: 270,
     minWidth: 480,
@@ -61,7 +61,7 @@ const createPlayerWindow = (container: F1TV.ContentVideoContainer) => {
   })
 
   playerWindow.on('ready-to-show', () => {
-    playerWindow.webContents.send(IPCChannel.PLAYER_READY_TO_SHOW, container, f1tv.ascendon, f1tv.config);
+    playerWindow.webContents.send(IPCChannel.PLAYER_READY_TO_SHOW, container, f1tv.ascendon, f1tv.config, platform);
   });
 
   playerWindow.on('closed', () => {
@@ -245,13 +245,13 @@ ipcMain.handle(IPCChannel.PLAYER_CONTEXT_MENU, async (e, cursorLocation: { x: nu
   playerCtxMenuPopup(senderWindow, cursorLocation);
 });
 
-ipcMain.handle(IPCChannel.MAIN_WINDOW_NEW_PLAYER, async (e, contentId: number) => {
+ipcMain.handle(IPCChannel.MAIN_WINDOW_NEW_PLAYER, async (e, contentId: number, platform: string) => {
   if (f1tv.ascendon === null)
     return;
 
   const apiRes = await f1tv.contentVideo(contentId);
 
-  createPlayerWindow(apiRes);
+  createPlayerWindow(apiRes, platform);
 });
 
 ipcMain.handle(IPCChannel.F1TV_LOGIN, async () => {

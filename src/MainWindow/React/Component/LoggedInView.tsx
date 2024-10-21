@@ -1,11 +1,13 @@
 import { useRef } from 'react';
 import { useAppSelector } from '../Hook';
+import { F1TVPlatform } from '../Type';
 
 const LoggedInView = () => {
   const inputRef = useRef<HTMLInputElement>(null);
   const config = useAppSelector(state => state.f1tv.config);
   const location = useAppSelector(state => state.f1tv.location);
   const isReady = config !== null && location !== null;
+  const platformRef = useRef<HTMLSelectElement>(null);
 
   return (
     <>
@@ -20,6 +22,16 @@ const LoggedInView = () => {
             e.target.value = e.target.value.replace(/\D/g, '');
           }}
         />
+        <select ref={platformRef} defaultValue={F1TVPlatform.WEB_DASH}>
+          {Object
+            .values(F1TVPlatform)
+            .map(val => (
+              <option
+                key={val}
+                value={val}
+              >{val}</option>
+            ))}
+        </select>
         <button
           disabled={!isReady}
           type='submit'
@@ -33,7 +45,7 @@ const LoggedInView = () => {
                 inputRef.current.value = '';
               }
 
-              mainWindow.newPlayer(contentId);
+              mainWindow.newPlayer(contentId, platformRef.current.value);
             }
           }}
         > Play Content </button>

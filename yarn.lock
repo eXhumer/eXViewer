@@ -503,14 +503,14 @@
   dependencies:
     levn "^0.4.1"
 
-"@exhumer/f1tv-api@^2.1.0":
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/@exhumer/f1tv-api/-/f1tv-api-2.1.0.tgz#807d98f674171f532c52088cd71e955c8f104a4d"
-  integrity sha512-HJuHy0+uV92lLrDHEeIOcZrQii4v9sfr4bHBwHjXWe6vIRSN6jId09nSizL43Hbh5KlxksYEuHeqwe94SRMwUQ==
+"@exhumer/f1tv-api@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@exhumer/f1tv-api/-/f1tv-api-2.2.1.tgz#c180435407b2e0a044c596ae47b0aae1e9cd4696"
+  integrity sha512-m9T0r8UZ+sA8JwzPwXTS6FsAwO19ZlHMaH1g7yz3HuLVCrFxXNvDwwiV2SUh+qcJOQOZslMQk2xsxrHwa/zIYA==
   dependencies:
     "@tiny-libs/typed-event-emitter" "^1.0.0"
     jwt-decode "^4.0.0"
-    undici "^6.19.8"
+    undici "^6.20.1"
 
 "@gar/promisify@^1.1.3":
   version "1.1.3"
@@ -6536,7 +6536,7 @@ undici-types@~6.19.2:
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-6.19.8.tgz#35111c9d1437ab83a7cdc0abae2f26d88eda0a02"
   integrity sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==
 
-undici@^6.19.8:
+undici@^6.20.1:
   version "6.20.1"
   resolved "https://registry.yarnpkg.com/undici/-/undici-6.20.1.tgz#fbb87b1e2b69d963ff2d5410a40ffb4c9e81b621"
   integrity sha512-AjQF1QsmqfJys+LXfGTNum+qw4S88CojRInG/6t31W/1fk6G59s92bnAvGz5Cmur+kQv2SURXEvvudLmbrE8QA==

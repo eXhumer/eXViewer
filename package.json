@@ -54,7 +54,7 @@
   },
   "license": "AGPL-3.0-only",
   "dependencies": {
-    "@exhumer/f1tv-api": "^2.1.0",
+    "@exhumer/f1tv-api": "^2.2.1",
     "@reduxjs/toolkit": "^2.3.0",
     "bitmovin-player": "^8.185.0",
     "bitmovin-player-ui": "^3.73.0",

@@ -29,7 +29,7 @@ contextBridge.exposeInMainWorld('f1tv', {
 });
 
 contextBridge.exposeInMainWorld('mainWindow', {
-  newPlayer: (contentId: number) => ipcRenderer.invoke(IPCChannel.MAIN_WINDOW_NEW_PLAYER, contentId),
+  newPlayer: (contentId: number, platform: string) => ipcRenderer.invoke(IPCChannel.MAIN_WINDOW_NEW_PLAYER, contentId, platform),
   onReadyToShow: (cb: (e: Electron.IpcRendererEvent,
                        decodedAscendon: DecodedAscendonToken | null,
                        entitlement: string | null,

@@ -1,10 +1,11 @@
 import { F1TV } from '@exhumer/f1tv-api';
+import { F1TVPlatform } from '../MainWindow/React/Type';
 
 declare interface Player {
-  contentPlay: (contentId: number, channelId?: number) => Promise<F1TV.ContentPlayResult>;
+  contentPlay: (contentId: number, channelId?: number, platform: F1TVPlatform) => Promise<F1TV.ContentPlayResult>;
   contextMenu: (cursor_location: { x: number, y: number }) => Promise<void>;
-  onReadyToShow: (cb: (e: IpcRendererEvent, videoContainer: F1TV.ContentVideoContainer, ascendon: string, config: F1TV.Config | null) => void) => void;
-  offReadyToShow: (cb: (e: IpcRendererEvent, videoContainer: F1TV.ContentVideoContainer, ascendon: string, config: F1TV.Config | null) => void) => void;
+  onReadyToShow: (cb: (e: IpcRendererEvent, videoContainer: F1TV.ContentVideoContainer, ascendon: string, config: F1TV.Config | null, platform: F1TVPlatform) => void) => void;
+  offReadyToShow: (cb: (e: IpcRendererEvent, videoContainer: F1TV.ContentVideoContainer, ascendon: string, config: F1TV.Config | null, platform: F1TVPlatform) => void) => void;
 }
 
 declare global {

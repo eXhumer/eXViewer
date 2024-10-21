@@ -7,20 +7,23 @@ import styles from './App.module.scss';
 import BitmovinPlayer, { BitmovinPlayerRef } from './Component/BitmovinPlayer';
 import Overlay from './Component/Overlay';
 
-import { updateAscendon, updateConfig, updateVideoContainer } from './Slice/Player';
+import { updateAscendon, updateConfig, updatePlatform, updateVideoContainer } from './Slice/Player';
 import { usePlayerDispatch, usePlayerSelector } from './Hook';
 
 import { author, productName } from '../../../package.json';
+import { F1TVPlatform } from '../../MainWindow/React/Type';
 
 const App = () => {
   const ascendon = usePlayerSelector(state => state.player.ascendon);
   const config = usePlayerSelector(state => state.player.config);
+  const platform = usePlayerSelector(state => state.player.platform);
   const videoContainer = usePlayerSelector(state => state.player.videoContainer);
   const dispatch = usePlayerDispatch();
 
-  const playerReadyToShowCB = (e: IpcRendererEvent, videoContainer: F1TV.ContentVideoContainer, ascendon: string, config: F1TV.Config) => {
+  const playerReadyToShowCB = (e: IpcRendererEvent, videoContainer: F1TV.ContentVideoContainer, ascendon: string, config: F1TV.Config, platform: string) => {
     dispatch(updateAscendon(ascendon));
     dispatch(updateConfig(config));
+    dispatch(updatePlatform(platform));
     dispatch(updateVideoContainer(videoContainer));
   };
 
@@ -35,7 +38,7 @@ const App = () => {
       null;
 
     player
-      .contentPlay(videoContainer.contentId, stream && stream.identifier !== 'WIF' ? channelId : undefined)
+      .contentPlay(videoContainer.contentId, stream && stream.identifier !== 'WIF' ? channelId : undefined, platform as F1TVPlatform)
       .then(playData => {
         const currentRef = playerRef.current;
 

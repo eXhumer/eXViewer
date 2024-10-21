@@ -10,11 +10,13 @@ contextBridge.exposeInMainWorld('player', {
   onReadyToShow: (cb: (e: Electron.IpcRendererEvent,
                        videoContainer: F1TV.ContentVideoContainer,
                        ascendon: string,
-                       config: F1TV.Config) => void) =>
+                       config: F1TV.Config,
+                       platform: F1TV.Platform) => void) =>
     ipcRenderer.on(IPCChannel.PLAYER_READY_TO_SHOW, cb),
   offReadyToShow: (cb: (e: Electron.IpcRendererEvent,
                         videoContainer: F1TV.ContentVideoContainer,
                         ascendon: string,
-                        config: F1TV.Config) => void) =>
+                        config: F1TV.Config,
+                       platform: F1TV.Platform) => void) =>
     ipcRenderer.off(IPCChannel.PLAYER_READY_TO_SHOW, cb),
 });
