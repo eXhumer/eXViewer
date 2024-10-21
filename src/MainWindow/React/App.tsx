@@ -2,22 +2,15 @@ import { useEffect } from 'react';
 import { useAppDispatch, useAppSelector } from './Store';
 import { updateAscendon, updateConfig, updateEntitlement, updateLocation } from './Slice/F1TV';
 import { DecodedAscendonToken, F1TV } from '@exhumer/f1tv-api';
+import LoggedOutView from './Component/LoggedOutView';
+import LoggedInView from './Component/LoggedInView';
 
 const App = () => {
   const dispatch = useAppDispatch();
   const ascendon = useAppSelector(state => state.f1tv.ascendon);
   const config = useAppSelector(state => state.f1tv.config);
-  const entitlement = useAppSelector(state => state.f1tv.entitlement);
   const location = useAppSelector(state => state.f1tv.location);
   const isReady = config !== null && location !== null;
-
-  const handleBtn = () => {
-    if (ascendon === null)
-      f1tv.login();
-
-    else
-      f1tv.logout();
-  };
 
   const readyToShowCB = (e: Electron.IpcRendererEvent, decodedAscendon: DecodedAscendonToken | null, entitlement: string | null, config: F1TV.Config | null, location: F1TV.LocationResult | null) => {
     dispatch(updateAscendon(decodedAscendon));
@@ -30,7 +23,7 @@ const App = () => {
     dispatch(updateAscendon(decodedAscendon));
   };
 
-  const configCB = (e: Electron.IpcRendererEvent, config: F1TV.Config | null) => {
+  const configCB = (e: Electron.IpcRendererEvent, config: F1TV.Config) => {
     dispatch(updateConfig(config));
   };
 
@@ -38,7 +31,7 @@ const App = () => {
     dispatch(updateEntitlement(entitlement));
   };
 
-  const locationCB = (e: Electron.IpcRendererEvent, location: F1TV.LocationResult | null) => {
+  const locationCB = (e: Electron.IpcRendererEvent, location: F1TV.LocationResult) => {
     dispatch(updateLocation(location));
   };
 
@@ -67,12 +60,10 @@ const App = () => {
 
   return (
     <>
-      <h2>F1TV Status: {isReady ? 'Ready' : 'Not ready'}</h2>
-      <h2>{ascendon !== null ? `Logged in as ${ascendon.FirstName} ${ascendon.LastName}!` : 'Not logged in!'}</h2>
-      {ascendon !== null && <h2>Entitlement: {entitlement !== null ? 'Available' : 'Not available'}</h2>}
-      {ascendon !== null && <h2>Subscription Status: {ascendon.SubscriptionStatus}</h2>}
-      {ascendon !== null && ascendon.SubscriptionStatus === 'active' && <h2>Subscription Product: {ascendon.SubscribedProduct}</h2>}
-      <button onClick={handleBtn}>{ascendon === null ? 'Login' : 'Logout'}</button>
+      <h2>F1TV Status: {isReady ? 'Ready' : 'Initializing'}!</h2>
+      {ascendon !== null ?
+        <LoggedInView /> :
+        <LoggedOutView />}
     </>
   );
 };

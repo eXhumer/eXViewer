@@ -3,12 +3,12 @@ import { DecodedAscendonToken, F1TV } from "@exhumer/f1tv-api";
 declare interface F1TV {
   onAscendon: (cb: (e: IpcRendererEvent, ascendon: DecodedAscendonToken | null) => void) => void;
   offAscendon: (cb: (e: IpcRendererEvent, ascendon: DecodedAscendonToken | null) => void) => void;
-  onConfig: (cb: (e: IpcRendererEvent, config: F1TV.Config | null) => void) => void;
-  offConfig: (cb: (e: IpcRendererEvent, config: F1TV.Config | null) => void) => void;
+  onConfig: (cb: (e: IpcRendererEvent, config: F1TV.Config) => void) => void;
+  offConfig: (cb: (e: IpcRendererEvent, config: F1TV.Config) => void) => void;
   onEntitlement: (cb: (e: IpcRendererEvent, entitlement: string | null) => void) => void;
   offEntitlement: (cb: (e: IpcRendererEvent, entitlement: string | null) => void) => void;
-  onLocation: (cb: (e: IpcRendererEvent, location: F1TV.LocationResult | null) => void) => void;
-  offLocation: (cb: (e: IpcRendererEvent, location: F1TV.LocationResult | null) => void) => void;
+  onLocation: (cb: (e: IpcRendererEvent, location: F1TV.LocationResult) => void) => void;
+  offLocation: (cb: (e: IpcRendererEvent, location: F1TV.LocationResult) => void) => void;
   onReady: (cb: (e: IpcRendererEvent, config: F1TV.Config, location: F1TV.LocationResult) => void) => void;
   offReady: (cb: (e: IpcRendererEvent, config: F1TV.Config, location: F1TV.LocationResult) => void) => void;
   login: () => Promise<void>;
