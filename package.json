@@ -2,14 +2,16 @@
   "name": "exviewer",
   "productName": "eXViewer",
   "version": "1.0.0",
-  "description": "My Electron application description",
+  "description": "Unofficial F1TV viewer and live timing client",
   "main": ".webpack/main",
+  "packageManager": "yarn@1.22.22",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint",
+    "lint:scss": "stylelint \"src/**/*.scss\"",
     "patch-dev": " yarn redeploy-electron-dev && yarn vmp-sign-dev",
     "redeploy-electron-dev": "ts-node scripts/redeploy-electron-dev.ts",
     "vmp-sign-dev": "ts-node scripts/vmp-sign-dev.ts"
@@ -35,7 +37,11 @@
     "fork-ts-checker-webpack-plugin": "^9.0.2",
     "globals": "^15.11.0",
     "node-loader": "^2.0.0",
+    "sass": "^1.80.3",
+    "sass-loader": "^16.0.2",
     "style-loader": "^4.0.0",
+    "stylelint": "^16.10.0",
+    "stylelint-config-standard-scss": "^13.1.0",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3",
@@ -50,7 +56,11 @@
   "dependencies": {
     "@exhumer/f1tv-api": "^2.1.0",
     "@reduxjs/toolkit": "^2.3.0",
+    "bitmovin-player": "^8.185.0",
+    "bitmovin-player-ui": "^3.73.0",
+    "bootstrap": "^5.3.3",
     "react": "^18.3.1",
+    "react-bootstrap": "^2.10.5",
     "react-dom": "^18.3.1",
     "react-redux": "^9.1.2"
   }

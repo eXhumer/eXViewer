@@ -1,9 +1,11 @@
 import { useEffect } from 'react';
-import { useAppDispatch, useAppSelector } from './Store';
-import { updateAscendon, updateConfig, updateEntitlement, updateLocation } from './Slice/F1TV';
 import { DecodedAscendonToken, F1TV } from '@exhumer/f1tv-api';
+
 import LoggedOutView from './Component/LoggedOutView';
 import LoggedInView from './Component/LoggedInView';
+
+import { updateAscendon, updateConfig, updateEntitlement, updateLocation } from './Slice/F1TV';
+import { useAppDispatch, useAppSelector } from './Hook';
 
 const App = () => {
   const dispatch = useAppDispatch();

@@ -21,6 +21,12 @@ declare interface MainWindow {
 }
 
 declare global {
+  declare module '*.module.scss' {
+    const classes: { [key: string]: string };
+    export default classes;
+    export = classes;
+  }
+
   interface Window {
     f1tv: F1TV,
     mainWindow: MainWindow,
