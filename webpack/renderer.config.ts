@@ -29,7 +29,8 @@ rules.push({
           options: {
             api: 'modern',
             sassOptions: {
-              silenceDeprecations: ['mixed-decls', 'import', 'global-builtin', 'color-functions'],
+              // Needed for sass >= 1.77.7
+              // silenceDeprecations: ['mixed-decls', 'import', 'global-builtin', 'color-functions'],
             },
           },
         },
@@ -44,7 +45,8 @@ rules.push({
           options: {
             api: 'modern',
             sassOptions: {
-              silenceDeprecations: ['mixed-decls', 'import', 'global-builtin', 'color-functions'],
+              // Needed for sass >= 1.77.7
+              // silenceDeprecations: ['mixed-decls', 'import', 'global-builtin', 'color-functions'],
             },
           },
         }],
