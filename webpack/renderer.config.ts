@@ -29,8 +29,10 @@ rules.push({
           options: {
             api: 'modern',
             sassOptions: {
-              // Needed for sass >= 1.77.7
-              // silenceDeprecations: ['mixed-decls', 'import', 'global-builtin', 'color-functions'],
+              // https://sass-lang.com/d/mixed-decls (deprecation warning since 1.77.7)
+              // https://sass-lang.com/d/import (deprecation warning since 1.80.0, will break from 3.0.0)
+              // https://sass-lang.com/d/color-functions/ (deprecation warning since 1.79.0, will break from 2.0.0)
+              silenceDeprecations: ['mixed-decls', 'import', 'global-builtin', 'color-functions'],
             },
           },
         },
@@ -45,8 +47,10 @@ rules.push({
           options: {
             api: 'modern',
             sassOptions: {
-              // Needed for sass >= 1.77.7
-              // silenceDeprecations: ['mixed-decls', 'import', 'global-builtin', 'color-functions'],
+              // https://sass-lang.com/d/mixed-decls (deprecation warning since 1.77.7)
+              // https://sass-lang.com/d/import (deprecation warning since 1.80.0, will break from 3.0.0)
+              // https://sass-lang.com/d/color-functions/ (deprecation warning since 1.79.0, will break from 2.0.0)
+              silenceDeprecations: ['mixed-decls', 'import', 'global-builtin', 'color-functions'],
             },
           },
         }],
