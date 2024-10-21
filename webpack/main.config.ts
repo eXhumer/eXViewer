@@ -4,7 +4,7 @@ import { rules } from './rules';
 import { plugins } from './plugins';
 
 export const mainConfig: Configuration = {
-  entry: './src/index.ts',
+  entry: './src/Index.ts',
   module: {
     rules,
   },
