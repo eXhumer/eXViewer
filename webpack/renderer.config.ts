@@ -4,6 +4,38 @@ import { rules } from './rules';
 import { plugins } from './plugins';
 
 rules.push({
+  test: /\.css$/,
+  oneOf: [
+    {
+      test: /\.module\.css$/,
+      use: [
+        {
+          loader: 'style-loader',
+          options: {
+            esModule: false,
+          },
+        },
+        {
+          loader: 'css-loader',
+          options: {
+            esModule: false,
+            modules: {
+              exportLocalsConvention: 'as-is'
+            },
+          },
+        },
+      ],
+    },
+    {
+      use: [
+        'style-loader',
+        'css-loader',
+      ],
+    }
+  ],
+});
+
+rules.push({
   test: /\.s[ac]ss$/,
   oneOf: [
     {
@@ -64,6 +96,6 @@ export const rendererConfig: Configuration = {
   },
   plugins,
   resolve: {
-    extensions: ['.js', '.ts', '.jsx', '.tsx', '.scss', '.sass'],
+    extensions: ['.js', '.ts', '.jsx', '.tsx', '.css', '.scss', '.sass'],
   },
 };
