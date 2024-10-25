@@ -118,8 +118,11 @@ const App = () => {
               onClick={() => {
                 switchChannel(stream.channelId);
               }}
+              style={{
+                backgroundColor: stream.hex,
+              }}
             >
-              {stream.title}
+              {stream.reportingName}
             </button>
           ))}
         </div>
