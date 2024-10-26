@@ -31,7 +31,7 @@
     "@vercel/webpack-asset-relocator-loader": "1.7.3",
     "css-loader": "^7.1.2",
     "dotenv": "^16.4.5",
-    "electron": "git+https://github.com/castlabs/electron-releases.git#v33.0.1+wvcus",
+    "electron": "git+https://github.com/castlabs/electron-releases.git#v33.0.2+wvcus",
     "eslint": "^9.13.0",
     "eslint-plugin-import": "^2.31.0",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
