@@ -1,0 +1,20 @@
+@import '../variables';
+@import '../mixins';
+
+.#{$prefix}-ui-playbacktogglebutton {
+  @extend %ui-button;
+
+  background-image: url('../Skin/SkinModern/assets/images/play.svg');
+
+  &:hover {
+    @include svg-icon-shadow;
+  }
+
+  &.#{$prefix}-on {
+    background-image: url('../Skin/SkinModern/assets/images/pause.svg');
+
+    &.#{$prefix}-stoptoggle {
+      background-image: url('../Skin/SkinModern/assets/images/stop.svg');
+    }
+  }
+}

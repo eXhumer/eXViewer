@@ -151,19 +151,19 @@ const config: ForgeConfig = {
         config: rendererConfig,
         entryPoints: [
           {
-            html: './src/MainWindow/Index.html',
-            js: './src/MainWindow/Renderer.ts',
+            html: './src/main_window/index.html',
+            js: './src/main_window/renderer.ts',
             name: 'main_window',
             preload: {
-              js: './src/MainWindow/Preload.ts',
+              js: './src/main_window/preload.ts',
             },
           },
           {
-            html: './src/Player/Index.html',
-            js: './src/Player/Renderer.ts',
+            html: './src/player/index.html',
+            js: './src/player/renderer.ts',
             name: 'player',
             preload: {
-              js: './src/Player/Preload.ts',
+              js: './src/player/preload.ts',
             },
           },
         ],

@@ -1,0 +1,29 @@
+@import '../Skin/SkinModern/skin';
+
+#bitmovin-player {
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+.bmpui-ui-titlebar,
+.bmpui-ui-controlbar,
+.bmpui-ui-selectbox,
+.bmpui-ui-settings-panel-item,
+.bmpui-ui-settings-panel {
+  -webkit-app-region: no-drag;
+}
+
+.bmpui-ui-rewindbutton {
+  background-image: url('../Skin/SkinModern/assets/images/rewind.svg');
+  background-size: contain;
+}
+
+.bmpui-ui-forwardbutton {
+  background-image: url('../Skin/SkinModern/assets/images/forward.svg');
+  background-size: contain;
+}
+
+.bmpui-ui-rewindbutton:hover, .bmpui-ui-forwardbutton:hover {
+  filter: drop-shadow(0 0 1px #fff);
+}
