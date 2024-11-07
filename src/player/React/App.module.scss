@@ -2,11 +2,11 @@
   position: fixed;
   display: flex;
   flex-direction: column;
-  width: Max(10vw, 64px);
+  width: max(10vw, 64px);
   height: 100vh;
   right: 0;
   justify-content: center;
-  animation: fadeOut 5s forwards;
+  animation: fade-out 5s forwards;
   transition: opacity 0.3s ease-in-out;
   opacity: 1;
 }
@@ -21,7 +21,7 @@
   -webkit-app-region: no-drag;
 }
 
-@keyframes fadeOut {
+@keyframes fade-out {
   0% { opacity: 1; }
   90% { opacity: 1; }
   100% { opacity: 0; }
