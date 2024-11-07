@@ -11,6 +11,7 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "eslint",
+    "lint:ci": "yarn lint:scss && eslint --config eslint.config.ci.mjs",
     "lint:scss": "stylelint \"src/**/*.scss\"",
     "patch-dev": " yarn redeploy-electron-dev && yarn vmp-sign-dev",
     "redeploy-electron-dev": "ts-node scripts/redeploy-electron-dev.ts",
