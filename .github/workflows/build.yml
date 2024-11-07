@@ -36,12 +36,12 @@ jobs:
     strategy:
       matrix:
         image: [
-          {os: macos-latest, arch: arm64, python: '3.12'},
-          {os: macos-latest, arch: universal, python: '3.12'},
-          {os: macos-latest, arch: x64, python: '3.12'},
+          {os: macos-latest, arch: arm64, python: '3.13'},
+          {os: macos-latest, arch: universal, python: '3.13'},
+          {os: macos-latest, arch: x64, python: '3.13'},
           {os: ubuntu-latest, arch: x64},
-          {os: windows-latest, arch: ia32, python: '3.12'},
-          {os: windows-latest, arch: x64, python: '3.12'}
+          {os: windows-latest, arch: ia32, python: '3.13'},
+          {os: windows-latest, arch: x64, python: '3.13'}
         ]
         node: [22]
     runs-on: ${{ matrix.image.os }}
@@ -85,6 +85,7 @@ jobs:
           CODESIGN_CERTIFICATE_PASSWORD: ${{ secrets.CODESIGN_CERTIFICATE_PASSWORD }}
           CODESIGN_CERTIFICATE: ${{ secrets.CODESIGN_CERTIFICATE }}
         run: |
+          echo "::add-mask::${{ secrets.DEVELOPER_NAME }}"
           echo $CODESIGN_CERTIFICATE | base64 --decode > Certificates.p12
           security create-keychain -p "$CI_KEYCHAIN_PASSWORD" build.keychain 
           security default-keychain -s build.keychain
