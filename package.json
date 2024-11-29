@@ -18,12 +18,12 @@
     "vmp-sign-dev": "ts-node scripts/vmp-sign-dev.ts"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.5.0",
-    "@electron-forge/maker-dmg": "^7.5.0",
-    "@electron-forge/maker-zip": "^7.5.0",
-    "@electron-forge/plugin-auto-unpack-natives": "^7.5.0",
-    "@electron-forge/plugin-fuses": "^7.5.0",
-    "@electron-forge/plugin-webpack": "^7.5.0",
+    "@electron-forge/cli": "^7.6.0",
+    "@electron-forge/maker-dmg": "^7.6.0",
+    "@electron-forge/maker-zip": "^7.6.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.6.0",
+    "@electron-forge/plugin-fuses": "^7.6.0",
+    "@electron-forge/plugin-webpack": "^7.6.0",
     "@electron/fuses": "^1.8.0",
     "@eslint/js": "^9.15.0",
     "@types/eslint__js": "^8.42.3",
@@ -32,7 +32,7 @@
     "@vercel/webpack-asset-relocator-loader": "1.7.3",
     "css-loader": "^7.1.2",
     "dotenv": "^16.4.5",
-    "electron": "git+https://github.com/castlabs/electron-releases.git#v33.2.0+wvcus",
+    "electron": "git+https://github.com/castlabs/electron-releases.git#v33.2.1+wvcus",
     "eslint": "^9.15.0",
     "eslint-plugin-import": "^2.31.0",
     "fork-ts-checker-webpack-plugin": "^9.0.2",
@@ -40,12 +40,12 @@
     "sass": "1.81.0",
     "sass-loader": "^16.0.3",
     "style-loader": "^4.0.0",
-    "stylelint": "^16.10.0",
+    "stylelint": "^16.11.0",
     "stylelint-config-standard-scss": "^13.1.0",
     "ts-loader": "^9.5.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.7.2",
-    "typescript-eslint": "^8.15.0"
+    "typescript-eslint": "^8.16.0"
   },
   "keywords": [],
   "author": {
@@ -55,12 +55,12 @@
   "license": "AGPL-3.0-only",
   "dependencies": {
     "@exhumer/f1tv-api": "^2.2.1",
-    "@reduxjs/toolkit": "^2.3.0",
-    "bitmovin-player": "^8.190.0",
+    "@reduxjs/toolkit": "^2.4.0",
+    "bitmovin-player": "^8.191.0",
     "bitmovin-player-ui": "^3.75.0",
     "bootstrap": "^5.3.3",
     "react": "^18.3.1",
-    "react-bootstrap": "^2.10.5",
+    "react-bootstrap": "^2.10.6",
     "react-dom": "^18.3.1",
     "react-redux": "^9.1.2"
   }
