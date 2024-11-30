@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { type SourceConfig, PlayerAPI, PlayerEvent } from 'bitmovin-player';
+import { PlayerAPI, PlayerEvent, QualityMetadata, SourceConfig } from 'bitmovin-player';
 import { BitmovinPlayer, CustomUi } from 'bitmovin-player-react';
 import type { IpcRendererEvent } from 'electron';
 import { F1TV } from '@exhumer/f1tv-api';
@@ -21,6 +21,17 @@ const uiContainerFactory = () => PlayerUI();
 
 const customUi: CustomUi = {
   containerFactory: uiContainerFactory
+};
+
+const getQualityLabels = (quality: QualityMetadata) => {
+  console.log('quality', quality);
+
+  let fpsData = '';
+
+  if (quality.frameRate)
+    fpsData += `${quality.frameRate} fps / `;
+
+  return `${quality.height}p (${fpsData}${Math.trunc(quality.bitrate / 1000)} kbps)`;
 };
 
 const App = () => {
@@ -59,6 +70,14 @@ const App = () => {
           title: `${videoContainer.metadata.title}${stream && stream.type === 'obc' ?
             ` - ${stream.driverFirstName} ${stream.driverLastName}` :
             stream ? ` - ${stream.title}` : ''}`,
+          labeling: {
+            hls: {
+              qualities: getQualityLabels,
+            },
+            dash: {
+              qualities: getQualityLabels,
+            },
+          },
         };
 
         if (playData.streamType === 'DASHWV' && playData.drmType === 'widevine' && playData.laURL) {
