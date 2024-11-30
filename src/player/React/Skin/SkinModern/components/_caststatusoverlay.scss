@@ -7,7 +7,7 @@
   @include hidden-animated;
 
   & {
-    background: $color-background url('../Skin/SkinModern/assets/images/chromecast.svg') center no-repeat;
+    background: $color-background url('./Skin/SkinModern/assets/images/chromecast.svg') center no-repeat;
     background-size: 7em 7em;
   }
 

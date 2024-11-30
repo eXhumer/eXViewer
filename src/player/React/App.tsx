@@ -1,17 +1,27 @@
 import { useEffect, useRef } from 'react';
-import { type SourceConfig, PlayerEvent } from 'bitmovin-player';
+import { type SourceConfig, PlayerAPI, PlayerEvent } from 'bitmovin-player';
+import { BitmovinPlayer, CustomUi } from 'bitmovin-player-react';
 import type { IpcRendererEvent } from 'electron';
 import { F1TV } from '@exhumer/f1tv-api';
 
-import styles from './App.module.scss';
-import BitmovinPlayer, { BitmovinPlayerRef } from './Component/BitmovinPlayer';
 import Overlay from './Component/Overlay';
+import PlayerUI from './Component/PlayerUI';
+import StreamSwitcherButton from './Component/StreamSwitcherButton';
 
-import { updateAscendon, updateConfig, updatePlatform, updateVideoContainer } from './Slice/Player';
+import { updateAscendon, updateConfig, updateCurrentPlayResult, updatePlatform, updateVideoContainer } from './Slice/Player';
 import { usePlayerDispatch, usePlayerSelector } from './Hook';
 
 import { author, productName } from '../../../package.json';
 import { F1TVPlatform } from '../../main_window/React/Type';
+
+import styles from './App.module.scss';
+import './BitmovinPlayer.scss';
+
+const uiContainerFactory = () => PlayerUI();
+
+const customUi: CustomUi = {
+  containerFactory: uiContainerFactory
+};
 
 const App = () => {
   const ascendon = usePlayerSelector(state => state.player.ascendon);
@@ -27,7 +37,8 @@ const App = () => {
     dispatch(updateVideoContainer(videoContainer));
   };
 
-  const playerRef = useRef<BitmovinPlayerRef | null>(null);
+  const playerRef = useRef<PlayerAPI | null>(null);
+  const playerDivRef = useRef<HTMLDivElement | null>(null);
 
   const switchChannel = (channelId?: number) => {
     if (videoContainer === null || !playerRef.current)
@@ -42,6 +53,7 @@ const App = () => {
       .then(playData => {
         const currentRef = playerRef.current;
 
+        dispatch(updateCurrentPlayResult(playData));
 
         const source: SourceConfig = {
           title: `${videoContainer.metadata.title}${stream && stream.type === 'obc' ?
@@ -72,18 +84,18 @@ const App = () => {
           source.dash = playData.url;
         }
 
-        if (currentRef.api.getSource() === null)
-          currentRef.api.load(source);
+        if (currentRef.getSource() === null)
+          currentRef.load(source);
 
         else {
-          if (currentRef.api.isLive()) {
-            const timeShift = currentRef.api.getTimeShift();
-            currentRef.api.load(source)
-              .then(() => currentRef.api.timeShift(timeShift));
+          if (currentRef.isLive()) {
+            const timeShift = currentRef.getTimeShift();
+            currentRef.load(source)
+              .then(() => currentRef.timeShift(timeShift));
           } else {
-            const seekTime = currentRef.api.getCurrentTime();
-            currentRef.api.load(source)
-              .then(() => currentRef.api.seek(seekTime));
+            const seekTime = currentRef.getCurrentTime();
+            currentRef.load(source)
+              .then(() => currentRef.seek(seekTime));
           }
         }
       });
@@ -113,23 +125,20 @@ const App = () => {
       <Overlay>
         <div className={styles['additional-streams-overlay']}>
           {videoContainer.metadata.additionalStreams.map(stream => (
-            <button
+            <StreamSwitcherButton
               key={stream.channelId}
-              onClick={() => {
-                switchChannel(stream.channelId);
-              }}
-              style={{
-                backgroundColor: stream.hex,
-              }}
-            >
-              {stream.reportingName}
-            </button>
+              onClick={(stream) => switchChannel(stream.channelId)}
+              stream={stream}
+            />
           ))}
         </div>
       </Overlay>}
     {videoContainer && config && <BitmovinPlayer
-      playerKey={config.bitmovin.bitmovinKeys.player}
+      playerRef={playerRef}
+      ref={playerDivRef}
+      customUi={customUi}
       config={{
+        key: config.bitmovin.bitmovinKeys.player,
         buffer: {
           audio: {
             forwardduration: config.bitmovin.buffer.audio.forwardduration,
@@ -234,7 +243,6 @@ const App = () => {
           app_id: `com.${author.name}.${productName}`.toLowerCase(),
         },
       }}
-      ref={playerRef}
     />}
   </> : <>
     <h1>Loading...</h1>

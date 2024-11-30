@@ -4,6 +4,7 @@ import { F1TV } from '@exhumer/f1tv-api';
 export type PlayerState = {
   ascendon: string | null;
   config: F1TV.Config | null;
+  currentPlayResult: F1TV.ContentPlayResult | null;
   videoContainer: F1TV.ContentVideoContainer | null;
   platform: string | null;
 };
@@ -11,6 +12,7 @@ export type PlayerState = {
 const initialState: PlayerState = {
   ascendon: null,
   config: null,
+  currentPlayResult: null,
   videoContainer: null,
   platform: null,
 };
@@ -25,6 +27,9 @@ export const configSlice = createSlice({
     updateConfig: (state, action: PayloadAction<F1TV.Config | null>) => {
       state.config = action.payload;
     },
+    updateCurrentPlayResult: (state, action: PayloadAction<F1TV.ContentPlayResult | null>) => {
+      state.currentPlayResult = action.payload;
+    },
     updatePlatform: (state, action: PayloadAction<string | null>) => {
       state.platform = action.payload;
     },
@@ -34,6 +39,6 @@ export const configSlice = createSlice({
   },
 });
 
-export const { updateAscendon, updateConfig, updatePlatform, updateVideoContainer } = configSlice.actions;
+export const { updateAscendon, updateConfig, updateCurrentPlayResult, updatePlatform, updateVideoContainer } = configSlice.actions;
 
 export default configSlice.reducer;

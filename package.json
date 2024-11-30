@@ -57,6 +57,7 @@
     "@exhumer/f1tv-api": "^2.2.1",
     "@reduxjs/toolkit": "^2.4.0",
     "bitmovin-player": "^8.191.0",
+    "bitmovin-player-react": "^1.0.2",
     "bitmovin-player-ui": "^3.75.0",
     "bootstrap": "^5.3.3",
     "react": "^18.3.1",

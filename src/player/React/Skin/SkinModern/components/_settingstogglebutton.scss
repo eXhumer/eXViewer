@@ -18,9 +18,9 @@
 .#{$prefix}-ui-settingstogglebutton {
   @extend %ui-settingstogglebutton;
 
-  background-image: url('../Skin/SkinModern/assets/images/settings.svg');
+  background-image: url('./Skin/SkinModern/assets/images/settings.svg');
 
   &.#{$prefix}-on {
-    background-image: url('../Skin/SkinModern/assets/images/settingsX.svg');
+    background-image: url('./Skin/SkinModern/assets/images/settingsX.svg');
   }
 }

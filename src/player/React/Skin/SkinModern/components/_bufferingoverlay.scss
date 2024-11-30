@@ -66,7 +66,7 @@
 
     & {
       animation: #{$prefix}-fancy $buffering-animation-duration ease-in infinite;
-      background: url('../Skin/SkinModern/assets/images/loader.svg') no-repeat center;
+      background: url('./Skin/SkinModern/assets/images/loader.svg') no-repeat center;
       display: inline-block;
       height: 2em;
       margin: .2em;

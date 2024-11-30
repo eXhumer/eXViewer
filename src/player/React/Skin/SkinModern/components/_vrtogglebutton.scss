@@ -5,13 +5,13 @@
   @extend %ui-button;
 
   // svg() usage: http://pavliko.github.io/postcss-svg/
-  background-image: url('../Skin/SkinModern/assets/images/glasses.svg');
+  background-image: url('./Skin/SkinModern/assets/images/glasses.svg');
 
   &:hover {
     @include svg-icon-shadow;
   }
 
   &.#{$prefix}-on {
-    background-image: url('../Skin/SkinModern/assets/images/glassesX.svg');
+    background-image: url('./Skin/SkinModern/assets/images/glassesX.svg');
   }
 }

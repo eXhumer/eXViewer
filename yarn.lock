@@ -330,9 +330,9 @@
   optionalDependencies:
     global-agent "^3.0.0"
 
-"@electron/node-gyp@git+https://github.com/electron/node-gyp.git#06b29aafb7708acef8b3669835c8a7857ebc92d2":
+"@electron/node-gyp@https://github.com/electron/node-gyp#06b29aafb7708acef8b3669835c8a7857ebc92d2":
   version "10.2.0-electron.1"
-  resolved "git+https://github.com/electron/node-gyp.git#06b29aafb7708acef8b3669835c8a7857ebc92d2"
+  resolved "https://github.com/electron/node-gyp#06b29aafb7708acef8b3669835c8a7857ebc92d2"
   dependencies:
     env-paths "^2.2.0"
     exponential-backoff "^3.1.1"
@@ -1633,6 +1633,11 @@ binary-extensions@^2.0.0:
   version "2.3.0"
   resolved "https://registry.yarnpkg.com/binary-extensions/-/binary-extensions-2.3.0.tgz#f6e14a97858d327252200242d4ccfe522c445522"
   integrity sha512-Ceh+7ox5qe7LJuLHoY0feh3pHuUDHAcRUeyL2VYghZwfpkNIy/+8Ocg0a3UuSoYzavmylwuLWQOf3hl0jjMMIw==
+
+bitmovin-player-react@^1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/bitmovin-player-react/-/bitmovin-player-react-1.0.2.tgz#7917f1f68f46075dde08afe3d0cc9a3102b5649e"
+  integrity sha512-/lfIUE6s+5JgPEFtWSazKzvH3L9OrRT7oGN6I+03wMfIg1jZ/rsD2uC6YjdyAvKvvI4NR7+jsp6jARKKxsZn2g==
 
 bitmovin-player-ui@^3.75.0:
   version "3.75.0"

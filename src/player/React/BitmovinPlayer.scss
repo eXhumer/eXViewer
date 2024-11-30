@@ -1,9 +1,9 @@
-@import '../Skin/SkinModern/skin';
+@import './Skin/SkinModern/skin';
 
-#bitmovin-player {
-  height: 100vh;
-  margin: 0;
-  padding: 0;
+.bitmovinplayer-container {
+  height: 100vh!important;
+  margin: 0!important;
+  padding: 0!important;
 }
 
 .bmpui-ui-titlebar,
@@ -15,12 +15,12 @@
 }
 
 .bmpui-ui-rewindbutton {
-  background-image: url('../Skin/SkinModern/assets/images/rewind.svg');
+  background-image: url('./Skin/SkinModern/assets/images/rewind.svg');
   background-size: contain;
 }
 
 .bmpui-ui-forwardbutton {
-  background-image: url('../Skin/SkinModern/assets/images/forward.svg');
+  background-image: url('./Skin/SkinModern/assets/images/forward.svg');
   background-size: contain;
 }
 
