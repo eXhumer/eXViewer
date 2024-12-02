@@ -3,8 +3,8 @@
 body {
   height: 100vh;
   width: 100vw;
-  background-color: rgb(50, 50, 50);
-  color: rgb(205, 205, 205);
+  background-color: rgb(50 50 50);
+  color: rgb(205 205 205);
 }
 
 #react-root {
@@ -13,9 +13,9 @@ body {
 }
 
 button, input, select {
-  background-color: rgb(80, 80, 80);
-  color: rgb(205, 205, 205);
-  border: 2px solid rgb(100, 100, 100);
+  background-color: rgb(80 80 80);
+  color: rgb(205 205 205);
+  border: 2px solid rgb(100 100 100);
   border-radius: 4px;
   transition: all 0.3s ease;
 }
@@ -30,25 +30,6 @@ input, select {
   padding: 8px 12px;
 }
 
-button:hover, input:hover, select:hover {
-  border-color: rgb(120, 120, 120);
-}
-
-button:hover {
-  background-color: rgb(100, 100, 100);
-  transform: translateY(-2px);
-}
-
-button:active {
-  background-color: rgb(60, 60, 60);
-  transform: translateY(1px);
-}
-
-select:focus, input:focus {
-  border-color: rgb(140, 140, 140);
-  box-shadow: 0 0 5px rgba(140, 140, 140, 0.3);
-}
-
 /* Style for select dropdown arrow */
 select {
   appearance: none;
@@ -59,15 +40,34 @@ select {
   padding-right: 32px;
 }
 
+button:hover, input:hover, select:hover {
+  border-color: rgb(120 120 120);
+}
+
+button:hover {
+  background-color: rgb(100 100 100);
+  transform: translateY(-2px);
+}
+
+button:active {
+  background-color: rgb(60 60 60);
+  transform: translateY(1px);
+}
+
+select:focus, input:focus {
+  border-color: rgb(140 140 140);
+  box-shadow: 0 0 5px rgba(140 140 140 / 30%);
+}
+
 /* Style for input placeholder */
 input::placeholder {
-  color: rgb(150, 150, 150);
+  color: rgb(150 150 150);
 }
 
 /* Disabled state */
 select:disabled, input:disabled {
-  background-color: rgb(60, 60, 60);
-  border-color: rgb(80, 80, 80);
+  background-color: rgb(60 60 60);
+  border-color: rgb(80 80 80);
   cursor: not-allowed;
   opacity: 0.7;
 }
