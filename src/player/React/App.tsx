@@ -146,7 +146,7 @@ const App = () => {
           {videoContainer.metadata.additionalStreams.map(stream => (
             <StreamSwitcherButton
               key={stream.channelId}
-              onClick={(stream) => switchChannel(stream.channelId)}
+              onClick={() => switchChannel(stream.channelId)}
               stream={stream}
             />
           ))}

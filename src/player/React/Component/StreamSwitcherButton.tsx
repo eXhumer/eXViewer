@@ -5,7 +5,7 @@ import { usePlayerSelector } from '../Hook';
 type StreamType = F1TV.ContentVideoContainer['metadata']['additionalStreams'][number];
 
 type StreamSwitcherButtonProps = {
-  onClick: (stream: StreamType) => void;
+  onClick: () => void;
   stream: StreamType;
 };
 
@@ -24,7 +24,7 @@ const StreamSwitcherButton = ({ onClick, stream }: StreamSwitcherButtonProps) =>
             0.8 :
             0.5,
       }}
-      onClick={() => onClick(stream)}
+      onClick={onClick}
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >

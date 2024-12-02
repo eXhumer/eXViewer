@@ -2,16 +2,20 @@ import { useRef } from 'react';
 import { useAppSelector } from '../Hook';
 import { F1TVPlatform } from '../Type';
 
+import styles from './LoggedInView.module.scss';
+
 const LoggedInView = () => {
   const inputRef = useRef<HTMLInputElement>(null);
+  const platformRef = useRef<HTMLSelectElement>(null);
+
   const config = useAppSelector(state => state.f1tv.config);
   const location = useAppSelector(state => state.f1tv.location);
   const isReady = config !== null && location !== null;
-  const platformRef = useRef<HTMLSelectElement>(null);
 
   return (
-    <>
-      <form>
+    <div className={`${styles['container']} ${styles['padding']}`}>
+      <h2>F1TV Status: {isReady ? 'Ready' : 'Initializing'}!</h2>
+      <form className={styles['container']}>
         <input
           disabled={!isReady}
           ref={inputRef}
@@ -22,7 +26,11 @@ const LoggedInView = () => {
             e.target.value = e.target.value.replace(/\D/g, '');
           }}
         />
-        <select ref={platformRef} defaultValue={F1TVPlatform.WEB_DASH}>
+        <select
+          ref={platformRef}
+          defaultValue={F1TVPlatform.WEB_DASH}
+          disabled={!isReady}
+        >
           {Object
             .values(F1TVPlatform)
             .map(val => (
@@ -51,7 +59,7 @@ const LoggedInView = () => {
         > Play Content </button>
       </form>
       <button onClick={() => f1tv.logout()}>Logout</button>
-    </>
+    </div>
   );
 };
 

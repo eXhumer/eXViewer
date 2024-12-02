@@ -10,9 +10,6 @@ import { useAppDispatch, useAppSelector } from './Hook';
 const App = () => {
   const dispatch = useAppDispatch();
   const ascendon = useAppSelector(state => state.f1tv.ascendon);
-  const config = useAppSelector(state => state.f1tv.config);
-  const location = useAppSelector(state => state.f1tv.location);
-  const isReady = config !== null && location !== null;
 
   const readyToShowCB = (e: Electron.IpcRendererEvent, decodedAscendon: DecodedAscendonToken | null, entitlement: string | null, config: F1TV.Config | null, location: F1TV.LocationResult | null) => {
     dispatch(updateAscendon(decodedAscendon));
@@ -62,7 +59,6 @@ const App = () => {
 
   return (
     <>
-      <h2>F1TV Status: {isReady ? 'Ready' : 'Initializing'}!</h2>
       {ascendon !== null ?
         <LoggedInView /> :
         <LoggedOutView />}

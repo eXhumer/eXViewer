@@ -2,7 +2,8 @@ import { createRoot } from 'react-dom/client';
 
 import { Provider } from 'react-redux';
 
-import './CustomBootstrap.scss';
+import './Index.scss';
+
 import App from './App';
 import store from './Store';
 import { StrictMode } from 'react';

@@ -1,0 +1,73 @@
+@import "bootstrap/scss/bootstrap";
+
+body {
+  height: 100vh;
+  width: 100vw;
+  background-color: rgb(50, 50, 50);
+  color: rgb(205, 205, 205);
+}
+
+#react-root {
+  height: 100%;
+  width: 100%;
+}
+
+button, input, select {
+  background-color: rgb(80, 80, 80);
+  color: rgb(205, 205, 205);
+  border: 2px solid rgb(100, 100, 100);
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+button {
+  cursor: pointer;
+  padding: 10px 20px;
+}
+
+input, select {
+  outline: none;
+  padding: 8px 12px;
+}
+
+button:hover, input:hover, select:hover {
+  border-color: rgb(120, 120, 120);
+}
+
+button:hover {
+  background-color: rgb(100, 100, 100);
+  transform: translateY(-2px);
+}
+
+button:active {
+  background-color: rgb(60, 60, 60);
+  transform: translateY(1px);
+}
+
+select:focus, input:focus {
+  border-color: rgb(140, 140, 140);
+  box-shadow: 0 0 5px rgba(140, 140, 140, 0.3);
+}
+
+/* Style for select dropdown arrow */
+select {
+  appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgb(205, 205, 205)' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 8px center;
+  background-size: 16px;
+  padding-right: 32px;
+}
+
+/* Style for input placeholder */
+input::placeholder {
+  color: rgb(150, 150, 150);
+}
+
+/* Disabled state */
+select:disabled, input:disabled {
+  background-color: rgb(60, 60, 60);
+  border-color: rgb(80, 80, 80);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
