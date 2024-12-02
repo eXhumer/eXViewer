@@ -66,10 +66,14 @@ const App = () => {
 
         dispatch(updateCurrentPlayResult(playData));
 
+        const title = `${videoContainer.metadata.title}${stream && stream.type === 'obc' ?
+          ` - ${stream.driverFirstName} ${stream.driverLastName}` :
+          stream ? ` - ${stream.title}` : ''}`;
+
+        player.updateWindowTitle(title);
+
         const source: SourceConfig = {
-          title: `${videoContainer.metadata.title}${stream && stream.type === 'obc' ?
-            ` - ${stream.driverFirstName} ${stream.driverLastName}` :
-            stream ? ` - ${stream.title}` : ''}`,
+          title,
           labeling: {
             hls: {
               qualities: getQualityLabels,

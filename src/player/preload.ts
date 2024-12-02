@@ -19,4 +19,6 @@ contextBridge.exposeInMainWorld('player', {
                         config: F1TV.Config,
                        platform: F1TV.Platform) => void) =>
     ipcRenderer.off(IPCChannel.PLAYER_READY_TO_SHOW, cb),
+  updateWindowTitle: (title: string) =>
+    ipcRenderer.invoke(IPCChannel.PLAYER_UPDATE_WINDOW_TITLE, title),
 });

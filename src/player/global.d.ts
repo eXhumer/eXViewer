@@ -6,6 +6,7 @@ declare interface Player {
   contextMenu: (cursor_location: { x: number, y: number }) => Promise<void>;
   onReadyToShow: (cb: (e: IpcRendererEvent, videoContainer: F1TV.ContentVideoContainer, ascendon: string, config: F1TV.Config | null, platform: F1TVPlatform) => void) => void;
   offReadyToShow: (cb: (e: IpcRendererEvent, videoContainer: F1TV.ContentVideoContainer, ascendon: string, config: F1TV.Config | null, platform: F1TVPlatform) => void) => void;
+  updateWindowTitle: (title: string) => Promise<void>;
 }
 
 declare global {

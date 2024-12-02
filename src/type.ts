@@ -17,6 +17,7 @@ export enum IPCChannel {
   PLAYER_CONTENT_PLAY = 'Player:Content-Play',
   PLAYER_CONTEXT_MENU = 'Player:Context-Menu',
   PLAYER_READY_TO_SHOW = 'Player:Ready-To-Show',
+  PLAYER_UPDATE_WINDOW_TITLE = 'Player:Update-Window-Title',
   F1TV_ASCENDON_UPDATED = 'F1TV:Ascendon',
   F1TV_CONFIG_UPDATED = 'F1TV:Config',
   F1TV_ENTITLEMENT_UPDATED = 'F1TV:Entitlement',

@@ -246,6 +246,15 @@ ipcMain.handle(IPCChannel.PLAYER_CONTEXT_MENU, async (e, cursorLocation: { x: nu
   playerCtxMenuPopup(senderWindow, cursorLocation);
 });
 
+ipcMain.handle(IPCChannel.PLAYER_UPDATE_WINDOW_TITLE, async (e, title: string) => {
+  const senderWindow = BrowserWindow.fromWebContents(e.sender);
+
+  if (senderWindow === null)
+    throw new Error('senderWindow === null | Failed to get sender window!');
+
+  senderWindow.setTitle(title);
+});
+
 ipcMain.handle(IPCChannel.MAIN_WINDOW_NEW_PLAYER, async (e, contentId: number, platform: string) => {
   if (f1tv.ascendon === null)
     return;
