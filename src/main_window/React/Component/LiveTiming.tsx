@@ -1,5 +1,5 @@
-import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from "@microsoft/signalr";
-import { useEffect, useState } from "react";
+import { HttpTransportType, HubConnection, HubConnectionBuilder, HubConnectionState, LogLevel } from '@microsoft/signalr';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { deepMerge } from '../../../utils';
 
@@ -7,9 +7,10 @@ import styles from './LiveTiming.module.scss';
 
 const LiveTiming = () => {
   const [connection, setConnection] = useState<HubConnection | null>(null);
-  const [current, setCurrent] = useState<Record<string, unknown> | null>(null);
+  const [current, setCurrent] = useState<Record<string, unknown>>({});
   const [topics, setTopics] = useState<string[]>([]);
-  const [newTopic, setNewTopic] = useState<string>('');
+
+  const topicRef = useRef<HTMLInputElement>();
 
   useEffect(() => {
     const newConnection = new HubConnectionBuilder()
@@ -47,12 +48,12 @@ const LiveTiming = () => {
       .then(() => {
         console.log('Connection ID', newConnection.connectionId, newConnection.state);
         setConnection(newConnection);
-        setCurrent(null);
+        setCurrent({});
       })
       .catch(err => {
         console.error('Failed to start connection:', err);
         setConnection(null);
-        setCurrent(null);
+        setCurrent({});
       });
 
     return () => {
@@ -65,7 +66,7 @@ const LiveTiming = () => {
         })
         .finally(() => {
           setConnection(null);
-          setCurrent(null);
+          setCurrent({});
         });
     };
   }, []);
@@ -74,7 +75,13 @@ const LiveTiming = () => {
     if (connection && connection.state === HubConnectionState.Connected) {
       const onFeed = (topic: string, update: unknown, timestamp: string) => {
         console.log('feed', topic, update, timestamp);
-        setCurrent(prev => deepMerge(prev, { [topic]: update }));
+
+        setCurrent(prev => {
+          if (prev[topic] === undefined)
+            return { ...prev, [topic]: update };
+
+          return deepMerge(prev, { [topic]: update });
+        });
       };
 
       connection.on('feed', onFeed);
@@ -100,9 +107,6 @@ const LiveTiming = () => {
           console.log('Unsubscribed', toUnsubscribe);
 
           setCurrent(prev => {
-            if (!prev)
-              return null;
-
             const next = { ...prev };
             toUnsubscribe.forEach(topic => delete next[topic]);
             return next;
@@ -122,45 +126,62 @@ const LiveTiming = () => {
   }, [connection, topics]);
 
   const handleAddTopic = () => {
-    if (newTopic && !topics.includes(newTopic)) {
-      setTopics(prev => [...prev, newTopic]);
-      setNewTopic('');
-    }
+    if (!topicRef.current)
+      return;
+
+    const topicToAdd = topicRef.current.value;
+
+    if (!topicToAdd || topics.includes(topicToAdd))
+      return;
+
+    setTopics(prev => [...prev, topicToAdd]);
   };
 
   const handleRemoveTopic = (topicToRemove: string) => {
     setTopics(prev => prev.filter(topic => topic !== topicToRemove));
   };
 
+  const handleSubmitTopic = (e: React.MouseEvent<HTMLButtonElement, MouseEvent>) => {
+    e.preventDefault();
+
+    handleAddTopic();
+
+    topicRef.current.value = '';
+  };
+
   return (
     <div className={`${styles['container']} ${styles['padding']}`}>
       <h2>Live Timing</h2>
       <p>Connection Status: {!connection ? 'Not Connected' : connection.state}</p>
-      
-      <div>
-        <input 
-          type="text" 
-          value={newTopic}
-          onChange={(e) => setNewTopic(e.target.value)}
-          placeholder="Enter topic name"
-        />
-        <button onClick={handleAddTopic}>Add Topic</button>
-      </div>
 
-      <div>
-        <h3>Active Topics:</h3>
-        {topics.map(topic => (
-          <div key={topic}>
-            {topic}
-            <button onClick={() => handleRemoveTopic(topic)}>Remove</button>
+      {connection && connection.state === HubConnectionState.Connected && (
+        <>
+          <form className={`${styles['container']}`}>
+            <input 
+              type='text'
+              ref={topicRef}
+              placeholder='Enter topic name'
+            />
+            <button
+              onClick={handleSubmitTopic}
+              type='submit'
+            >Add Topic</button>
+          </form>
+          <div className={`${styles['container']}`}>
+            <h3>Active Topics:</h3>
+            {topics.map(topic => (
+              <div key={topic}>
+                {topic}
+                <button onClick={() => handleRemoveTopic(topic)}>Remove</button>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
-
-      <div>
-        <h3>Current Data:</h3>
-        <pre>{JSON.stringify(current, undefined, 2)}</pre>
-      </div>
+          <div className={`${styles['container']}`}>
+            <h3>Current Data:</h3>
+            <pre>{JSON.stringify(current, undefined, 2)}</pre>
+          </div>
+        </>
+      )}
     </div>
   );
 };
