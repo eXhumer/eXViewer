@@ -120,7 +120,7 @@ const createMainWindow = (): void => {
     height: 600,
     width: 800,
     webPreferences: {
-      webSecurity: true,
+      webSecurity: false,
       nodeIntegration: false,
       contextIsolation: true,
       preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
