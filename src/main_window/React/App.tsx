@@ -1,8 +1,8 @@
 import { useEffect } from 'react';
 import { DecodedAscendonToken, F1TV } from '@exhumer/f1tv-api';
 
-import LoggedOutView from './Component/LoggedOutView';
-import LoggedInView from './Component/LoggedInView';
+import LoggedOut from './Component/View/LoggedOut';
+import LoggedIn from './Component/View/LoggedIn';
 
 import { updateAscendon, updateConfig, updateEntitlement, updateLocation } from './Slice/F1TV';
 import { useAppDispatch, useAppSelector } from './Hook';
@@ -60,8 +60,8 @@ const App = () => {
   return (
     <>
       {ascendon !== null ?
-        <LoggedInView /> :
-        <LoggedOutView />}
+        <LoggedIn /> :
+        <LoggedOut />}
     </>
   );
 };

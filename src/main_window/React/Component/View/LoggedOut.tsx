@@ -1,4 +1,4 @@
-const LoggedOutView = () => {
+const LoggedOut = () => {
   return (
     <div
       // center align all text and components
@@ -18,4 +18,4 @@ const LoggedOutView = () => {
   );
 };
 
-export default LoggedOutView;
+export default LoggedOut;
