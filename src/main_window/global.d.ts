@@ -1,4 +1,4 @@
-import { DecodedAscendonToken, F1TV } from "@exhumer/f1tv-api";
+import { DecodedAscendonToken, F1TV } from '@exhumer/f1tv-api';
 
 declare interface F1TV {
   onAscendon: (cb: (e: IpcRendererEvent, ascendon: DecodedAscendonToken | null) => void) => void;
