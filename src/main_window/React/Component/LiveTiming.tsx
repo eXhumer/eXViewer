@@ -24,10 +24,9 @@ const LiveTiming = () => {
     newConnection.onclose(async (err) => {
       if (err) {
         console.error('Connection closed with error:', err);
-        return;
+      } else {
+        console.log('Connection closed', newConnection.connectionId, newConnection.state);
       }
-
-      console.log('Connection closed', newConnection.connectionId, newConnection.state);
     });
 
     newConnection.onreconnected(connId => {
@@ -37,10 +36,9 @@ const LiveTiming = () => {
     newConnection.onreconnecting(err => {
       if (err) {
         console.error('Reconnecting to the server failed:', err);
-        return;
+      } else {
+        console.log('Reconnecting to the server', newConnection.connectionId, newConnection.state);
       }
-
-      console.log('Reconnecting to the server', newConnection.connectionId, newConnection.state);
     });
 
     newConnection
@@ -73,8 +71,12 @@ const LiveTiming = () => {
 
   useEffect(() => {
     if (connection && connection.state === HubConnectionState.Connected) {
-      const onFeed = (topic: string, update: unknown, timestamp: string) => {
+      const onFeed = (topic: string, update: Record<string, unknown>, timestamp: string) => {
         console.log('feed', topic, update, timestamp);
+
+        // delete _kf from update if it exists
+        if ('_kf' in update)
+          delete update['_kf'];
 
         setCurrent(prev => {
           if (prev[topic] === undefined)
@@ -118,12 +120,20 @@ const LiveTiming = () => {
       connection
         .invoke('Subscribe', toSubscribe)
         .then(subscribed => {
+          for (const topic in subscribed)
+            if ('_kf' in subscribed[topic])
+              delete subscribed[topic]['_kf'];
+
           console.log('Subscribed', subscribed);
 
           setCurrent(prev => ({ ...prev, ...subscribed }));
         });
     }
   }, [connection, topics]);
+
+  useEffect(() => {
+    console.log('Current changed', current);
+  }, [current]);
 
   const handleAddTopic = () => {
     if (!topicRef.current)
@@ -175,10 +185,6 @@ const LiveTiming = () => {
                 <button onClick={() => handleRemoveTopic(topic)}>Remove</button>
               </div>
             ))}
-          </div>
-          <div className={`${styles['container']}`}>
-            <h3>Current Data:</h3>
-            <pre>{JSON.stringify(current, undefined, 2)}</pre>
           </div>
         </>
       )}
