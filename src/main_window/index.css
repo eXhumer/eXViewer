@@ -1,0 +1,1728 @@
+:root {
+  --title-bar-height: 32px;
+  /* Dark native controls, scrollbars included. */
+  color-scheme: dark;
+}
+
+/* Thin scrollbars that sit on the dark background. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: rgb(255 255 255 / 22%) transparent;
+}
+
+/* Sideways rows show theirs only while the pointer is over them. */
+.content-row,
+.calendar-strip {
+  scrollbar-color: transparent transparent;
+  transition: scrollbar-color 0.2s;
+}
+
+.content-row:hover,
+.calendar-strip:hover {
+  scrollbar-color: rgb(255 255 255 / 22%) transparent;
+}
+
+body {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial,
+    sans-serif;
+  margin: 0;
+  padding: 2rem;
+  padding-top: calc(var(--title-bar-height) + 1rem);
+  /* The app's dark colours; keep in sync with APP_BACKGROUND in main.ts. */
+  background: #15151e;
+  color: #fff;
+}
+
+main {
+  margin: auto;
+  max-width: 38rem;
+}
+
+.video-player {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  background: #000;
+}
+
+.video-player video {
+  width: 100%;
+  height: 100%;
+}
+
+.video-player-error {
+  position: absolute;
+  inset: auto 0 0;
+  margin: 0;
+  padding: 0.75rem 1rem;
+  background: rgb(0 0 0 / 75%);
+  color: #fff;
+}
+
+.channel-switcher {
+  position: absolute;
+  top: 50%;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  transform: translateY(-50%);
+  color: #fff;
+  transition: opacity 0.3s;
+}
+
+.video-player.idle .channel-switcher {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.channel-rail,
+.driver-list {
+  display: flex;
+  flex-direction: column;
+  background: rgb(21 21 30 / 85%);
+}
+
+.channel-rail {
+  border-radius: 8px 0 0 8px;
+  padding: 0.25rem 0;
+}
+
+.channel-rail-button,
+.driver-button {
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  font: inherit;
+}
+
+.channel-rail-button {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.75rem;
+}
+
+.channel-rail-button:hover,
+.channel-rail-button[aria-pressed='true'] {
+  background: rgb(255 255 255 / 12%);
+}
+
+.channel-rail-button[aria-pressed='true'] svg {
+  color: #e10600;
+}
+
+/* Feed name, shown to the left of the rail on hover. */
+.channel-rail-label {
+  position: absolute;
+  right: calc(100% + 0.75rem);
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  text-shadow: 0 1px 3px #000;
+  transition: opacity 0.15s;
+}
+
+.channel-rail-button:hover .channel-rail-label {
+  opacity: 1;
+}
+
+.driver-list {
+  order: 1;
+  max-height: 80vh;
+  margin: 0;
+  padding: 0.25rem 0;
+  overflow-y: auto;
+  list-style: none;
+}
+
+.driver-button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.875rem;
+}
+
+.driver-button:hover,
+.driver-button[aria-pressed='true'] {
+  background: rgb(255 255 255 / 12%);
+}
+
+.driver-button[aria-pressed='true'] {
+  font-weight: bold;
+}
+
+.driver-number {
+  min-width: 1.5rem;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.driver-color {
+  width: 2px;
+  height: 1em;
+}
+
+/* Each feed's pop-out button, beside its driver row. */
+.driver-row {
+  display: flex;
+}
+
+.driver-pop-out {
+  display: grid;
+  place-items: center;
+  padding: 0 0.5rem;
+  border: none;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  opacity: 0;
+}
+
+.driver-pop-out svg {
+  width: 1rem;
+  height: 1rem;
+}
+
+.driver-row:hover .driver-pop-out,
+.driver-pop-out:focus-visible {
+  opacity: 1;
+}
+
+/* Pop-out windows: the video fills the frameless window. */
+body.pop-out-window {
+  padding: 0;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+}
+
+body.pop-out-window .title-bar {
+  display: none;
+}
+
+.pop-out,
+.pop-out .video-player {
+  width: 100vw;
+  height: 100vh;
+  aspect-ratio: auto;
+}
+
+/* Drags the window; shown with the controls. */
+.pop-out-bar {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 11;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2rem;
+  padding: 0 0.25rem 0 0.75rem;
+  background: linear-gradient(rgb(0 0 0 / 70%), transparent);
+  color: #fff;
+  font-size: 0.8125rem;
+  -webkit-app-region: drag;
+  user-select: none;
+  transition: opacity 0.3s;
+}
+
+.video-player.idle .pop-out-bar {
+  opacity: 0;
+}
+
+.pop-out-title {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pop-out-close {
+  width: 1.75rem;
+  height: 1.75rem;
+  border: none;
+  border-radius: 4px;
+  background: none;
+  color: inherit;
+  font-size: 1.25rem;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-app-region: no-drag;
+}
+
+.pop-out-close:hover {
+  background: rgb(255 255 255 / 15%);
+}
+
+.pop-out-message {
+  margin: 0;
+  padding: 3rem 1rem 1rem;
+  text-align: center;
+}
+
+/* A smaller rail so it fits a small window. */
+.pop-out .channel-rail-button {
+  width: 2.5rem;
+  height: 2.5rem;
+}
+
+.pop-out .channel-rail-button svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+.pop-out .driver-list {
+  max-height: calc(100vh - 2.5rem);
+}
+
+/* Multiview: the full-window player, like F1TV's. The channels button opens
+   the layout picker and the channel panel, and the stage shrinks to make
+   room for them. */
+.multiview {
+  --mv-ease: cubic-bezier(0.2, 0, 0, 1);
+  --mv-duration: 0.4s;
+  --mv-panel-width: 17rem;
+  position: fixed;
+  inset: var(--title-bar-height) 0 0;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr 0;
+  overflow: hidden;
+  background: #000;
+  color: #fff;
+  transition:
+    grid-template-columns var(--mv-duration) var(--mv-ease),
+    background-color var(--mv-duration) var(--mv-ease);
+}
+
+.multiview.mv-open {
+  grid-template-columns: 1fr var(--mv-panel-width);
+  background: #15151e;
+}
+
+.multiview.idle {
+  cursor: none;
+}
+
+.mv-main {
+  position: relative;
+  min-width: 0;
+}
+
+/* Where the tiles go: the whole window, or the space between the top bar and
+   the controls while the panel is open. The grid is the largest box of the
+   layout's shape that fits. */
+.mv-stage {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  container-type: size;
+  transition: inset var(--mv-duration) var(--mv-ease);
+}
+
+.mv-open .mv-stage {
+  inset: 3.75rem 2rem 7.5rem;
+}
+
+.mv-grid,
+.layout-icon {
+  display: grid;
+}
+
+.mv-grid {
+  --ratio: 16 / 9;
+  gap: 4px;
+  width: min(100cqw, calc((100cqh - 8px) * var(--ratio)));
+}
+
+.mv-grid.layout-side-by-side {
+  --ratio: 32 / 9;
+}
+
+.mv-grid.layout-main-1,
+.mv-grid.layout-main-3 {
+  --ratio: 64 / 27;
+}
+
+.mv-grid.layout-main-2 {
+  --ratio: 8 / 3;
+}
+
+.layout-single {
+  grid-template-columns: 1fr;
+}
+
+.layout-side-by-side,
+.layout-grid {
+  grid-template-columns: 1fr 1fr;
+}
+
+/* main-N: the first tile is large, the others stack in a column beside it,
+   sized so the column is as tall as the main tile. */
+.layout-main-1 {
+  grid-template-columns: 3fr 1fr;
+  grid-template-rows: auto 1fr;
+}
+
+.layout-main-2 {
+  grid-template-columns: 2fr 1fr;
+  grid-template-rows: repeat(2, auto);
+}
+
+.layout-main-3 {
+  grid-template-columns: 3fr 1fr;
+  grid-template-rows: repeat(3, auto);
+}
+
+.layout-main-1 > :first-child,
+.layout-main-2 > :first-child,
+.layout-main-3 > :first-child {
+  grid-row: 1 / -1;
+  grid-column: 1;
+}
+
+.mv-grid.layout-main-2 > :first-child,
+.mv-grid.layout-main-3 > :first-child {
+  aspect-ratio: auto;
+}
+
+.tile {
+  position: relative;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 4px;
+  background: #000;
+  cursor: pointer;
+}
+
+.mv-grid.layout-single .tile {
+  border-radius: 0;
+}
+
+.mv-open .mv-grid.layout-single .tile {
+  border-radius: 6px;
+}
+
+.tile video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.tile::after {
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  border-radius: inherit;
+  content: '';
+  pointer-events: none;
+  transition: border-color 0.2s;
+}
+
+.mv-grid:not(.layout-single) .tile-focused::after {
+  border-color: #e10600;
+}
+
+.tile-drag-over::after,
+.mv-grid .tile-drag-over::after {
+  border-color: #fff;
+  border-style: dashed;
+}
+
+.tile-label {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.15rem 0.55rem 0.15rem 0.3rem;
+  border-radius: 999px;
+  background: rgb(0 0 0 / 70%);
+  color: #fff;
+  font-size: 0.75rem;
+  font-weight: bold;
+  pointer-events: none;
+}
+
+.tile-label-color {
+  width: 0.75rem;
+  height: 0.75rem;
+  border: 1.5px solid #fff;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 40%);
+}
+
+.tile-message {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  margin: 0;
+  color: rgb(255 255 255 / 70%);
+  font-size: 0.875rem;
+  pointer-events: none;
+}
+
+/* Each tile's quality and audio menu, top right. Shown on hover. */
+.tile-settings {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 2;
+  transition: opacity 0.2s;
+}
+
+.tile:not(:hover) .tile-settings:not(.tile-settings-open) {
+  opacity: 0;
+}
+
+.tile-settings-button {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0.35rem;
+  border: none;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 65%);
+  color: #fff;
+  cursor: pointer;
+  transition: transform 0.3s var(--mv-ease);
+}
+
+.tile-settings-button .icon {
+  width: 100%;
+  height: 100%;
+}
+
+.tile-settings-open .tile-settings-button {
+  transform: rotate(45deg);
+}
+
+.tile-settings-menu {
+  position: absolute;
+  top: calc(100% + 0.35rem);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 11rem;
+  padding: 0.35rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 8px;
+  background: rgb(28 28 38 / 96%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 50%);
+  animation: tile-settings-in 0.18s var(--mv-ease);
+}
+
+@keyframes tile-settings-in {
+  from {
+    opacity: 0;
+    transform: translateY(-0.35rem);
+  }
+}
+
+.tile-settings-heading {
+  margin: 0.4rem 0.5rem 0.2rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.tile-settings-menu button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.5rem;
+  border: none;
+  border-radius: 5px;
+  background: none;
+  color: #fff;
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.tile-settings-menu button:hover {
+  background: rgb(255 255 255 / 10%);
+}
+
+.tile-settings-menu .icon {
+  width: 1rem;
+  height: 1rem;
+  visibility: hidden;
+}
+
+.tile-settings-menu [aria-checked='true'] .icon {
+  visibility: visible;
+}
+
+.tile-settings-detail {
+  margin-left: auto;
+  opacity: 0.6;
+}
+
+/* Back, the title and, while the panel is open, the layout picker. */
+.mv-topbar {
+  position: absolute;
+  inset: 0 0 auto;
+  z-index: 5;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 3.25rem;
+  padding: 0.5rem 1rem;
+  background: linear-gradient(rgb(0 0 0 / 70%), transparent);
+  transition:
+    opacity 0.3s,
+    background-color var(--mv-duration);
+}
+
+.mv-open .mv-topbar {
+  background: none;
+}
+
+/* Only the bar's buttons take clicks, so a tile's settings under it work. */
+.mv-topbar {
+  pointer-events: none;
+}
+
+.mv-topbar > * {
+  pointer-events: auto;
+}
+
+.mv-title {
+  max-width: 40%;
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mv-icon-button {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  padding: 0;
+  border: none;
+  border-radius: 50%;
+  background: none;
+  color: inherit;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.mv-icon-button:hover:not(:disabled) {
+  background: rgb(255 255 255 / 12%);
+}
+
+.mv-icon-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.mv-layouts {
+  position: absolute;
+  top: 0.6rem;
+  left: 50%;
+  display: flex;
+  gap: 0.25rem;
+  padding: 0.25rem;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 10%);
+  opacity: 0;
+  transform: translate(-50%, -0.75rem);
+  transition:
+    opacity var(--mv-duration) var(--mv-ease),
+    transform var(--mv-duration) var(--mv-ease);
+}
+
+.mv-open .mv-layouts {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.mv-layout-button {
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 2rem;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: rgb(255 255 255 / 55%);
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.mv-layout-button:hover {
+  color: #fff;
+}
+
+.mv-layout-button[aria-checked='true'] {
+  background: #fff;
+  color: #000;
+}
+
+.layout-icon {
+  gap: 1px;
+  width: 1.5rem;
+  height: 0.875rem;
+  grid-auto-rows: 1fr;
+}
+
+.layout-icon.layout-main-1,
+.layout-icon.layout-main-2,
+.layout-icon.layout-grid {
+  grid-template-rows: 1fr 1fr;
+}
+
+.layout-icon.layout-main-3 {
+  grid-template-rows: repeat(3, 1fr);
+}
+
+.layout-icon > span {
+  border-radius: 1px;
+  background: currentColor;
+}
+
+/* Shared controls: over the video, or below the tiles while the panel is
+   open. */
+.mv-controls {
+  position: absolute;
+  inset: auto 0 0;
+  z-index: 5;
+  padding: 2.5rem 2rem 1rem;
+  background: linear-gradient(transparent, rgb(0 0 0 / 75%));
+  transition: opacity 0.3s;
+}
+
+.mv-open .mv-controls {
+  background: none;
+}
+
+.multiview.idle .mv-controls,
+.multiview.idle .mv-topbar,
+.multiview.idle .mv-panel-toggle,
+.multiview.idle .tile-settings,
+.multiview.idle .mv-topbar > * {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mv-timeline {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+}
+
+.mv-time {
+  font-size: 0.875rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.mv-range {
+  --fill: 0%;
+  height: 4px;
+  margin: 0;
+  border-radius: 2px;
+  background: linear-gradient(
+    to right,
+    #fff var(--fill),
+    rgb(255 255 255 / 30%) var(--fill)
+  );
+  cursor: pointer;
+  appearance: none;
+}
+
+.mv-range::-webkit-slider-thumb {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #fff;
+  appearance: none;
+  transform: scale(0);
+  transition: transform 0.15s;
+}
+
+.mv-range:hover::-webkit-slider-thumb,
+.mv-range:focus-visible::-webkit-slider-thumb {
+  transform: scale(1);
+}
+
+.mv-seek {
+  flex: 1;
+  transition: height 0.15s;
+}
+
+.mv-seek:hover {
+  height: 6px;
+}
+
+.mv-volume {
+  width: 5rem;
+}
+
+.mv-controls-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.mv-spacer {
+  flex: 1;
+}
+
+.mv-live {
+  padding: 0.25rem 0.6rem;
+  border: none;
+  border-radius: 4px;
+  background: rgb(255 255 255 / 15%);
+  color: inherit;
+  font-size: 0.75rem;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.mv-live-on {
+  background: #e10600;
+}
+
+/* The round channels button on the right edge; a chevron while open. */
+.mv-panel-toggle {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  z-index: 6;
+  display: grid;
+  place-items: center;
+  width: 3rem;
+  height: 3rem;
+  border: none;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 92%);
+  color: #000;
+  cursor: pointer;
+  transform: translateY(-50%);
+  transition:
+    opacity 0.3s,
+    right var(--mv-duration) var(--mv-ease),
+    width var(--mv-duration) var(--mv-ease),
+    height var(--mv-duration) var(--mv-ease),
+    background-color var(--mv-duration);
+}
+
+.mv-open .mv-panel-toggle {
+  right: 0.5rem;
+  width: 2.25rem;
+  height: 2.25rem;
+  background: rgb(255 255 255 / 15%);
+  color: #fff;
+}
+
+/* Channel panel: a live preview of every channel. */
+.channel-panel {
+  min-width: 0;
+  overflow: hidden;
+}
+
+.channel-panel-scroll {
+  box-sizing: border-box;
+  width: var(--mv-panel-width);
+  height: 100%;
+  padding: 0.75rem 1rem 1rem 0.5rem;
+  overflow-y: auto;
+  opacity: 0;
+  transform: translateX(2rem);
+  transition:
+    opacity var(--mv-duration) var(--mv-ease),
+    transform var(--mv-duration) var(--mv-ease);
+}
+
+.mv-open .channel-panel-scroll {
+  opacity: 1;
+  transform: none;
+}
+
+.channel-panel-heading {
+  margin: 1rem 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.channel-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.channel-card {
+  position: relative;
+}
+
+.channel-card-button {
+  position: relative;
+  display: block;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  padding: 0;
+  overflow: hidden;
+  border: none;
+  border-radius: 6px;
+  background: #000;
+  cursor: grab;
+}
+
+.channel-card-button video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.channel-card-button::after {
+  position: absolute;
+  inset: 0;
+  border: 2px solid transparent;
+  border-radius: inherit;
+  content: '';
+  transition: border-color 0.2s;
+}
+
+.channel-card-button:hover::after {
+  border-color: rgb(255 255 255 / 50%);
+}
+
+.channel-card-button[aria-pressed='true']::after {
+  border-color: #fff;
+}
+
+.channel-card-pop-out {
+  position: absolute;
+  top: 0.4rem;
+  right: 0.4rem;
+  display: grid;
+  place-items: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  padding: 0.3rem;
+  border: none;
+  border-radius: 50%;
+  background: rgb(0 0 0 / 70%);
+  color: #fff;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+
+.channel-card-pop-out .icon {
+  width: 100%;
+  height: 100%;
+}
+
+.channel-card:hover .channel-card-pop-out,
+.channel-card-pop-out:focus-visible {
+  opacity: 1;
+}
+
+/* Empty strip where the title bar was, so the window can still be dragged. */
+.title-bar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--title-bar-height);
+  border-bottom: 1px solid rgb(255 255 255 / 6%);
+  box-sizing: border-box;
+  background: #101018;
+  -webkit-app-region: drag;
+  user-select: none;
+}
+
+/* Browse pages: a sidebar beside the current page, below the title bar
+   strip, in the player's dark colours. */
+.app-shell {
+  position: fixed;
+  inset: var(--title-bar-height) 0 0;
+  display: grid;
+  grid-template-columns: 13rem 1fr;
+  background: #15151e;
+  color: #fff;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem 0.75rem;
+  border-right: 1px solid rgb(255 255 255 / 8%);
+  background: #101018;
+}
+
+.sidebar ul {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.sidebar-brand {
+  margin: 0 0.75rem 1.25rem;
+  font-size: 1.25rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  border: none;
+  border-radius: 8px;
+  background: none;
+  color: rgb(255 255 255 / 70%);
+  font: inherit;
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.sidebar-link:hover {
+  background: rgb(255 255 255 / 6%);
+  color: #fff;
+}
+
+.sidebar-link[aria-current='page'] {
+  background: rgb(225 6 0 / 18%);
+  color: #fff;
+  font-weight: 600;
+}
+
+.sidebar-link[aria-current='page'] svg {
+  color: #e10600;
+}
+
+.sidebar-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-top: auto;
+}
+
+.play-by-id {
+  display: flex;
+  gap: 0.25rem;
+  padding: 0 0.25rem;
+}
+
+.play-by-id input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.35rem 0.5rem;
+  border: 1px solid rgb(255 255 255 / 15%);
+  border-radius: 6px;
+  background: rgb(255 255 255 / 5%);
+  color: inherit;
+  font: inherit;
+  font-size: 0.8rem;
+}
+
+.play-by-id button {
+  padding: 0.35rem 0.6rem;
+  border: none;
+  border-radius: 6px;
+  background: rgb(255 255 255 / 12%);
+  color: inherit;
+  font: inherit;
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+main.page {
+  min-width: 0;
+  max-width: none;
+  margin: 0;
+  padding: 1.5rem 2rem 3rem;
+  overflow-y: auto;
+}
+
+.page-message {
+  margin: 4rem auto;
+  text-align: center;
+  opacity: 0.7;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+}
+
+.page-header h1 {
+  margin: 0;
+  font-size: 1.75rem;
+}
+
+.button-primary {
+  padding: 0.6rem 1.4rem;
+  border: none;
+  border-radius: 999px;
+  background: #e10600;
+  color: #fff;
+  font: inherit;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.button-primary:hover:not(:disabled) {
+  background: #ff1e10;
+}
+
+.button-primary:disabled {
+  background: rgb(255 255 255 / 15%);
+  color: rgb(255 255 255 / 50%);
+  cursor: default;
+}
+
+.live-dot {
+  display: inline-block;
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: #e10600;
+  animation: live-pulse 1.6s ease-in-out infinite;
+}
+
+@keyframes live-pulse {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* Home: the banner. */
+.hero {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 15rem;
+  margin-bottom: 2rem;
+  overflow: hidden;
+  border-radius: 14px;
+  background:
+    radial-gradient(circle at 85% 20%, rgb(225 6 0 / 45%), transparent 55%),
+    linear-gradient(135deg, #2a0d12, #15151e 70%);
+  background-position: center;
+  background-size: cover;
+}
+
+.hero::before {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgb(0 0 0 / 75%), transparent 70%);
+  content: '';
+}
+
+.hero-body {
+  position: relative;
+  padding: 2rem;
+}
+
+.hero-kicker {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 0.5rem;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+.hero-live .hero-kicker {
+  color: #ff4d45;
+  opacity: 1;
+}
+
+.hero-title {
+  margin: 0;
+  font-size: 2.25rem;
+  letter-spacing: -0.02em;
+}
+
+.hero-subtitle {
+  margin: 0.25rem 0 0;
+  font-size: 1.1rem;
+  opacity: 0.8;
+}
+
+.hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.hero-countdown {
+  font-size: 0.95rem;
+  opacity: 0.85;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Home: the rows. */
+.home-section {
+  margin-bottom: 2rem;
+}
+
+.home-section-title {
+  margin: 0 0 0.75rem;
+  font-size: 1.15rem;
+}
+
+.home-section-detail {
+  margin-left: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0.6;
+}
+
+.home-empty {
+  margin: 0;
+  opacity: 0.6;
+}
+
+.content-row,
+.calendar-strip {
+  display: flex;
+  gap: 0.75rem;
+  margin: 0;
+  padding: 0 0 0.5rem;
+  overflow-x: auto;
+  list-style: none;
+  scroll-snap-type: x proximity;
+}
+
+.content-card {
+  flex: none;
+  width: 15rem;
+  scroll-snap-align: start;
+}
+
+.content-card-button {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.content-card-button:disabled {
+  cursor: default;
+}
+
+.content-card-image {
+  position: relative;
+  display: block;
+  aspect-ratio: 16 / 9;
+  margin-bottom: 0.4rem;
+  overflow: hidden;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #2b2b3a, #1c1c26);
+  background-position: center;
+  background-size: cover;
+}
+
+/* The hover outline is drawn inside the image: the row scrolls sideways, so
+   anything outside the card would be clipped. */
+.content-card-image::after {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border: 2px solid transparent;
+  border-radius: inherit;
+  content: '';
+  pointer-events: none;
+  transition: border-color 0.2s;
+}
+
+.content-card-button:not(:disabled):hover .content-card-image::after,
+.content-card-button:focus-visible .content-card-image::after {
+  border-color: #fff;
+}
+
+.content-card-button:focus-visible {
+  outline: none;
+}
+
+.content-card-button:disabled .content-card-image {
+  opacity: 0.55;
+}
+
+.content-card-duration,
+.live-badge {
+  position: absolute;
+  right: 0.4rem;
+  bottom: 0.4rem;
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  background: rgb(0 0 0 / 70%);
+  font-size: 0.75rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.live-badge {
+  background: #e10600;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.content-card-progress {
+  position: absolute;
+  inset: auto 0 0;
+  height: 4px;
+  background: rgb(255 255 255 / 25%);
+}
+
+.content-card-progress > span {
+  display: block;
+  height: 100%;
+  background: #e10600;
+}
+
+.content-card-title {
+  font-weight: 600;
+}
+
+.content-card-subtitle {
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+/* Home: the season calendar. */
+.calendar-round {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  width: 9rem;
+  padding: 0.75rem;
+  border: 1px solid rgb(255 255 255 / 10%);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 4%);
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  scroll-snap-align: start;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s;
+}
+
+.calendar-round:hover:not(:disabled) {
+  background: rgb(255 255 255 / 9%);
+}
+
+.calendar-round[aria-pressed='true'] {
+  border-color: #e10600;
+  background: rgb(225 6 0 / 14%);
+}
+
+.calendar-round:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.calendar-round-number {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  opacity: 0.7;
+}
+
+.calendar-round-place {
+  overflow: hidden;
+  font-weight: 600;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.calendar-round-dates {
+  font-size: 0.8rem;
+  opacity: 0.6;
+}
+
+/* A video's page before playback: the browse pages' banner with where to
+   start, then the description. */
+.watch-page {
+  max-width: 64rem;
+}
+
+.watch-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0 0 1rem -0.5rem;
+  padding: 0.35rem 0.75rem 0.35rem 0.5rem;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: rgb(255 255 255 / 75%);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    color 0.15s;
+}
+
+.watch-back:hover {
+  background: rgb(255 255 255 / 8%);
+  color: #fff;
+}
+
+.watch-back svg {
+  width: 1.1rem;
+  height: 1.1rem;
+}
+
+.watch-hero {
+  min-height: 0;
+  aspect-ratio: 21 / 9;
+}
+
+.watch-error {
+  max-width: 36rem;
+  margin: 0;
+  font-size: 1.1rem;
+}
+
+.watch-about p {
+  max-width: 48rem;
+  margin: 0;
+  line-height: 1.55;
+  white-space: pre-line;
+  opacity: 0.8;
+}
+
+.button-secondary {
+  padding: 0.6rem 1.4rem;
+  border: none;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 14%);
+  color: #fff;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.button-secondary:hover {
+  background: rgb(255 255 255 / 22%);
+}
+
+.skeleton {
+  display: block;
+  border-radius: 6px;
+  background: linear-gradient(
+    90deg,
+    rgb(255 255 255 / 6%) 25%,
+    rgb(255 255 255 / 14%) 50%,
+    rgb(255 255 255 / 6%) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.4s linear infinite;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.skeleton-kicker {
+  width: 6rem;
+  height: 0.8rem;
+  margin-bottom: 0.75rem;
+}
+
+.skeleton-title {
+  width: 22rem;
+  max-width: 60vw;
+  height: 2.25rem;
+  margin-bottom: 1.25rem;
+}
+
+.skeleton-button {
+  width: 8rem;
+  height: 2.5rem;
+  border-radius: 999px;
+}
+
+/* Home: a round's series, as tabs above its rows. */
+.series-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: -0.75rem 0 1.25rem;
+}
+
+.series-tab {
+  padding: 0.4rem 0.9rem;
+  border: 1px solid rgb(255 255 255 / 14%);
+  border-radius: 999px;
+  background: none;
+  color: rgb(255 255 255 / 75%);
+  font: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition:
+    background-color 0.15s,
+    border-color 0.15s,
+    color 0.15s;
+}
+
+.series-tab:hover {
+  border-color: rgb(255 255 255 / 30%);
+  color: #fff;
+}
+
+.series-tab[aria-selected='true'] {
+  border-color: #e10600;
+  background: #e10600;
+  color: #fff;
+}
+
+/* Settings. */
+.settings-page {
+  max-width: 40rem;
+}
+
+.settings-section h2 {
+  margin: 0 0 0.25rem;
+  font-size: 1.15rem;
+}
+
+.settings-hint {
+  margin: 0 0 1rem;
+  font-size: 0.9rem;
+  opacity: 0.6;
+}
+
+.settings-list {
+  margin: 0;
+  padding: 0;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 10px;
+  background: rgb(255 255 255 / 3%);
+  list-style: none;
+}
+
+.settings-list li + li {
+  border-top: 1px solid rgb(255 255 255 / 8%);
+}
+
+.settings-toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.85rem 1rem;
+  cursor: pointer;
+}
+
+/* A switch drawn over the checkbox. */
+.settings-toggle input {
+  position: relative;
+  width: 2.5rem;
+  height: 1.4rem;
+  margin: 0;
+  border-radius: 999px;
+  background: rgb(255 255 255 / 18%);
+  appearance: none;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.settings-toggle input::after {
+  content: '';
+  position: absolute;
+  top: 0.2rem;
+  left: 0.2rem;
+  width: 1rem;
+  height: 1rem;
+  border-radius: 50%;
+  background: #fff;
+  transition: transform 0.15s;
+}
+
+.settings-toggle input:checked {
+  background: #e10600;
+}
+
+.settings-toggle input:checked::after {
+  transform: translateX(1.1rem);
+}
+
+.settings-toggle input:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.settings-toggle input:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+
+/* Logged out: a card in the middle of the window. */
+main.login-screen {
+  position: fixed;
+  inset: var(--title-bar-height) 0 0;
+  display: grid;
+  place-items: center;
+  max-width: none;
+  margin: 0;
+  padding: 2rem;
+  background:
+    radial-gradient(
+      60rem 30rem at 50% 110%,
+      rgb(225 6 0 / 22%),
+      transparent 70%
+    ),
+    #15151e;
+}
+
+.login-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(100%, 26rem);
+  padding: 2.5rem 2.25rem 2rem;
+  border: 1px solid rgb(255 255 255 / 8%);
+  border-radius: 16px;
+  background: rgb(16 16 24 / 85%);
+  box-shadow: 0 24px 60px rgb(0 0 0 / 45%);
+  text-align: center;
+}
+
+.login-brand {
+  margin: 0 0 1.5rem;
+  font-size: 1.1rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+/* The brand's red underline. */
+.login-brand::after {
+  content: '';
+  display: block;
+  width: 2rem;
+  height: 3px;
+  margin: 0.4rem auto 0;
+  border-radius: 2px;
+  background: #e10600;
+}
+
+.login-card h1 {
+  margin: 0 0 0.6rem;
+  font-size: 1.6rem;
+  line-height: 1.2;
+}
+
+.login-text {
+  margin: 0 0 1.75rem;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  opacity: 0.7;
+}
+
+.login-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.85rem 1.4rem;
+  border-radius: 10px;
+  font-size: 1rem;
+  box-shadow: 0 8px 24px rgb(225 6 0 / 30%);
+  transition:
+    background-color 0.15s,
+    box-shadow 0.15s,
+    transform 0.15s;
+}
+
+.login-button:hover:not(:disabled) {
+  box-shadow: 0 10px 28px rgb(225 6 0 / 45%);
+  transform: translateY(-1px);
+}
+
+.login-button:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.login-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+.login-button:disabled {
+  box-shadow: none;
+}
+
+.login-spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgb(255 255 255 / 30%);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: login-spin 0.8s linear infinite;
+}
+
+@keyframes login-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.login-note {
+  margin: 1rem 0 0;
+  font-size: 0.8rem;
+  opacity: 0.5;
+}
