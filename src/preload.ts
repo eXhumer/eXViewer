@@ -32,6 +32,8 @@ const player: PlayerApi = {
   reportPosition: (contentId, seconds) =>
     ipcRenderer.invoke(PlayerChannel.ReportPosition, contentId, seconds),
   popOut: (request) => ipcRenderer.invoke(PlayerChannel.PopOut, request),
+  endSession: (contentId) =>
+    ipcRenderer.invoke(PlayerChannel.EndSession, contentId),
 };
 
 const catalog: CatalogApi = {

@@ -471,7 +471,7 @@ body.pop-out-window .title-bar {
   pointer-events: none;
 }
 
-/* Each tile's quality and audio menu, top right. Shown on hover. */
+/* Each tile's quality menu, top right. Shown on hover. */
 .tile-settings {
   position: absolute;
   top: 0.5rem;
@@ -785,6 +785,121 @@ body.pop-out-window .title-bar {
 
 .mv-spacer {
   flex: 1;
+}
+
+/* The audio picker in the bottom bar: every feed's tracks in one list. */
+.mv-audio {
+  position: relative;
+  min-width: 0;
+}
+
+.mv-audio-button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  max-width: 16rem;
+  height: 2.25rem;
+  padding: 0 0.7rem 0 0.5rem;
+  border: none;
+  border-radius: 999px;
+  background: none;
+  color: inherit;
+  font: inherit;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+.mv-audio-button:hover,
+.mv-audio-open .mv-audio-button {
+  background: rgb(255 255 255 / 12%);
+}
+
+.mv-audio-button .icon {
+  flex: none;
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.mv-audio-current {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.mv-audio-menu {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  min-width: 14rem;
+  max-height: min(24rem, 60vh);
+  padding: 0.35rem;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  border-radius: 8px;
+  background: rgb(28 28 38 / 96%);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 50%);
+  animation: mv-audio-in 0.18s var(--mv-ease);
+}
+
+@keyframes mv-audio-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.35rem);
+  }
+}
+
+.mv-audio-menu [role='group'] {
+  display: flex;
+  flex-direction: column;
+}
+
+.mv-audio-heading {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.4rem 0.5rem 0.2rem;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  opacity: 0.6;
+}
+
+.mv-audio-heading .tile-label-color {
+  width: 0.6rem;
+  height: 0.6rem;
+}
+
+.mv-audio-menu button {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.5rem;
+  border: none;
+  border-radius: 5px;
+  background: none;
+  color: #fff;
+  font: inherit;
+  font-size: 0.85rem;
+  text-align: left;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.mv-audio-menu button:hover {
+  background: rgb(255 255 255 / 10%);
+}
+
+.mv-audio-menu .icon {
+  width: 1rem;
+  height: 1rem;
+  visibility: hidden;
+}
+
+.mv-audio-menu [aria-checked='true'] .icon {
+  visibility: visible;
 }
 
 .mv-live {

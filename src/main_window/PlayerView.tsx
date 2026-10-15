@@ -97,6 +97,8 @@ export function PlayerView({ contentId, onBack }: PlayerViewProps) {
     );
     return () => {
       cancelled = true;
+      // Tiles, previews and pop-outs of this page share one play response.
+      void window.player.endSession(contentId);
     };
   }, [contentId]);
 

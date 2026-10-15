@@ -30,9 +30,10 @@ interface TileProps {
   channel: StreamChannel | undefined;
   /** True if the tile has a channel or the content has no channels. */
   filled: boolean;
-  /** The selected tile: it has the sound and takes the next channel. */
+  /** The selected tile: it takes the next channel. */
   focused: boolean;
   volume: number;
+  /** False only for the tile whose audio is playing. */
   muted: boolean;
   /**
    * The first tile leads: the others follow its clock, and only it saves
@@ -244,7 +245,7 @@ export function Tile({
             />
           )}
           {channel.title}
-          {focused && !muted && (
+          {!muted && (
             <span className="tile-label-audio" aria-label="Sound on">
               ♪
             </span>

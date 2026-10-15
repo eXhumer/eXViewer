@@ -124,3 +124,10 @@ export const CheckIcon = () => (
     <path d="M5 12.5l4.5 4.5L19 7.5" />
   </Icon>
 );
+
+export const AudioIcon = () => (
+  <Icon>
+    <path d="M3 14v-2a9 9 0 0 1 18 0v2" />
+    <path d="M21 15a2 2 0 0 1-2 2h-1v-6h1a2 2 0 0 1 2 2zM3 15a2 2 0 0 0 2 2h1v-6H5a2 2 0 0 0-2 2z" />
+  </Icon>
+);

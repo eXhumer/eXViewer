@@ -42,6 +42,11 @@ export interface PlayerContent {
   description: string;
   /** DASH or HLS manifest URL. */
   streamUrl: string;
+  /**
+   * F1TV's names for each feed's audio tracks, by channel ID, then by the
+   * track's name in the playlist (eng, deu, fx, tea…).
+   */
+  audioTrackNames: Record<number, Record<string, string>>;
   /** True when the stream needs a Widevine license (see PlayerApi.requestLicense). */
   drm: boolean;
   /** True for a live session (F1TV contentSubtype LIVE). */
@@ -67,6 +72,11 @@ export interface PlayerApi {
     channelId: number | undefined,
     challenge: Uint8Array,
   ): Promise<ArrayBuffer>;
+  /**
+   * Ends a content's play session when its page closes. Until then every
+   * getContent() for it reuses one F1TV play response, which has all feeds.
+   */
+  endSession(contentId: number): Promise<void>;
   /** Saves the playhead (seconds) as F1TV's resume position for VOD content. */
   reportPosition(contentId: number, seconds: number): Promise<void>;
   /** Opens a feed in a new always-on-top window the user can place freely. */
@@ -78,4 +88,5 @@ export const PlayerChannel = {
   RequestLicense: 'player:request-license',
   ReportPosition: 'player:report-position',
   PopOut: 'player:pop-out',
+  EndSession: 'player:end-session',
 } as const;

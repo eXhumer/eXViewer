@@ -1,6 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import type { PlayerContent, StartPosition } from '../../shared/player';
 import { positionOf } from '../playerSetup';
+import {
+  pickAudio,
+  trackKey,
+  type AudioChoice,
+  type AudioSource,
+} from './audio';
+import { AudioMenu } from './AudioMenu';
 import { ChannelList } from './ChannelList';
 import { Controls } from './Controls';
 import { BackIcon, ChannelsIcon, ChevronRightIcon } from './icons';
@@ -9,6 +16,8 @@ import { followerTarget, syncFollower } from './sync';
 import { Tile, type TileHandle } from './Tile';
 
 const SYNC_INTERVAL_MS = 500;
+/** Player events after which a tile's audio tracks may differ. */
+const AUDIO_EVENTS = ['loaded', 'trackschanged', 'variantchanged', 'unloading'];
 /** How long the mouse can rest before the controls hide. */
 const IDLE_MS = 3000;
 
@@ -45,7 +54,10 @@ export function MultiView({
   const [volume, setVolume] = useState(1);
   const [muted, setMuted] = useState(false);
   const [idle, setIdle] = useState(false);
-  const [, setHandlesChanged] = useState(0);
+  const [handlesChanged, setHandlesChanged] = useState(0);
+  /** The listener's audio pick; null plays the default (F1 LIVE, English). */
+  const [audioChoice, setAudioChoice] = useState<AudioChoice | null>(null);
+  const [, setTracksChanged] = useState(0);
   const handles = useRef<(TileHandle | null)[]>([]);
   const rootRef = useRef<HTMLDivElement>(null);
   const idleTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
@@ -86,6 +98,26 @@ export function MultiView({
     }, SYNC_INTERVAL_MS);
     return () => clearInterval(timer);
   }, []);
+
+  // The audio menu lists the tiles' tracks, which change as feeds load.
+  useEffect(() => {
+    const players = handles.current
+      .filter((handle) => handle !== null)
+      .map(({ player }) => player);
+    const update = () => setTracksChanged((changes) => changes + 1);
+    for (const player of players) {
+      for (const name of AUDIO_EVENTS) {
+        player.addEventListener(name, update);
+      }
+    }
+    return () => {
+      for (const player of players) {
+        for (const name of AUDIO_EVENTS) {
+          player.removeEventListener(name, update);
+        }
+      }
+    };
+  }, [handlesChanged]);
 
   useEffect(() => () => clearTimeout(idleTimer.current), []);
   const wake = () => {
@@ -188,6 +220,42 @@ export function MultiView({
       start: leaderPosition(),
     });
 
+  // Every tile's audio, for the bottom bar; one track plays at a time.
+  const audioSources: AudioSource[] = [];
+  for (let index = 0; index < count; index++) {
+    const handle = handles.current[index];
+    const channelId = hasChannels ? tiles[index] : content.channelId;
+    if (!handle || (hasChannels && channelId === undefined)) {
+      continue;
+    }
+    const tracks = handle.player.getAudioTracks();
+    if (tracks.length === 0) {
+      continue;
+    }
+    const channel = channels.find((channel) => channel.channelId === channelId);
+    audioSources.push({
+      index,
+      channelId,
+      title: channel?.title ?? content.title,
+      channel,
+      tracks,
+      names:
+        (channelId !== undefined && content.audioTrackNames[channelId]) || {},
+    });
+  }
+  const audio = pickAudio(audioSources, audioChoice);
+
+  // Plays the picked track in its tile; the other tiles stay muted.
+  const audioHandle = audio ? handles.current[audio.index] : undefined;
+  const audioTrack = audioHandle?.player
+    .getAudioTracks()
+    .find((track) => trackKey(track) === audio?.key);
+  useEffect(() => {
+    if (audioHandle && audioTrack && !audioTrack.active) {
+      audioHandle.player.selectAudioTrack(audioTrack);
+    }
+  });
+
   const className = [
     'multiview',
     panelOpen && 'mv-open',
@@ -218,7 +286,7 @@ export function MultiView({
                   filled={!hasChannels || channelId !== undefined}
                   focused={index === focused}
                   volume={volume}
-                  muted={muted || index !== focused}
+                  muted={muted || index !== audio?.index}
                   leader={index === 0}
                   getStart={leaderPosition}
                   onReady={(handle) => {
@@ -274,6 +342,15 @@ export function MultiView({
         <Controls
           leader={handles.current[0] ?? null}
           focused={handles.current[focused] ?? null}
+          audioMenu={
+            <AudioMenu
+              sources={audioSources}
+              playing={audio}
+              onChoose={(source, key) =>
+                setAudioChoice({ channelId: source.channelId, key })
+              }
+            />
+          }
           volume={volume}
           muted={muted}
           onVolume={setVolume}

@@ -1,4 +1,4 @@
-import { useEffect, useState, type CSSProperties } from 'react';
+import { useEffect, useState, type CSSProperties, type ReactNode } from 'react';
 import {
   BackTenIcon,
   ForwardTenIcon,
@@ -68,8 +68,10 @@ function fill(value: number, min: number, max: number) {
 interface ControlsProps {
   /** The first tile, whose clock every tile follows. */
   leader: TileHandle | null;
-  /** The selected tile, which has the sound. */
+  /** The selected tile, for picture in picture. */
   focused: TileHandle | null;
+  /** The audio picker, shown after the volume. */
+  audioMenu?: ReactNode;
   volume: number;
   muted: boolean;
   onVolume(volume: number): void;
@@ -84,6 +86,7 @@ interface ControlsProps {
 export function Controls({
   leader,
   focused,
+  audioMenu,
   volume,
   muted,
   onVolume,
@@ -174,6 +177,7 @@ export function Controls({
             onMuted(false);
           }}
         />
+        {audioMenu}
         {live && (
           <button
             className={atLive ? 'mv-live mv-live-on' : 'mv-live'}

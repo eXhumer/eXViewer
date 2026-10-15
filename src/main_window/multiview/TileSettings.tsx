@@ -2,8 +2,6 @@ import { useEffect, useRef, useState } from 'react';
 import type { shaka } from '../playerSetup';
 import { CheckIcon, SettingsIcon } from './icons';
 
-type AudioTrack = shaka.extern.AudioTrack;
-
 /** Events after which the track lists or the active tracks may differ. */
 const TRACK_EVENTS = [
   'loaded',
@@ -15,26 +13,6 @@ const TRACK_EVENTS = [
 
 /** Room (px) left between the menu and the tile's edge, and the gap above it. */
 const MENU_MARGIN = 12;
-
-const languageNames = new Intl.DisplayNames(undefined, { type: 'language' });
-
-function audioLabel(track: AudioTrack) {
-  if (track.label) {
-    return track.label;
-  }
-  let name = track.language;
-  try {
-    name = languageNames.of(track.language) ?? track.language;
-  } catch {
-    // Not a language code F1TV uses consistently; show it as it is.
-  }
-  return track.roles.length > 0 ? `${name} (${track.roles.join(', ')})` : name;
-}
-
-/** The same audio track in another feed: same language and label. */
-function sameAudio(a: AudioTrack, b: AudioTrack) {
-  return a.language === b.language && a.label === b.label;
-}
 
 /** Video heights on offer, highest first. */
 function qualities(player: shaka.Player) {
@@ -66,35 +44,29 @@ interface TileSettingsProps {
 }
 
 /**
- * The gear in a tile's top-right corner: the feed's video quality and audio
- * track. The choice carries over when the tile switches channel.
+ * The gear in a tile's top-right corner: the feed's video quality. The
+ * choice carries over when the tile switches channel. Audio is chosen for
+ * the whole multiview in the bottom bar.
  */
 export function TileSettings({ player }: TileSettingsProps) {
   const [open, setOpen] = useState(false);
   /** The chosen height, or undefined for automatic. */
   const [quality, setQuality] = useState<number | undefined>(undefined);
-  const [audio, setAudio] = useState<AudioTrack | undefined>(undefined);
   const [, setTick] = useState(0);
   const [menuHeight, setMenuHeight] = useState<number | undefined>(undefined);
   const rootRef = useRef<HTMLDivElement>(null);
-  const choice = useRef({ quality, audio });
-  choice.current = { quality, audio };
+  const choice = useRef(quality);
+  choice.current = quality;
 
   useEffect(() => {
     if (!player) {
       return;
     }
     const update = () => setTick((tick) => tick + 1);
-    // A newly loaded channel gets the tile's chosen quality and audio.
+    // A newly loaded channel gets the tile's chosen quality.
     const reapply = () => {
-      const { quality, audio } = choice.current;
-      if (quality !== undefined) {
-        selectQuality(player, quality);
-      }
-      const track =
-        audio && player.getAudioTracks().find((track) => sameAudio(track, audio));
-      if (track && !track.active) {
-        player.selectAudioTrack(track);
+      if (choice.current !== undefined) {
+        selectQuality(player, choice.current);
       }
     };
     for (const name of TRACK_EVENTS) {
@@ -159,7 +131,6 @@ export function TileSettings({ player }: TileSettingsProps) {
   const activeHeight = player
     .getVideoTracks()
     .find((track) => track.active)?.height;
-  const audioTracks = player.getAudioTracks();
 
   const chooseQuality = (height: number | undefined) => {
     setQuality(height);
@@ -168,11 +139,6 @@ export function TileSettings({ player }: TileSettingsProps) {
     } else {
       selectQuality(player, height);
     }
-  };
-
-  const chooseAudio = (track: AudioTrack) => {
-    setAudio(track);
-    player.selectAudioTrack(track);
   };
 
   return (
@@ -185,8 +151,8 @@ export function TileSettings({ player }: TileSettingsProps) {
     >
       <button
         className="tile-settings-button"
-        aria-label="Quality and audio"
-        title="Quality and audio"
+        aria-label="Quality"
+        title="Quality"
         aria-expanded={open}
         onClick={() => setOpen((open) => !open)}
       >
@@ -221,22 +187,6 @@ export function TileSettings({ player }: TileSettingsProps) {
               {height}p
             </button>
           ))}
-          {audioTracks.length > 0 && (
-            <>
-              <p className="tile-settings-heading">Audio</p>
-              {audioTracks.map((track, index) => (
-                <button
-                  key={`${track.language}/${track.label ?? ''}/${index}`}
-                  role="menuitemradio"
-                  aria-checked={track.active}
-                  onClick={() => chooseAudio(track)}
-                >
-                  <CheckIcon />
-                  {audioLabel(track)}
-                </button>
-              ))}
-            </>
-          )}
         </div>
       )}
     </div>
