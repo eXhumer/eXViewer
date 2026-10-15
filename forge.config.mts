@@ -9,6 +9,11 @@ import { FuseV1Options, FuseVersion } from '@electron/fuses';
 const config: ForgeConfig = {
   packagerConfig: {
     asar: true,
+    // Packager otherwise writes an asar integrity digest into the macOS
+    // Electron Framework binary, which castlabs EVS rejects for VMP signing.
+    // Integrity is still checked against the hash in Info.plist.
+    // See https://github.com/castlabs/electron-releases/issues/240
+    asarIntegrityDigest: false,
     // Package with castlabs Electron for Content Security (ECS) instead of stock Electron.
     download: {
       mirrorOptions: {
